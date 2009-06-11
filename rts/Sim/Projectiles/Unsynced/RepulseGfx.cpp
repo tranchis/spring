@@ -3,8 +3,10 @@
 
 #include "RepulseGfx.h"
 #include "Sim/Units/Unit.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -57,6 +59,7 @@ void CRepulseGfx::DependentDied(CObject* o)
 
 void CRepulseGfx::Draw(void)
 {
+#if !defined HEADLESS
 	CUnit* owner = CProjectile::owner();
 	if(!owner || !repulsed)
 		return;
@@ -134,6 +137,7 @@ void CRepulseGfx::Draw(void)
 	va->AddVertexQTC(owner->pos+(-dir1+dir2)*drawsize*0.2f,tx,ty,col2);
 	va->AddVertexQTC(pos-dir1*drawsize+dir2*drawsize+dir*difs[6],tx,ty,col);
 	va->AddVertexQTC(pos-dir1*drawsize-dir2*drawsize+dir*difs[6],tx,ty,col);
+#endif // !defined HEADLESS
 }
 
 void CRepulseGfx::Update(void)

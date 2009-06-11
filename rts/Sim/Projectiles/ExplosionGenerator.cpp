@@ -10,9 +10,11 @@
 #include "LogOutput.h"
 #include "Map/Ground.h"
 #include "ConfigHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GroundFlash.h"
 #include "Rendering/Textures/ColorMap.h"
+#endif // !defined HEADLESS
 #include "ProjectileHandler.h"
 #include "Unsynced/BubbleProjectile.h"
 #include "Unsynced/DirtProjectile.h"
@@ -274,6 +276,7 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 		}
 	}
 
+#if !defined HEADLESS
 	if (radius > 20 && damage > 6 && height < radius * 0.7f) {
 		float modSize=max(radius,damage*2);
 		float circleAlpha=0;
@@ -287,6 +290,7 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 		float flashAlpha=min(0.8f,damage*0.01f);
 		new CStandardGroundFlash(pos,circleAlpha,flashAlpha,flashSize,circleGrowth,ttl);
 	}
+#endif // !defined HEADLESS
 
 	if (radius > 40 && damage > 12) {
 		CSpherePartProjectile::CreateSphere(pos,min(0.7f,damage*0.02f),5+(int)(sqrt(damage)*0.7f),(8+damage*2.5f)/(9+sqrt(damage)*0.7f)*0.5f,owner);
@@ -480,7 +484,7 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 			return;
 		}
 
-		int p = 0;
+		string::size_type p = 0;
 		while (p < script.length()) {
 			char opcode;
 			char c;
@@ -536,9 +540,9 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 
 		string::size_type start = 0;
 		for (creg::Class* c = oit->objectClass; c; c=c->base) {
-			for (int a=0;a<c->members.size();a++) {
+			for (size_t a=0;a<c->members.size();a++) {
 				string::size_type end = script.find(',', start+1);
-				ParseExplosionCode(psi, offset + c->members [a]->offset, c->members[a]->type, script.substr(start,end-start), code);
+				ParseExplosionCode(psi, offset + c->members[a]->offset, c->members[a]->type, script.substr(start,end-start), code);
 				start = end+1;
 				if (start >= script.length()) break;
 			}
@@ -578,6 +582,8 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 			code.append((char*)&ofs, (char*)&ofs + 2);
 		}
 		else if (type->GetName() == "CColorMap*") {
+// FIXME: ifdeffing this may cause sync problems
+#if !defined HEADLESS
 			string::size_type end = script.find(';', 0);
 			string colorstring = script.substr(0, end);
 			void* colormap = CColorMap::LoadFromDefString(colorstring);
@@ -586,6 +592,7 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 			code += OP_STOREP;
 			boost::uint16_t ofs = offset;
 			code.append((char*)&ofs, (char*)&ofs + 2);
+#endif // !defined HEADLESS
 		}
 		else if (type->GetName() == "CExplosionGenerator*") {
 			string::size_type end = script.find(';', 0);
@@ -711,7 +718,7 @@ void CCustomExplosionGenerator::Explosion(const float3& pos, float damage, float
 	if (hit) flags |= SPW_UNIT;
 	else     flags |= SPW_NO_UNIT;
 
-	for (int a = 0; a < (currentCEG->second).projectileSpawn.size(); a++) {
+	for (size_t a = 0; a < (currentCEG->second).projectileSpawn.size(); a++) {
 		ProjectileSpawnInfo& psi = (currentCEG->second).projectileSpawn[a];
 
 		if (!(psi.flags & flags)) {
@@ -726,12 +733,14 @@ void CCustomExplosionGenerator::Explosion(const float3& pos, float damage, float
 		}
 	}
 
+#if !defined HEADLESS
 	const GroundFlashInfo& groundFlash = (currentCEG->second).groundFlash;
 
 	if ((flags & SPW_GROUND) && groundFlash.ttl > 0) {
 		new CStandardGroundFlash(pos, groundFlash.circleAlpha, groundFlash.flashAlpha,
 			groundFlash.flashSize, groundFlash.circleGrowth, groundFlash.ttl, groundFlash.color);
 	}
+#endif // !defined HEADLESS
 
 	if ((currentCEG->second).useDefaultExplosions) {
 		CStdExplosionGenerator::Explosion(pos, damage, radius, owner, gfxMod, hit, dir);

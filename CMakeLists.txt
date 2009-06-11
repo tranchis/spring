@@ -177,6 +177,7 @@ if (SDL_FOUND)
 	Add_Subdirectory(AI)
 endif (SDL_FOUND)
 Add_Subdirectory(tools/DedicatedServer)
+Add_Subdirectory(tools/HeadlessClient)
 Add_Subdirectory(tools/unitsync)
 
 ### make the basefiles (aka sdz's)

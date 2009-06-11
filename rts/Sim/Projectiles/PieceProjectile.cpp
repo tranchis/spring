@@ -12,6 +12,7 @@
 #include "myMath.h"
 #include "PieceProjectile.h"
 #include "ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Colors.h"
@@ -19,6 +20,7 @@
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/Unit.h"
 #include "Sync/SyncTracer.h"
 #include "Unsynced/SmokeProjectile.h"
@@ -32,7 +34,9 @@ CR_BIND_DERIVED(CPieceProjectile, CProjectile, (float3(0, 0, 0), float3(0, 0, 0)
 CR_REG_METADATA(CPieceProjectile,(
 	CR_SERIALIZER(creg_Serialize), // numCallback, oldInfos
 	CR_MEMBER(flags),
+#if !defined HEADLESS
 	CR_MEMBER(dispList),
+#endif // !defined HEADLESS
 	// TODO what to do with the next two fields
 	// CR_MEMBER(piece3do),
 	// CR_MEMBER(pieces3o),
@@ -326,6 +330,7 @@ void CPieceProjectile::Update()
 
 void CPieceProjectile::Draw()
 {
+#if !defined HEADLESS
 	if (flags & PF_NoCEGTrail) {
 		if (flags & PF_Smoke) {
 			// this piece leaves a default (non-CEG) smoketrail
@@ -405,15 +410,19 @@ void CPieceProjectile::Draw()
 	if (curCallback == 0) {
 		DrawCallback();
 	}
+#endif // !defined HEADLESS
 }
 
 void CPieceProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	points.AddVertexQC(pos, color4::red);
+#endif // !defined HEADLESS
 }
 
 void CPieceProjectile::DrawCallback(void)
 {
+#if !defined HEADLESS
 	if(*numCallback != gu->drawFrame) {
 		*numCallback = gu->drawFrame;
 		return;
@@ -443,11 +452,13 @@ void CPieceProjectile::DrawCallback(void)
 			va->AddVertexQTC(interPos - camera->right * drawsize+camera->up * drawsize, ph->explofadetex.xstart, ph->explofadetex.yend,   col);
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
 void CPieceProjectile::DrawUnitPart(void)
 {
+#if !defined HEADLESS
 	unitDrawer->SetTeamColour(colorTeam);
 
 	if (alphaThreshold != 0.1f) {
@@ -465,6 +476,7 @@ void CPieceProjectile::DrawUnitPart(void)
 	}
 
 	*numCallback = 0;
+#endif // !defined HEADLESS
 }
 
 void CPieceProjectile::DrawS3O(void)

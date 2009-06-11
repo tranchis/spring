@@ -1,6 +1,8 @@
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 // Projectile.h: interface for the CProjectile class.
 //
 //////////////////////////////////////////////////////////////////////

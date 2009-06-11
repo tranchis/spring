@@ -1,5 +1,7 @@
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 // QuadField.cpp: implementation of the CQuadField class.
 //
 //////////////////////////////////////////////////////////////////////

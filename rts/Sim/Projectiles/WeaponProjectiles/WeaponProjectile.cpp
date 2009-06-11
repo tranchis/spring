@@ -4,6 +4,7 @@
 #include "WeaponProjectile.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "Sound/AudioChannel.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Rendering/UnitModels/3DOParser.h"
@@ -11,6 +12,7 @@
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Colors.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "Map/Ground.h"
 #include "LaserProjectile.h"
@@ -276,6 +278,7 @@ bool CWeaponProjectile::TraveledRange()
 
 void CWeaponProjectile::DrawUnitPart()
 {
+#if !defined HEADLESS
 	float3 dir(speed);
 	dir.Normalize();
 	glPushMatrix();
@@ -294,17 +297,22 @@ void CWeaponProjectile::DrawUnitPart()
 	glMultMatrixf(&transMatrix[0]);
 	glCallList(s3domodel->rootobject->displist); // dont cache displists because of delayed loading
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 void CWeaponProjectile::DrawS3O(void)
 {
+#if !defined HEADLESS
 	unitDrawer->SetTeamColour(colorTeam);
 	DrawUnitPart();
+#endif // !defined HEADLESS
 }
 
 void CWeaponProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	points.AddVertexQC(pos, color4::yellow);
+#endif // !defined HEADLESS
 }
 
 void CWeaponProjectile::DependentDied(CObject* o)
@@ -323,6 +331,7 @@ void CWeaponProjectile::PostLoad()
 //	if(weaponDef->interceptedByShieldType)
 //		interceptHandler.AddShieldInterceptableProjectile(this);
 
+#if !defined HEADLESS
 	if (!weaponDef->visuals.modelName.empty()) {
 		if (weaponDef->visuals.model==NULL) {
 			std::string modelname = string("objects3d/") + weaponDef->visuals.modelName;
@@ -335,6 +344,7 @@ void CWeaponProjectile::PostLoad()
 			s3domodel = weaponDef->visuals.model;
 		}
 	}
+#endif // !defined HEADLESS
 
 //	collisionFlags = weaponDef->collisionFlags;
 }

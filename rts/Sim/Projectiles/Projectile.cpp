@@ -4,16 +4,18 @@
 //////////////////////////////////////////////////////////////////////
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"			// Header File For The OpenGL32 Library
+#include "Rendering/GL/VertexArray.h"
+#include "Rendering/UnitModels/IModelParser.h"
+#include "Rendering/Colors.h"
+#endif // !defined HEADLESS
 #include "Projectile.h"
 #include "ProjectileHandler.h"
 #include "Game/Camera.h"
-#include "Rendering/GL/VertexArray.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Misc/GlobalConstants.h"
 #include "LogOutput.h"
-#include "Rendering/UnitModels/IModelParser.h"
-#include "Rendering/Colors.h"
 #include "Map/MapInfo.h"
 #include "GlobalUnsynced.h"
 
@@ -117,6 +119,7 @@ void CProjectile::Collision(CFeature* feature)
 
 void CProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=1*255;
@@ -127,6 +130,7 @@ void CProjectile::Draw()
 	va->AddVertexTC(drawPos+camera->right*drawRadius-camera->up*drawRadius,ph->projectiletex.xend,ph->projectiletex.ystart,col);
 	va->AddVertexTC(drawPos+camera->right*drawRadius+camera->up*drawRadius,ph->projectiletex.xend,ph->projectiletex.yend,col);
 	va->AddVertexTC(drawPos-camera->right*drawRadius+camera->up*drawRadius,ph->projectiletex.xstart,ph->projectiletex.yend,col);
+#endif // !defined HEADLESS
 }
 
 void CProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
@@ -137,6 +141,7 @@ void CProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 int CProjectile::DrawArray()
 {
 	int idx = 0;
+#if !defined HEADLESS
 
 	va->DrawArrayTC(GL_QUADS);
 
@@ -148,6 +153,7 @@ int CProjectile::DrawArray()
 	va->Initialize();
 	inArray = false;
 
+#endif // !defined HEADLESS
 	return idx;
 }
 
@@ -160,9 +166,11 @@ void CProjectile::DrawUnitPart(void)
 }
 
 void CProjectile::UpdateDrawPos() {
+#if !defined HEADLESS
 #if defined(USE_GML) && GML_ENABLE_SIM
 		drawPos = pos + (speed * ((float)gu->lastFrameStart - (float)lastProjUpdate) * gu->weightedSpeedFactor);
 #else
 		drawPos = pos + (speed * gu->timeOffset);
 #endif
+#endif // !defined HEADLESS
 }

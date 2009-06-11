@@ -2,8 +2,10 @@
 #include "mmgr.h"
 
 #include "ShieldPartProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Rendering/Textures/TextureAtlas.h"
 #include "GlobalUnsynced.h"
@@ -74,6 +76,7 @@ void CShieldPartProjectile::Update(void)
 
 void CShieldPartProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	if (baseAlpha <= 0.0f) {
 		return;
 	}
@@ -96,4 +99,5 @@ void CShieldPartProjectile::Draw(void)
 			va->AddVertexQTC(centerPos + vectors[(y + 1) * 5 + x    ] * sphereSize, texCoords[(y + 1) * 5 + x    ].x, texCoords[(y + 1) * 5 + x    ].y, col);
 		}
 	}
+#endif // !defined HEADLESS
 }

@@ -3,8 +3,10 @@
 #include "mmgr.h"
 
 #include "Sim/Misc/GlobalConstants.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "SpherePartProjectile.h"
 #include "GlobalUnsynced.h"
@@ -74,6 +76,7 @@ void CSpherePartProjectile::Update(void)
 
 void CSpherePartProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	unsigned char col[4];
 	va->EnlargeArrays(4*4*4,0,VA_SIZE_TC);
 
@@ -98,6 +101,7 @@ void CSpherePartProjectile::Draw(void)
 			va->AddVertexQTC(centerPos+vectors[(y+1)*5+x]*interSize,texx,texy,col);
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 

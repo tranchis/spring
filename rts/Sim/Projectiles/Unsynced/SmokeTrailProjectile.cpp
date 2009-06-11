@@ -7,12 +7,14 @@
 
 #include "SmokeTrailProjectile.h"
 
-#include "Rendering/Textures/TextureAtlas.h"
 #include "Game/Camera.h"
 #include "Map/Ground.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/Wind.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
@@ -97,6 +99,7 @@ CSmokeTrailProjectile::~CSmokeTrailProjectile()
 
 void CSmokeTrailProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	float age=gs->frameNum+gu->timeOffset-creationTime;
 	va->EnlargeArrays(8*4,0,VA_SIZE_TC);
@@ -195,6 +198,7 @@ void CSmokeTrailProjectile::Draw()
 	if(drawCallbacker)
 		drawCallbacker->DrawCallback();
 #endif
+#endif // !defined HEADLESS
 }
 
 void CSmokeTrailProjectile::Update()

@@ -8,9 +8,11 @@
 #include "Game/Camera.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Colors.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "SmokeProjectile.h"
 #include "WreckProjectile.h"
@@ -57,6 +59,7 @@ void CWreckProjectile::Update()
 
 void CWreckProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char) (0.15f*200);
@@ -68,6 +71,7 @@ void CWreckProjectile::Draw(void)
 	va->AddVertexTC(drawPos+camera->right*drawRadius-camera->up*drawRadius,ph->wrecktex.xend,ph->wrecktex.ystart,col);
 	va->AddVertexTC(drawPos+camera->right*drawRadius+camera->up*drawRadius,ph->wrecktex.xend,ph->wrecktex.yend,col);
 	va->AddVertexTC(drawPos-camera->right*drawRadius+camera->up*drawRadius,ph->wrecktex.xstart,ph->wrecktex.yend,col);
+#endif // !defined HEADLESS
 }
 
 void CWreckProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)

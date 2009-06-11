@@ -6,7 +6,9 @@
 #include "mmgr.h"
 
 #include "TracerProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"			// Header File For The OpenGL32 Library
+#endif // !defined HEADLESS
 #include "GlobalUnsynced.h"
 
 CR_BIND_DERIVED(CTracerProjectile, CProjectile, )
@@ -70,6 +72,7 @@ void CTracerProjectile::Update()
 
 void CTracerProjectile::Draw()
 {
+#if !defined HEADLESS
 	if(drawLength>3)
 		drawLength=3;
 
@@ -81,4 +84,5 @@ void CTracerProjectile::Draw()
 	glEnd();
 	glColor4f(1,1,1,1);
 	glTexCoord2f(0,0);
+#endif // !defined HEADLESS
 }

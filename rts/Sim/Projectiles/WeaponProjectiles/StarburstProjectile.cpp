@@ -8,16 +8,18 @@
 #include "Map/MapInfo.h"
 #include "Matrix44f.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/UnitModels/3DOParser.h"
+#include "Rendering/UnitModels/s3oParser.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "StarburstProjectile.h"
 #include "Sync/SyncTracer.h"
-#include "Rendering/UnitModels/s3oParser.h"
 #include "GlobalUnsynced.h"
 
 static const float Smoke_Time=70;
@@ -265,6 +267,7 @@ void CStarburstProjectile::Update(void)
 
 void CStarburstProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	float age2=(age&7)+gu->timeOffset;
 
@@ -341,10 +344,12 @@ void CStarburstProjectile::Draw(void)
 	DrawCallback();
 	if(curCallback==0)
 		DrawCallback();
+#endif // !defined HEADLESS
 }
 
 void CStarburstProjectile::DrawCallback(void)
 {
+#if !defined HEADLESS
 	if(*numCallback != gu->drawFrame) {
 		*numCallback = gu->drawFrame;
 		return;
@@ -399,10 +404,12 @@ void CStarburstProjectile::DrawCallback(void)
 	va->AddVertexTC(drawPos+camera->right*fsize-camera->up*fsize,weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->ystart,col);
 	va->AddVertexTC(drawPos+camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->yend,col);
 	va->AddVertexTC(drawPos-camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture1->xstart,weaponDef->visuals.texture1->yend,col);
+#endif // !defined HEADLESS
 }
 
 void CStarburstProjectile::DrawUnitPart(void)
 {
+#if !defined HEADLESS
 	glPushMatrix();
 	float3 rightdir;
 	if(dir.y!=1)
@@ -417,6 +424,7 @@ void CStarburstProjectile::DrawUnitPart(void)
 
 	glCallList(s3domodel->rootobject->displist); // dont cache displists because of delayed loading
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 int CStarburstProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)

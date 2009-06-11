@@ -1,10 +1,12 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
-#include "Rendering/GL/myGL.h"
 #include "Game/Camera.h"
 #include "LargeBeamLaserProjectile.h"
+#if !defined HEADLESS
+#include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
@@ -113,6 +115,7 @@ void CLargeBeamLaserProjectile::Update(void)
 
 void CLargeBeamLaserProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	float3 dif(pos-camera->pos);
 	float camDist=dif.Length();
@@ -283,12 +286,14 @@ void CLargeBeamLaserProjectile::Draw(void)
 	va->AddVertexQTC(pos1+camera->right*fsize-camera->up*fsize,weaponDef->visuals.texture4->xend,weaponDef->visuals.texture4->ystart,corecolstart);
 	va->AddVertexQTC(pos1+camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture4->xend,weaponDef->visuals.texture4->yend,corecolstart);
 	va->AddVertexQTC(pos1-camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture4->xstart,weaponDef->visuals.texture4->yend,corecolstart);
-
+#endif // !defined HEADLESS
 }
 
 void CLargeBeamLaserProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	unsigned char color[4] = {kocolstart[0], kocolstart[1], kocolstart[2],255};
 	lines.AddVertexQC(startPos,color);
 	lines.AddVertexQC(endPos,color);
+#endif // !defined HEADLESS
 }

@@ -15,6 +15,7 @@
 #include "Map/ReadMap.h"
 #include "Map/MapInfo.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/Env/BaseTreeDrawer.h"
 #include "Rendering/Env/BaseWater.h"
 #include "Rendering/FartextureHandler.h"
@@ -24,6 +25,7 @@
 #include "Rendering/Textures/S3OTextureHandler.h"
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Units/UnitHandler.h"
 #include "Sim/Units/CommandAI/BuilderCAI.h"
@@ -112,7 +114,9 @@ CFeatureHandler::CFeatureHandler() : nextFreeID(0)
 	drawQuadsY = gs->mapy/DRAW_QUAD_SIZE;
 	drawQuads.resize(drawQuadsX * drawQuadsY);
 
+#if !defined HEADLESS
 	treeDrawer = CBaseTreeDrawer::GetTreeDrawer();
+#endif // !defined HEADLESS
 
 	const LuaTable rootTable = game->defsParser->GetRoot().SubTable("FeatureDefs");
 	if (!rootTable.IsValid()) {
@@ -159,7 +163,9 @@ CFeatureHandler::~CFeatureHandler()
 		featureDefs.erase(fi);
 	}
 
+#if !defined HEADLESS
 	delete treeDrawer;
+#endif // !defined HEADLESS
 }
 
 void CFeatureHandler::Serialize(creg::ISerializer *s)
@@ -526,6 +532,7 @@ void CFeatureHandler::Update()
 
 void CFeatureHandler::UpdateDrawQuad(CFeature* feature, const float3& newPos)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(feat); // UpdateDrawQuad
 
 	const int oldDrawQuad = feature->drawQuad;
@@ -541,6 +548,7 @@ void CFeatureHandler::UpdateDrawQuad(CFeature* feature, const float3& newPos)
 			feature->drawQuad = newDrawQuad;
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -580,6 +588,7 @@ void CFeatureHandler::TerrainChanged(int x1, int y1, int x2, int y2)
 
 void CFeatureHandler::Draw()
 {
+#if !defined HEADLESS
 	fadeFeatures.clear();
 	fadeFeaturesS3O.clear();
 
@@ -615,10 +624,12 @@ void CFeatureHandler::Draw()
 	}
 
 	glDisable(GL_FOG);
+#endif // !defined HEADLESS
 }
 
 void CFeatureHandler::DrawFadeFeatures(bool submerged, bool noAdvShading)
 {
+#if !defined HEADLESS
 	if (fadeFeatures.empty() && fadeFeaturesS3O.empty())
 		return;
 
@@ -666,11 +677,13 @@ void CFeatureHandler::DrawFadeFeatures(bool submerged, bool noAdvShading)
 		unitDrawer->CleanUpGhostDrawing();
 
 	unitDrawer->advShading = oldAdvShading;
+#endif // !defined HEADLESS
 }
 
 
 void CFeatureHandler::DrawShadowPass()
 {
+#if !defined HEADLESS
 	glBindProgramARB( GL_VERTEX_PROGRAM_ARB, unitDrawer->unitShadowGenVP );
 	glEnable( GL_VERTEX_PROGRAM_ARB );
 	glPolygonOffset(1,1);
@@ -683,6 +696,7 @@ void CFeatureHandler::DrawShadowPass()
 
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	glDisable(GL_VERTEX_PROGRAM_ARB);
+#endif // !defined HEADLESS
 }
 
 class CFeatureDrawer : public CReadMap::IQuadDrawer
@@ -703,6 +717,7 @@ public:
 
 void CFeatureDrawer::DrawQuad(int x, int y)
 {
+#if !defined HEADLESS
 	CFeatureHandler::DrawQuad* dq = &(*drawQuads)[y * drawQuadsX + x];
 
 	for (CFeatureSet::iterator fi = dq->features.begin(); fi != dq->features.end(); ++fi) {
@@ -772,11 +787,13 @@ void CFeatureDrawer::DrawQuad(int x, int y)
 			}
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
 void CFeatureHandler::DrawRaw(int extraSize, std::vector<CFeature*>* farFeatures)
 {
+#if !defined HEADLESS
 	float featureDist = 3000;
 	if (!extraSize) {
 		featureDist = 6000; //farfeatures wont be drawn for shadowpass anyway
@@ -793,11 +810,13 @@ void CFeatureHandler::DrawRaw(int extraSize, std::vector<CFeature*>* farFeatures
 	drawer.farFeatures = farFeatures;
 
 	readmap->GridVisibility(camera, DRAW_QUAD_SIZE, featureDist, &drawer, extraSize);
+#endif // !defined HEADLESS
 }
 
 
 void CFeatureHandler::DrawFar(CFeature* feature, CVertexArray* va)
 {
+#if !defined HEADLESS
 	float3 interPos=feature->pos+UpVector*feature->model->height*0.5f;
 	int snurr=-feature->heading+GetHeadingFromVector(camera->pos.x-feature->pos.x,camera->pos.z-feature->pos.z)+(0xffff>>4);
 	if(snurr<0)
@@ -815,12 +834,15 @@ void CFeatureHandler::DrawFar(CFeature* feature, CVertexArray* va)
 	va->AddVertexQTN(interPos+(curad+offset)+crrad,tx,ty+(1.0f/64.0f),unitDrawer->camNorm);
 	va->AddVertexQTN(interPos+(curad+offset)-crrad,tx+(1.0f/64.0f),ty+(1.0f/64.0f),unitDrawer->camNorm);
 	va->AddVertexQTN(interPos-(curad-offset)-crrad,tx+(1.0f/64.0f),ty,unitDrawer->camNorm);
+#endif // !defined HEADLESS
 }
 
 
 S3DModel* FeatureDef::LoadModel()
 {
+#if !defined HEADLESS
 	if (model==NULL)
 		model = modelParser->Load3DModel(modelname);
+#endif // !defined HEADLESS
 	return model;
 }

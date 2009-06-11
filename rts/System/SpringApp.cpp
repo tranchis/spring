@@ -1,5 +1,7 @@
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 #include <iostream>
 
@@ -25,7 +27,9 @@
 #include "Sim/Misc/Team.h"
 #include "Game/UI/KeyBindings.h"
 #include "Game/UI/MouseHandler.h"
+#if !defined HEADLESS
 #include "Lua/LuaOpenGL.h"
+#endif // !defined HEADLESS
 #include "Platform/BaseCmd.h"
 #include "ConfigHandler.h"
 #include "Platform/errorhandler.h"
@@ -33,12 +37,14 @@
 #include "FileSystem/FileSystem.h"
 #include "FileSystem/FileHandler.h"
 #include "ExternalAI/IAILibraryManager.h"
+#if !defined HEADLESS
 #include "Rendering/glFont.h"
 #include "Rendering/GLContext.h"
 #include "Rendering/VerticalSync.h"
 #include "Rendering/Textures/TAPalette.h"
 #include "Rendering/Textures/NamedTextures.h"
 #include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Misc/GlobalConstants.h"
 #include "LogOutput.h"
@@ -118,7 +124,7 @@ SpringApp::~SpringApp()
 	if (cmdline) delete cmdline;
 	if (keys) delete[] keys;
 
-	creg::System::FreeClasses ();
+	creg::System::FreeClasses();
 }
 
 
@@ -148,7 +154,7 @@ static int GetWow64Status()
 }
 
 
-#endif
+#endif // WIN32
 
 
 /**
@@ -210,6 +216,7 @@ bool SpringApp::Initialize()
 		gu->quitTime = quit_time;
 	}
 
+#if !defined HEADLESS
 	InitOpenGL();
 	palette.Init();
 
@@ -249,6 +256,7 @@ bool SpringApp::Initialize()
 
 	// Initialize Lua GL
 	LuaOpenGL::Init();
+#endif // !defined HEADLESS
 
 	// Create CGameSetup and CPreGame objects
 	Startup();
@@ -265,6 +273,7 @@ bool SpringApp::Initialize()
  */
 static bool MultisampleTest(void)
 {
+#if !defined HEADLESS
 	if (!GL_ARB_multisample)
 		return false;
 	GLuint fsaa = configHandler->Get("FSAA",0);
@@ -276,6 +285,7 @@ static bool MultisampleTest(void)
 	make_even_number(fsaalevel);
 
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,fsaalevel);
+#endif // !defined HEADLESS
 	return true;
 }
 
@@ -287,12 +297,14 @@ static bool MultisampleTest(void)
  */
 static bool MultisampleVerify(void)
 {
+#if !defined HEADLESS
 	GLint buffers, samples;
 	glGetIntegerv(GL_SAMPLE_BUFFERS_ARB, &buffers);
 	glGetIntegerv(GL_SAMPLES_ARB, &samples);
 	if (buffers && samples) {
 		return true;
 	}
+#endif // !defined HEADLESS
 	return false;
 }
 
@@ -305,6 +317,7 @@ static bool MultisampleVerify(void)
  */
 bool SpringApp::InitWindow(const char* title)
 {
+#if !defined HEADLESS
 	unsigned int sdlInitFlags = SDL_INIT_VIDEO | SDL_INIT_TIMER;
 #ifdef WIN32
 	// the crash reporter should be catching the errors
@@ -327,6 +340,7 @@ bool SpringApp::InitWindow(const char* title)
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_GL_SwapBuffers();
+#endif // !defined HEADLESS
 
 	return true;
 }
@@ -338,6 +352,7 @@ bool SpringApp::InitWindow(const char* title)
  */
 bool SpringApp::SetSDLVideoMode()
 {
+#if !defined HEADLESS
 	int sdlflags = SDL_OPENGL | SDL_RESIZABLE;
 
 	//conditionally_set_flag(sdlflags, SDL_FULLSCREEN, fullscreen);
@@ -420,6 +435,7 @@ bool SpringApp::SetSDLVideoMode()
 	SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &bits);
 	logOutput.Print("Video mode set to  %i x %i / %i bit", screenWidth, screenHeight, bits );
 	VSync.Init();
+#endif // !defined HEADLESS
 
 	return true;
 }
@@ -429,6 +445,7 @@ bool SpringApp::SetSDLVideoMode()
 // origin for our coordinates is the bottom left corner
 bool SpringApp::GetDisplayGeometry()
 {
+#if !defined HEADLESS
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 
@@ -492,6 +509,7 @@ bool SpringApp::GetDisplayGeometry()
 
 	gu->winPosX = windowPosX;
 	gu->winPosY = gu->screenSizeY - gu->winSizeY - windowPosY; //! origin BOTTOMLEFT
+#endif // !defined HEADLESS
 
 	return true;
 }
@@ -500,6 +518,7 @@ bool SpringApp::GetDisplayGeometry()
 
 void SpringApp::SetupViewportGeometry()
 {
+#if !defined HEADLESS
 	if (!GetDisplayGeometry()) {
 		gu->screenSizeX = screenWidth;
 		gu->screenSizeY = screenHeight;
@@ -541,6 +560,7 @@ void SpringApp::SetupViewportGeometry()
 	// NOTE:  gu->viewPosY is not currently used
 
 	gu->aspectRatio = (float)gu->viewSizeX / (float)gu->viewSizeY;
+#endif // !defined HEADLESS
 }
 
 
@@ -550,6 +570,7 @@ void SpringApp::SetupViewportGeometry()
  */
 void SpringApp::InitOpenGL()
 {
+#if !defined HEADLESS
 	SetupViewportGeometry();
 
 	glViewport(gu->viewPosX, gu->viewPosY, gu->viewSizeX, gu->viewSizeY);
@@ -561,6 +582,7 @@ void SpringApp::InitOpenGL()
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+#endif // !defined HEADLESS
 }
 
 
@@ -582,6 +604,7 @@ void SpringApp::UpdateOldConfigs()
 
 void SpringApp::LoadFonts()
 {
+#if !defined HEADLESS
 	// Initialize font
 	const std::string fontFile = configHandler->GetString("FontFile", "fonts/FreeSansBold.otf");
 	const std::string smallFontFile = configHandler->GetString("SmallFontFile", "fonts/FreeSansBold.otf");
@@ -619,6 +642,7 @@ void SpringApp::LoadFonts()
 		configHandler->SetString("FontFile", *fi);
 		configHandler->SetString("SmallFontFile", *fi);
 	}
+#endif // !defined HEADLESS
 }
 
 /**
@@ -690,9 +714,11 @@ void SpringApp::ParseCmdLine()
 		fullscreen = true;
 	}
 
+#if !defined HEADLESS
 	if (cmdline->result("textureatlas")) {
 		CTextureAtlas::debug = true;
 	}
+#endif // !defined HEADLESS
 
 	string name;
 	if (cmdline->result("name", name)) {
@@ -855,12 +881,13 @@ int SpringApp::Sim()
  */
 int SpringApp::Update()
 {
+	int ret = 1;
+#if !defined HEADLESS
 	if (FSAA)
 		glEnable(GL_MULTISAMPLE_ARB);
 
 	mouseInput->Update();
 
-	int ret = 1;
 	if (activeController) {
 #if !defined(USE_GML) || !GML_ENABLE_SIM
 		if (!activeController->Update()) {
@@ -914,6 +941,7 @@ int SpringApp::Update()
 
 	if (FSAA)
 		glDisable(GL_MULTISAMPLE_ARB);
+#endif // !defined HEADLESS
 
 	return ret;
 }
@@ -925,6 +953,7 @@ int SpringApp::Update()
  */
 void SpringApp::UpdateSDLKeys ()
 {
+#if !defined HEADLESS
 	int numkeys;
 	boost::uint8_t *state;
 	state = SDL_GetKeyState(&numkeys);
@@ -935,6 +964,7 @@ void SpringApp::UpdateSDLKeys ()
 	keys[SDLK_LCTRL]  = (mods & KMOD_CTRL)  ? 1 : 0;
 	keys[SDLK_LMETA]  = (mods & KMOD_META)  ? 1 : 0;
 	keys[SDLK_LSHIFT] = (mods & KMOD_SHIFT) ? 1 : 0;
+#endif // !defined HEADLESS
 }
 
 /**
@@ -1141,6 +1171,7 @@ int SpringApp::Run(int argc, char *argv[])
  */
 void SpringApp::RestoreWindowPosition()
 {
+#if !defined HEADLESS
 	if (!fullscreen) {
 		SDL_SysWMinfo info;
 		SDL_VERSION(&info.version);
@@ -1188,6 +1219,7 @@ void SpringApp::RestoreWindowPosition()
 #endif
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 /**
@@ -1195,6 +1227,7 @@ void SpringApp::RestoreWindowPosition()
  */
 void SpringApp::SaveWindowPosition()
 {
+#if !defined HEADLESS
 	if (!fullscreen) {
 #if defined(_WIN32)
 		SDL_SysWMinfo info;
@@ -1221,6 +1254,7 @@ void SpringApp::SaveWindowPosition()
 		configHandler->Set("WindowPosX", windowPosX);
 		configHandler->Set("WindowPosY", windowPosY);
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -1237,10 +1271,12 @@ void SpringApp::Shutdown()
 	if (game)
 		delete game;
 	delete gameSetup;
+#if !defined HEADLESS
 	delete font;
 	delete smallFont;
 	CNamedTextures::Kill();
 	GLContext::Free();
+#endif // !defined HEADLESS
 	ConfigHandler::Deallocate();
 	UnloadExtensions();
 	delete mouseInput;

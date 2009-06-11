@@ -10,17 +10,19 @@
 #include "MissileProjectile.h"
 #include "myMath.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#include "Rendering/UnitModels/IModelParser.h"
+#include "Rendering/UnitModels/UnitDrawer.h"
+#include "Rendering/UnitModels/s3oParser.h"
+#include "Rendering/UnitModels/3DOParser.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/GeometricObjects.h"
 #include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "Sync/SyncTracer.h"
-#include "Rendering/UnitModels/IModelParser.h"
-#include "Rendering/UnitModels/UnitDrawer.h"
-#include "Rendering/UnitModels/s3oParser.h"
-#include "Rendering/UnitModels/3DOParser.h"
 #include "GlobalUnsynced.h"
 
 static const float Smoke_Time=60;
@@ -89,12 +91,14 @@ CMissileProjectile::CMissileProjectile(const float3& pos, const float3& speed, C
 
 	SetRadius(0.0f);
 
+#if !defined HEADLESS
 	if (weaponDef) {
 		s3domodel = LoadModel(weaponDef);
 		if (s3domodel) {
 			SetRadius(s3domodel->radius);
 		}
 	}
+#endif // !defined HEADLESS
 
 	drawRadius = radius + maxSpeed * 8;
 
@@ -322,6 +326,7 @@ void CMissileProjectile::UpdateGroundBounce() {
 
 void CMissileProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray = true;
 	float age2 = (age & 7) + gu->timeOffset;
 
@@ -421,10 +426,12 @@ void CMissileProjectile::Draw(void)
 	va->AddVertexTC(interPos-u*1.0f,1.0f/16,1.0f/16,col);
 	va->AddVertexTC(interPos+dir*9,1.0f/16,1.0f/16,col);
 	va->AddVertexTC(interPos+dir*9,1.0f/16,1.0f/16,col);*/
+#endif // !defined HEADLESS
 }
 
 void CMissileProjectile::DrawUnitPart(void)
 {
+#if !defined HEADLESS
 	glPushMatrix();
 	float3 rightdir;
 
@@ -443,6 +450,7 @@ void CMissileProjectile::DrawUnitPart(void)
 	glCallList(s3domodel->rootobject->displist); // dont cache displists because of delayed loading (GML)
 
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 int CMissileProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)
@@ -472,6 +480,8 @@ int CMissileProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, 
 
 void CMissileProjectile::DrawS3O(void)
 {
+#if !defined HEADLESS
 	unitDrawer->SetTeamColour(colorTeam);
 	DrawUnitPart();
+#endif // !defined HEADLESS
 }
