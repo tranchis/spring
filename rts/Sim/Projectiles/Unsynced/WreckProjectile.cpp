@@ -76,5 +76,7 @@ void CWreckProjectile::Draw(void)
 
 void CWreckProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	points.AddVertexQC(pos, color4::redA);
+#endif // !defined HEADLESS
 }

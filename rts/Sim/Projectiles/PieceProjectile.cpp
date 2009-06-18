@@ -66,7 +66,9 @@ void CPieceProjectile::creg_Serialize(creg::ISerializer& s)
 CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, LocalModelPiece* piece, int f, CUnit* owner, float radius GML_PARG_C):
 	CProjectile(pos, speed, owner, true, false GML_PARG_P),
 	flags(f),
+#if !defined HEADLESS
 	dispList(piece? piece->displist: 0),
+#endif // !defined HEADLESS
 	spinPos(0),
 	alphaThreshold(0.1f),
 	oldSmoke(pos),
@@ -120,6 +122,7 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 	   Nothing else wants to draw just one part without PieceInfo, so this
 	   polymorphism can stay put for the moment.
 	   */
+#if !defined HEADLESS
 	if (piece) {
 		if (piece->type == MODELTYPE_3DO) {
 			piece3do = (S3DOPiece*)piece->original;
@@ -132,6 +135,7 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 		piece3do = NULL;
 		pieces3o = NULL;
 	}
+#endif // !defined HEADLESS
 
 	castShadow = true;
 
@@ -236,15 +240,19 @@ void CPieceProjectile::Collision(CUnit* unit)
 
 bool CPieceProjectile::HasVertices(void)
 {
-	if (!piece3do && !pieces3o) return false;
+	bool hasVertices = false;
+
+#if !defined HEADLESS
 	if (piece3do != NULL) {
-		/* 3DO */
-		return !piece3do->vertices.empty();
+		// 3DO
+		hasVertices = !piece3do->vertices.empty();
+	} else if (pieces3o != NULL) {
+		// S3O
+		hasVertices = !pieces3o->vertexDrawOrder.empty();
 	}
-	else {
-		/* S3O */
-		return !pieces3o->vertexDrawOrder.empty();
-	}
+#endif // !defined HEADLESS
+
+	return hasVertices;
 }
 
 float3 CPieceProjectile::RandomVertexPos(void)
@@ -252,6 +260,7 @@ float3 CPieceProjectile::RandomVertexPos(void)
 	if (!piece3do && !pieces3o) return float3(0, 0, 0);
 	float3 pos;
 
+#if !defined HEADLESS
 	if (piece3do != NULL) {
 		/* 3DO */
 		int vertexNum = (int) (gu->usRandFloat() * 0.99f * piece3do->vertices.size());
@@ -262,6 +271,7 @@ float3 CPieceProjectile::RandomVertexPos(void)
 		int vertexNum = (int) (gu->usRandFloat() * 0.99f * pieces3o->vertexDrawOrder.size());
 		pos = pieces3o->vertices[pieces3o->vertexDrawOrder[vertexNum]].pos;
 	}
+#endif // !defined HEADLESS
 
 	return pos;
 }

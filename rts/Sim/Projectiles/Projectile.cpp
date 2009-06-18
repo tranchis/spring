@@ -135,7 +135,9 @@ void CProjectile::Draw()
 
 void CProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	points.AddVertexQC(pos, color4::white);
+#endif // !defined HEADLESS
 }
 
 int CProjectile::DrawArray()
