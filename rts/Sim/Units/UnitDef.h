@@ -8,7 +8,9 @@
 
 #include "creg/creg_cond.h"
 #include "float3.h"
+#if !defined HEADLESS
 #include "Rendering/Icon.h"
+#endif // !defined HEADLESS
 
 struct MoveData;
 struct WeaponDef;
@@ -244,9 +246,13 @@ struct UnitDef
 	std::string categoryString;
 
 	std::string buildPicName;
+#if !defined HEADLESS
 	mutable UnitDefImage* buildPic;
+#endif // !defined HEADLESS
 
+#if !defined HEADLESS
 	mutable CIcon iconType;
+#endif // !defined HEADLESS
 
 	bool canSelfD;
 	int selfDCountdown;

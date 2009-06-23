@@ -8,7 +8,9 @@
 #include "LogOutput.h"
 #include "myMath.h"
 #include "Sim/MoveTypes/MoveInfo.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "TimeProfiler.h"
 #include "PathFinder.h"
 #include "PathEstimator.h"
@@ -367,6 +369,7 @@ void CPathManager::Update()
 Draw path-lines for each path in pathmap.
 */
 void CPathManager::Draw() {
+#if !defined HEADLESS
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 	glLineWidth(3);
@@ -414,6 +417,7 @@ void CPathManager::Draw() {
 	pe->Draw();
 	pe2->Draw();
 #endif
+#endif // !defined HEADLESS
 }
 
 

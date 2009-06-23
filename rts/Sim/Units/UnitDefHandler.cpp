@@ -18,9 +18,12 @@
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 #include "ConfigHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GroundDecalHandler.h"
 #include "Rendering/IconHandler.h"
 #include "Rendering/Textures/Bitmap.h"
+#endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Sim/Misc/ModInfo.h"
 #include "Sim/Misc/SideParser.h"
@@ -31,7 +34,9 @@
 #include "Sim/Units/COB/UnitScriptNames.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
+#endif // !defined HEADLESS
 #include "Exceptions.h"
 
 const char YARDMAP_CHAR = 'c';		//Need to be low case.
@@ -116,7 +121,9 @@ CUnitDefHandler::CUnitDefHandler(void) : noCost(false)
 		unitDefs[id].name = unitName;
 		unitDefs[id].id = id;
 		unitDefs[id].buildangle = 0;
+#if !defined HEADLESS
 		unitDefs[id].buildPic   = NULL;
+#endif // !defined HEADLESS
 		unitDefs[id].decoyDef   = NULL;
 		unitDefs[id].techLevel  = -1;
 		unitDefs[id].collisionVolume = NULL;
@@ -152,6 +159,7 @@ CUnitDefHandler::~CUnitDefHandler(void)
 			delete[] ud.yardmaps[u];
 		}
 
+#if !defined HEADLESS
 		if (ud.buildPic) {
 			if (ud.buildPic->textureOwner) {
 				glDeleteTextures(1, &unitDefs[i].buildPic->textureID);
@@ -159,6 +167,7 @@ CUnitDefHandler::~CUnitDefHandler(void)
 			delete ud.buildPic;
 			ud.buildPic = NULL;
 		}
+#endif // !defined HEADLESS
 
 		delete ud.collisionVolume;
 		ud.collisionVolume = NULL;
@@ -515,7 +524,9 @@ void CUnitDefHandler::ParseTAUnit(const LuaTable& udTable, const string& unitNam
 //	logOutput.Print("Unit %s has cat %i",ud.humanName.c_str(),ud.category);
 
 	const string iconName = udTable.GetString("iconType", "default");
+#if !defined HEADLESS
 	ud.iconType = iconHandler->GetIcon(iconName);
+#endif // !defined HEADLESS
 
 	ud.shieldWeaponDef    = NULL;
 	ud.stockpileWeaponDef = NULL;
@@ -727,17 +738,21 @@ void CUnitDefHandler::ParseTAUnit(const LuaTable& udTable, const string& unitNam
 	ud.trackOffset   = udTable.GetFloat("trackOffset",   0.0f);
 	ud.trackStrength = udTable.GetFloat("trackStrength", 0.0f);
 	ud.trackStretch  = udTable.GetFloat("trackStretch",  1.0f);
+#if !defined HEADLESS
 	if (ud.leaveTracks && groundDecals) {
 		ud.trackType = groundDecals->GetTrackType(udTable.GetString("trackType", "StdTank"));
 	}
+#endif // !defined HEADLESS
 
 	ud.useBuildingGroundDecal = udTable.GetBool("useBuildingGroundDecal", false);
 	ud.buildingDecalSizeX = udTable.GetInt("buildingGroundDecalSizeX", 4);
 	ud.buildingDecalSizeY = udTable.GetInt("buildingGroundDecalSizeY", 4);
 	ud.buildingDecalDecaySpeed = udTable.GetFloat("buildingGroundDecalDecaySpeed", 0.1f);
+#if !defined HEADLESS
 	if (ud.useBuildingGroundDecal && groundDecals) {
 		ud.buildingDecalType = groundDecals->GetBuildingDecalType(udTable.GetString("buildingGroundDecalType", ""));
 	}
+#endif // !defined HEADLESS
 
 	ud.canDropFlare    = udTable.GetBool("canDropFlare", false);
 	ud.flareReloadTime = udTable.GetFloat("flareReload",     5.0f);
@@ -864,6 +879,7 @@ void CUnitDefHandler::LoadSounds(const LuaTable& soundsTable,
 void CUnitDefHandler::LoadSound(GuiSoundSet& gsound,
                                 const string& fileName, const float volume)
 {
+#if !defined HEADLESS
 	if (!sound->HasSoundItem(fileName))
 	{
 		string soundFile = "sounds/" + fileName;
@@ -886,6 +902,7 @@ void CUnitDefHandler::LoadSound(GuiSoundSet& gsound,
 		GuiSoundSet::Data soundData(fileName, id, volume);
 		gsound.sounds.push_back(soundData);
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -989,6 +1006,7 @@ void CUnitDefHandler::CreateYardMap(UnitDef *def, std::string yardmapStr) {
 }
 
 
+#if !defined HEADLESS
 static bool LoadBuildPic(const string& filename, CBitmap& bitmap)
 {
 	CFileHandler bfile(filename);
@@ -998,21 +1016,30 @@ static bool LoadBuildPic(const string& filename, CBitmap& bitmap)
 	}
 	return false;
 }
+#endif // !defined HEADLESS
 
 
 unsigned int CUnitDefHandler::GetUnitDefImage(const UnitDef* unitDef)
 {
+	unsigned int unitDefImage = 0;
+
+#if !defined HEADLESS
 	if (unitDef->buildPic != NULL) {
-		return (unitDef->buildPic->textureID);
+		unitDefImage = unitDef->buildPic->textureID;
+	} else {
+		SetUnitDefImage(unitDef, unitDef->buildPicName);
+		unitDefImage = unitDef->buildPic->textureID;
 	}
-	SetUnitDefImage(unitDef, unitDef->buildPicName);
-	return unitDef->buildPic->textureID;
+#endif // !defined HEADLESS
+
+	return unitDefImage;
 }
 
 
 void CUnitDefHandler::SetUnitDefImage(const UnitDef* unitDef,
                                       const std::string& texName)
 {
+#if !defined HEADLESS
 	if (unitDef->buildPic == NULL) {
 		unitDef->buildPic = new UnitDefImage;
 	} else if (unitDef->buildPic->textureOwner) {
@@ -1040,12 +1067,14 @@ void CUnitDefHandler::SetUnitDefImage(const UnitDef* unitDef,
 	unitImage->textureOwner = true;
 	unitImage->imageSizeX = bitmap.xsize;
 	unitImage->imageSizeY = bitmap.ysize;
+#endif // !defined HEADLESS
 }
 
 
 void CUnitDefHandler::SetUnitDefImage(const UnitDef* unitDef,
                                       unsigned int texID, int xsize, int ysize)
 {
+#if !defined HEADLESS
 	if (unitDef->buildPic == NULL) {
 		unitDef->buildPic = new UnitDefImage;
 	} else if (unitDef->buildPic->textureOwner) {
@@ -1057,6 +1086,7 @@ void CUnitDefHandler::SetUnitDefImage(const UnitDef* unitDef,
 	unitImage->textureOwner = false;
 	unitImage->imageSizeX = xsize;
 	unitImage->imageSizeY = ysize;
+#endif // !defined HEADLESS
 }
 
 

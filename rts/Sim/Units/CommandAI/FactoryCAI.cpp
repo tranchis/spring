@@ -11,9 +11,11 @@
 #include "Game/WaitCommandsAI.h"
 #include "Game/UI/CommandColors.h"
 #include "Game/UI/CursorIcons.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/glExtra.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaRules.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Units/UnitHandler.h"
@@ -451,6 +453,7 @@ void CFactoryCAI::UpdateIconName(int id,BuildOption& bo)
 
 void CFactoryCAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	lineDrawer.StartPath(owner->drawMidPos, cmdColors.start);
 
 	if (owner->selfDCountdown != 0) {
@@ -543,4 +546,5 @@ void CFactoryCAI::DrawCommands(void)
 		}
 	}
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }

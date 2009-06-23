@@ -13,12 +13,14 @@
 #include "Sim/Misc/QuadField.h"
 #include "Game/UI/CommandColors.h"
 #include "LogOutput.h"
-#include "Rendering/GL/myGL.h"
-#include "Rendering/GL/glExtra.h"
 #include "Game/GameHelper.h"
 #include "Sim/MoveTypes/TAAirMoveType.h"
 #include "Sim/Misc/ModInfo.h"
+#if !defined HEADLESS
+#include "Rendering/GL/myGL.h"
+#include "Rendering/GL/glExtra.h"
 #include "Rendering/UnitModels/3DOParser.h"
+#endif // !defined HEADLESS
 #include "creg/STL_List.h"
 #include "GlobalUnsynced.h"
 #include "myMath.h"
@@ -872,6 +874,7 @@ int CTransportCAI::GetDefaultCmd(CUnit* pointed, CFeature* feature)
 
 void CTransportCAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	lineDrawer.StartPath(owner->drawMidPos, cmdColors.start);
 
 	if (owner->selfDCountdown != 0) {
@@ -967,6 +970,7 @@ void CTransportCAI::DrawCommands(void)
 		}
 	}
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }
 
 

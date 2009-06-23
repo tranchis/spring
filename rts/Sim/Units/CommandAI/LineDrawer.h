@@ -1,7 +1,9 @@
 #ifndef __LINE_DRAWER_H__
 #define __LINE_DRAWER_H__
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "Game/UI/CursorIcons.h"
 
 class CLineDrawer {
@@ -59,26 +61,31 @@ inline void CLineDrawer::Configure(bool ucr, bool urc,
 
 inline void CLineDrawer::FinishPath()
 {
+#if !defined HEADLESS
 	glEnd();
 	if (lineStipple) {
 		glDisable(GL_LINE_STIPPLE);
 	}
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::Break(const float3& endPos, const float* color)
 {
+#if !defined HEADLESS
 	lastPos = endPos;
 	lastColor = color;
 	glEnd();
 	if (lineStipple) {
 		glDisable(GL_LINE_STIPPLE);
 	}
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::Restart()
 {
+#if !defined HEADLESS
 	if (lineStipple) {
 		glEnable(GL_LINE_STIPPLE);
 	}
@@ -89,11 +96,13 @@ inline void CLineDrawer::Restart()
 	} else {
 		glBegin(GL_LINES);
 	}
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::RestartSameColor()
 {
+#if !defined HEADLESS
 	if (lineStipple) {
 		glEnable(GL_LINE_STIPPLE);
 	}
@@ -103,19 +112,23 @@ inline void CLineDrawer::RestartSameColor()
 	} else {
 		glBegin(GL_LINES);
 	}
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::StartPath(const float3& pos, const float* color)
 {
+#if !defined HEADLESS
 	lastPos = pos;
 	lastColor = color;
 	Restart();
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::DrawLine(const float3& endPos, const float* color)
 {
+#if !defined HEADLESS
 	if (!useColorRestarts) {
 		glColor4fv(color);
 		glVertexf3(endPos);
@@ -131,20 +144,25 @@ inline void CLineDrawer::DrawLine(const float3& endPos, const float* color)
 	}
 	lastPos = endPos;
 	lastColor = color;
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::DrawLineAndIcon(
                          int cmdID, const float3& endPos, const float* color)
 {
+#if !defined HEADLESS
 	cursorIcons.AddIcon(cmdID, endPos);
 	DrawLine(endPos, color);
+#endif // !defined HEADLESS
 }
 
 
 inline void CLineDrawer::DrawIconAtLastPos(int cmdID)
 {
+#if !defined HEADLESS
 	cursorIcons.AddIcon(cmdID, lastPos);
+#endif // !defined HEADLESS
 }
 
 

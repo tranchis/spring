@@ -17,8 +17,6 @@
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
-#include "Rendering/FartextureHandler.h"
-#include "Rendering/GL/myGL.h"
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/AirBaseHandler.h"
@@ -38,7 +36,11 @@
 #include "creg/STL_Deque.h"
 #include "creg/STL_List.h"
 #include "creg/STL_Set.h"
+#if !defined HEADLESS
+#include "Rendering/FartextureHandler.h"
+#include "Rendering/GL/myGL.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaUnsyncedCtrl.h"
 
 using std::min;

@@ -9,7 +9,9 @@
 #include <boost/version.hpp>
 
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "FileSystem/FileHandler.h"
 #include "ConfigHandler.h"
 
@@ -832,6 +834,7 @@ boost::uint32_t CPathEstimator::GetPathChecksum()
 
 void CPathEstimator::Draw(void)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(sel); // Draw
 
 	MoveData* md = moveinfo->GetMoveDataFromName("TANKSH2");
@@ -973,6 +976,7 @@ void CPathEstimator::Draw(void)
 	}
 	glDisable(GL_BLEND);
 */
+#endif // !defined HEADLESS
 }
 
 float3 CPathEstimator::FindBestBlockCenter(const MoveData* moveData, float3 pos)

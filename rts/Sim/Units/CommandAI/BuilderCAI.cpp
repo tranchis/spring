@@ -16,10 +16,12 @@
 #include "Game/UI/CursorIcons.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/glExtra.h"
 #include "Rendering/UnitModels/3DModel.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaRules.h"
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
@@ -1534,6 +1536,7 @@ bool CBuilderCAI::FindRepairTargetAndRepair(const float3& pos, float radius,
 
 void CBuilderCAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	if(uh->limitDgun && owner->unitDef->isCommander) {
 		glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
 		glSurfaceCircle(teamHandler->Team(owner->team)->startPos, uh->dgunRadius, 40);
@@ -1705,11 +1708,13 @@ void CBuilderCAI::DrawCommands(void)
 		}
 	}
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }
 
 
 void CBuilderCAI::DrawQuedBuildingSquares(void)
 {
+#if !defined HEADLESS
 	CCommandQueue::const_iterator ci;
 	for (ci = commandQue.begin(); ci != commandQue.end(); ++ci) {
 		if (buildOptions.find(ci->id) != buildOptions.end()) {
@@ -1751,6 +1756,7 @@ void CBuilderCAI::DrawQuedBuildingSquares(void)
 			}
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 

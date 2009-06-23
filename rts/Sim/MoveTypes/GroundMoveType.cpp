@@ -12,8 +12,10 @@
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 #include "MoveMath/MoveMath.h"
+#if !defined HEADLESS
 #include "Rendering/GroundDecalHandler.h"
 #include "Rendering/UnitModels/3DModel.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/GeometricObjects.h"
@@ -186,9 +188,11 @@ CGroundMoveType::~CGroundMoveType()
 	if (pathId) {
 		pathManager->DeletePath(pathId);
 	}
+#if !defined HEADLESS
 	if (owner->myTrack) {
 		groundDecals->RemoveUnit(owner);
 	}
+#endif // !defined HEADLESS
 }
 
 void CGroundMoveType::PostLoad()
@@ -375,11 +379,13 @@ void CGroundMoveType::Update()
 		owner->UpdateMidPos();
 		oldPos = owner->pos;
 
+#if !defined HEADLESS
 		if (groundDecals && owner->unitDef->leaveTracks && (lastTrackUpdate < gs->frameNum - 7) &&
 			((owner->losStatus[gu->myAllyTeam] & LOS_INLOS) || gu->spectatingFullView)) {
 			lastTrackUpdate = gs->frameNum;
 			groundDecals->UnitMoved(owner);
 		}
+#endif // !defined HEADLESS
 	} else {
 		owner->speed = ZeroVector;
 	}

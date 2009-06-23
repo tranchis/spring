@@ -11,8 +11,10 @@
 #include "Game/WaitCommandsAI.h"
 #include "Game/UI/CommandColors.h"
 #include "Game/UI/CursorIcons.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/glExtra.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaRules.h"
 #include "Map/Ground.h"
 #include "Sim/Features/Feature.h"
@@ -1249,12 +1251,15 @@ bool CCommandAI::isTrackable(const CUnit* unit) const
 
 void CCommandAI::DrawWaitIcon(const Command& cmd) const
 {
+#if !defined HEADLESS
 	waitCommandsAI.AddIcon(cmd, lineDrawer.GetLastPos());
+#endif // !defined HEADLESS
 }
 
 
 void CCommandAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	lineDrawer.StartPath(owner->drawMidPos, cmdColors.start);
 
 	if (owner->selfDCountdown != 0) {
@@ -1295,11 +1300,13 @@ void CCommandAI::DrawCommands(void)
 	}
 
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }
 
 
 void CCommandAI::DrawDefaultCommand(const Command& c) const
 {
+#if !defined HEADLESS
 	// TODO add Lua callin perhaps, for more elaborate needs?
 	const CCommandColors::DrawData* dd = cmdColors.GetCustomCmdData(c.id);
 	if (dd == NULL) {
@@ -1336,6 +1343,7 @@ void CCommandAI::DrawDefaultCommand(const Command& c) const
 		glSurfaceCircle(endPos, radius, 20);
 		lineDrawer.RestartSameColor();
 	}
+#endif // !defined HEADLESS
 }
 
 

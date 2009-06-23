@@ -2,7 +2,9 @@
 #define UNIT_DEF_IMAGE
 
 #include "creg/creg_cond.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 struct UnitDefImage
 {
@@ -11,7 +13,9 @@ struct UnitDefImage
 
 	int imageSizeX;
 	int imageSizeY;
+#if !defined HEADLESS
 	GLuint textureID;
+#endif // !defined HEADLESS
 	bool textureOwner;
 };
 

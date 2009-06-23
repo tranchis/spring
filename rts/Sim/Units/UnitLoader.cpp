@@ -3,7 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "mmgr.h"
 
 #include "UnitLoader.h"

@@ -5,7 +5,9 @@
 
 #include "Game/Player.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/3DModel.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/GeometricObjects.h"
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/LosHandler.h"

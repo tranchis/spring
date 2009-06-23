@@ -6,7 +6,10 @@
 #include "Lua/LuaRules.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
+#if !defined HEADLESS
 #include "Rendering/GroundDecalHandler.h"
+#endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DModel.h"
 #include "Sim/Misc/Wind.h"
 #include "Sim/Misc/AirBaseHandler.h"
@@ -228,12 +231,14 @@ void CScriptMoveType::Update()
 		owner->Block();
 	}
 
+#if !defined HEADLESS
 	if (groundDecals && owner->unitDef->leaveTracks && leaveTracks &&
 	    (lastTrackUpdate < (gs->frameNum - 7)) &&
 	    ((owner->losStatus[gu->myAllyTeam] & LOS_INLOS) || gu->spectatingFullView)) {
 		lastTrackUpdate = gs->frameNum;
 		groundDecals->UnitMoved(owner);
 	}
+#endif // !defined HEADLESS
 
 	CheckNotify();
 };

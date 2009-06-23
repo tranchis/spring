@@ -8,7 +8,9 @@
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/3DModel.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/GeometricObjects.h"
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/LosHandler.h"

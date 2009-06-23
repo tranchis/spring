@@ -6,7 +6,9 @@
 #include "Sim/MoveTypes/MoveMath/MoveMath.h"
 #include "Map/ReadMap.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Rendering/GL/glExtra.h"
+#endif // !defined HEADLESS
 #include "Sim/MoveTypes/MoveInfo.h"
 #include "Map/Ground.h"
 
@@ -572,12 +574,15 @@ int2 CPathFinderDef::GoalSquareOffset(int blockSize) const {
 Draw a circle around the goal, indicating the goal area.
 */
 void CPathFinderDef::Draw() const {
+#if !defined HEADLESS
 	glColor4f(0, 1, 1, 1);
 	glSurfaceCircle(goal, sqrt(sqGoalRadius), 20);
+#endif // !defined HEADLESS
 }
 
 void CPathFinder::Draw(void)
 {
+#if !defined HEADLESS
 	glColor3f(0.7f,0.2f,0.2f);
 	glDisable(GL_TEXTURE_2D);
 	glBegin(GL_LINES);
@@ -605,6 +610,7 @@ void CPathFinder::Draw(void)
 		}
 	}
 	glEnd();
+#endif // !defined HEADLESS
 }
 
 //////////////////////////////////////////

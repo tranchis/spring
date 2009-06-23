@@ -8,8 +8,10 @@
 #include "Game/SelectedUnits.h"
 #include "Game/UI/CommandColors.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/glExtra.h"
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/MoveTypes/AirMoveType.h"
 #include "Sim/Units/UnitDef.h"
@@ -631,6 +633,7 @@ bool CAirCAI::IsValidTarget(const CUnit* enemy) const {
 
 void CAirCAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	lineDrawer.StartPath(owner->drawMidPos, cmdColors.start);
 
 	if (owner->selfDCountdown != 0) {
@@ -700,6 +703,7 @@ void CAirCAI::DrawCommands(void)
 		}
 	}
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }
 
 void CAirCAI::FinishCommand(void)

@@ -21,10 +21,13 @@
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/IModelParser.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/UnitDrawer.h"
 #include "Rendering/GroundDecalHandler.h"
 #include "Rendering/GroundFlash.h"
+#endif // !defined HEADLESS
 
 #include "Sim/Units/Groups/Group.h"
 #include "Sim/Misc/AirBaseHandler.h"
@@ -366,17 +369,21 @@ void CUnit::ForcedMove(const float3& newPos)
 		UnBlock();
 	}
 
+#if !defined HEADLESS
 	CBuilding* building = dynamic_cast<CBuilding*>(this);
 	if (building && unitDef->useBuildingGroundDecal) {
 		groundDecals->RemoveBuilding(building, NULL);
 	}
+#endif // !defined HEADLESS
 
 	pos = newPos;
 	UpdateMidPos();
 
+#if !defined HEADLESS
 	if (building && unitDef->useBuildingGroundDecal) {
 		groundDecals->AddBuilding(building);
 	}
+#endif // !defined HEADLESS
 
 	if (blocking) {
 		Block();
@@ -1259,9 +1266,11 @@ void CUnit::DoSeismicPing(float pingSize)
 		const float3 err(errorScale[gu->myAllyTeam] * (0.5f - rx), 0.0f,
 		                 errorScale[gu->myAllyTeam] * (0.5f - rz));
 
+#if !defined HEADLESS
 		new CSeismicGroundFlash(pos + err,
 		                             ph->seismictex, 30, 15, 0, pingSize, 1,
 		                             float3(0.8f,0.0f,0.0f));
+#endif // !defined HEADLESS
 	}
 	for (int a = 0; a < teamHandler->ActiveAllyTeams(); ++a) {
 		if (radarhandler->InSeismicDistance(this, a)) {
@@ -2230,7 +2239,9 @@ void CUnit::PostLoad()
 
 void CUnit::DrawS3O()
 {
+#if !defined HEADLESS
 	unitDrawer->DrawUnitS3O(this);
+#endif // !defined HEADLESS
 }
 
 
