@@ -9,7 +9,9 @@
 
 #include "Game/Camera.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/Wind.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
@@ -48,7 +50,9 @@ CSmokeProjectile::CSmokeProjectile()
 
 void CSmokeProjectile::Init(const float3& pos, CUnit *owner GML_PARG_C)
 {
+#if !defined HEADLESS
 	textureNum=(int)(gu->usRandInt() % ph->smoketex.size());
+#endif // !defined HEADLESS
 
 	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10)
 		useAirLos=true;
@@ -70,13 +74,17 @@ CSmokeProjectile::CSmokeProjectile(const float3& pos,const float3& speed,float t
 	ageSpeed=1.0f/ttl;
 	checkCol=false;
 	castShadow=true;
+#if !defined HEADLESS
 	textureNum=(int)(gu->usRandInt() % ph->smoketex.size());
+#endif // !defined HEADLESS
 
-	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10)
+	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10) {
 		useAirLos=true;
+	}
 
-	if (!owner)
+	if (!owner) {
 		alwaysVisible=true;
+	}
 }
 
 CSmokeProjectile::~CSmokeProjectile()
@@ -102,6 +110,7 @@ void CSmokeProjectile::Update()
 
 void CSmokeProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	unsigned char alpha=(unsigned char) ((1-age)*255);
@@ -120,4 +129,5 @@ void CSmokeProjectile::Draw()
 	va->AddVertexTC(drawPos+pos1,ph->smoketex[textureNum].xend,ph->smoketex[textureNum].ystart,col);
 	va->AddVertexTC(drawPos+pos2,ph->smoketex[textureNum].xend,ph->smoketex[textureNum].yend,col);
 	va->AddVertexTC(drawPos-pos1,ph->smoketex[textureNum].xstart,ph->smoketex[textureNum].yend,col);
+#endif // !defined HEADLESS
 }

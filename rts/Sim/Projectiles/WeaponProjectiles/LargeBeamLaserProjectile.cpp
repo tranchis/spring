@@ -25,8 +25,10 @@ CR_REG_METADATA(CLargeBeamLaserProjectile,(
 	CR_MEMBER(tilelength),
 	CR_MEMBER(scrollspeed),
 	CR_MEMBER(pulseSpeed),
+#if !defined HEADLESS
 	CR_MEMBER(beamtex),
 	CR_MEMBER(side),
+#endif // !defined HEADLESS
 	CR_RESERVED(16)
 	));
 
@@ -47,8 +49,10 @@ CLargeBeamLaserProjectile::CLargeBeamLaserProjectile(const float3& startPos, con
 	useAirLos=true;
 
 	if (weaponDef) {
+#if !defined HEADLESS
 		this->beamtex = *weaponDef->visuals.texture1;
 		this->side = *weaponDef->visuals.texture3;
+#endif // !defined HEADLESS
 	}
 
 	SetRadius(pos.distance(endPos));

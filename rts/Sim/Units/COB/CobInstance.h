@@ -3,6 +3,9 @@
 
 #include "UnitScript.h"
 
+#include <string>
+#include <vector>
+#include <list>
 
 #define PACKXZ(x,z) (((int)(x) << 16)+((int)(z) & 0xffff))
 #define UNPACKX(xz) ((signed short)((boost::uint32_t)(xz) >> 16))

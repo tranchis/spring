@@ -30,16 +30,20 @@ CR_REG_METADATA(CSmokeTrailProjectile,(
 	CR_MEMBER(color),
 	CR_MEMBER(dir1),
 	CR_MEMBER(dir2),
+#if !defined HEADLESS
 	CR_MEMBER(drawTrail),
+#endif // !defined HEADLESS
 	CR_MEMBER(dirpos1),
 	CR_MEMBER(dirpos2),
 	CR_MEMBER(midpos),
 	CR_MEMBER(middir),
+#if !defined HEADLESS
 	CR_MEMBER(drawSegmented),
 	CR_MEMBER(firstSegment),
 	CR_MEMBER(lastSegment),
 	CR_MEMBER(drawCallbacker),
 	CR_MEMBER(texture),
+#endif // !defined HEADLESS
 	CR_RESERVED(4)
 	));
 
@@ -65,6 +69,7 @@ CSmokeTrailProjectile::CSmokeTrailProjectile(const float3& pos1,const float3& po
 	texture(texture)
 {
 	checkCol=false;
+#if !defined HEADLESS
 	castShadow=true;
 
 	//if no custom texture is defined, use the default texture
@@ -86,6 +91,7 @@ CSmokeTrailProjectile::CSmokeTrailProjectile(const float3& pos1,const float3& po
 		middir=(dir1+dir2).ANormalize();
 		drawSegmented=true;
 	}
+#endif // !defined HEADLESS
 	SetRadius(pos1.distance(pos2));
 
 	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10)

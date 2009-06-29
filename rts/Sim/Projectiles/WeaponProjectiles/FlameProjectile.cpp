@@ -4,8 +4,10 @@
 #include "FlameProjectile.h"
 #include "Game/Camera.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "GlobalUnsynced.h"
@@ -92,6 +94,7 @@ void CFlameProjectile::Update(void)
 
 void CFlameProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray = true;
 	unsigned char col[4];
 	weaponDef->visuals.colorMap->GetColor(col, curTime);
@@ -100,6 +103,7 @@ void CFlameProjectile::Draw(void)
 	va->AddVertexTC(drawPos + camera->right * radius - camera->up * radius, weaponDef->visuals.texture1->xend,   weaponDef->visuals.texture1->ystart, col);
 	va->AddVertexTC(drawPos + camera->right * radius + camera->up * radius, weaponDef->visuals.texture1->xend,   weaponDef->visuals.texture1->yend,   col);
 	va->AddVertexTC(drawPos - camera->right * radius + camera->up * radius, weaponDef->visuals.texture1->xstart, weaponDef->visuals.texture1->yend,   col);
+#endif // !defined HEADLESS
 }
 
 int CFlameProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)

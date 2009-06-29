@@ -9,7 +9,9 @@
 
 #include "Game/Camera.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/Wind.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
@@ -28,7 +30,9 @@ CR_REG_METADATA(CSmokeProjectile2,
 		CR_MEMBER(glowFalloff),
 	CR_MEMBER_ENDFLAG(CM_Config),
 	CR_MEMBER(age),
+#if !defined HEADLESS
 	CR_MEMBER(textureNum),
+#endif // !defined HEADLESS
 	CR_RESERVED(8)
 ));
 
@@ -44,7 +48,9 @@ CSmokeProjectile2::CSmokeProjectile2() :
 	size(0.0f),
 	startSize(0.0f),
 	sizeExpansion(0.0f),
+#if !defined HEADLESS
 	textureNum(0),
+#endif // !defined HEADLESS
 	glowFalloff(0.0f)
 {
 	deleteMe=false;
@@ -54,13 +60,17 @@ CSmokeProjectile2::CSmokeProjectile2() :
 
 void CSmokeProjectile2::Init(const float3& pos, CUnit *owner GML_PARG_C)
 {
+#if !defined HEADLESS
 	textureNum=(int)(gu->usRandInt() % ph->smoketex.size());
+#endif // !defined HEADLESS
 
-	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10)
+	if (pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10) {
 		useAirLos=true;
+	}
 
-	if(!owner)
+	if (!owner) {
 		alwaysVisible=true;
+	}
 
 	wantedPos += pos;
 
@@ -79,10 +89,13 @@ CSmokeProjectile2::CSmokeProjectile2(float3 pos,float3 wantedPos,float3 speed,fl
 	ageSpeed=1/ttl;
 	checkCol=false;
 	castShadow=true;
-	if(pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10)
+	if (pos.y-ground->GetApproximateHeight(pos.x,pos.z)>10) {
 		useAirLos=true;
+	}
 	glowFalloff=4.5f+gu->usRandFloat()*6;
+#if !defined HEADLESS
 	textureNum=(int)(gu->usRandInt() % ph->smoketex.size());
+#endif // !defined HEADLESS
 }
 
 CSmokeProjectile2::~CSmokeProjectile2()
@@ -100,10 +113,11 @@ void CSmokeProjectile2::Update()
 	pos.z+=(wantedPos.z-pos.z)*0.07f;
 	age+=ageSpeed;
 	size+=sizeExpansion;
-	if(size<startSize)
+	if (size<startSize) {
 		size+=(startSize-size)*0.2f;
+	}
 	SetRadius(size);
-	if(age>1){
+	if (age>1) {
 		age=1;
 		deleteMe=true;
 	}
@@ -111,6 +125,7 @@ void CSmokeProjectile2::Update()
 
 void CSmokeProjectile2::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	float interAge=std::min(1.0f,age+ageSpeed*gu->timeOffset);
 	unsigned char col[4];
@@ -138,4 +153,5 @@ void CSmokeProjectile2::Draw()
 	va->AddVertexTC(interPos+pos1,ph->smoketex[textureNum].xend,ph->smoketex[textureNum].ystart,col);
 	va->AddVertexTC(interPos+pos2,ph->smoketex[textureNum].xend,ph->smoketex[textureNum].yend,col);
 	va->AddVertexTC(interPos-pos1,ph->smoketex[textureNum].xstart,ph->smoketex[textureNum].yend,col);
+#endif // !defined HEADLESS
 }

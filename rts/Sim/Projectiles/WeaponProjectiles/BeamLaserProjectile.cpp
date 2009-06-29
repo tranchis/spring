@@ -3,7 +3,9 @@
 
 #include "BeamLaserProjectile.h"
 #include "Game/Camera.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
@@ -44,9 +46,11 @@ CBeamLaserProjectile::CBeamLaserProjectile(const float3& startPos, const float3&
 	SetRadius(pos.distance(endPos));
 
 	if (weaponDef) {
+#if !defined HEADLESS
 		midtexx = weaponDef->visuals.texture2->xstart
 				+ (weaponDef->visuals.texture2->xend
 						- weaponDef->visuals.texture2->xstart) * 0.5f;
+#endif // !defined HEADLESS
 	} else {
 		midtexx=0;
 	}
@@ -97,6 +101,7 @@ void CBeamLaserProjectile::Update(void)
 
 void CBeamLaserProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	float3 dif(pos-camera->pos);
 	float camDist=dif.Length();
@@ -163,11 +168,14 @@ void CBeamLaserProjectile::Draw(void)
 	va->AddVertexQTC(pos1+camera->right*fsize-camera->up*fsize,weaponDef->visuals.texture3->xend,weaponDef->visuals.texture3->ystart,corecolstart);
 	va->AddVertexQTC(pos1+camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture3->xend,weaponDef->visuals.texture3->yend,corecolstart);
 	va->AddVertexQTC(pos1-camera->right*fsize+camera->up*fsize,weaponDef->visuals.texture3->xstart,weaponDef->visuals.texture3->yend,corecolstart);
+#endif // !defined HEADLESS
 }
 
 void CBeamLaserProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	unsigned char color[4] = {kocolstart[0], kocolstart[1], kocolstart[2], 255};
 	lines.AddVertexQC(startPos, color);
 	lines.AddVertexQC(endPos, color);
+#endif // !defined HEADLESS
 }

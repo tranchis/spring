@@ -3,7 +3,9 @@
 
 #include "BubbleProjectile.h"
 #include "Game/Camera.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -60,6 +62,7 @@ void CBubbleProjectile::Update()
 
 void CBubbleProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char)(255*alpha);
@@ -68,8 +71,9 @@ void CBubbleProjectile::Draw()
 	col[3]=(unsigned char)(255*alpha);
 
 	float interSize=size+sizeExpansion*gu->timeOffset;
-	va->AddVertexTC(drawPos-camera->right*interSize-camera->up*interSize,ph->bubbletex.xstart    ,ph->bubbletex.ystart    ,col);
-	va->AddVertexTC(drawPos+camera->right*interSize-camera->up*interSize,ph->bubbletex.xend,ph->bubbletex.ystart    ,col);
-	va->AddVertexTC(drawPos+camera->right*interSize+camera->up*interSize,ph->bubbletex.xend,ph->bubbletex.yend,col);
-	va->AddVertexTC(drawPos-camera->right*interSize+camera->up*interSize,ph->bubbletex.xstart    ,ph->bubbletex.yend,col);
+	va->AddVertexTC(drawPos-camera->right*interSize-camera->up*interSize, ph->bubbletex.xstart, ph->bubbletex.ystart, col);
+	va->AddVertexTC(drawPos+camera->right*interSize-camera->up*interSize, ph->bubbletex.xend,   ph->bubbletex.ystart, col);
+	va->AddVertexTC(drawPos+camera->right*interSize+camera->up*interSize, ph->bubbletex.xend,   ph->bubbletex.yend,   col);
+	va->AddVertexTC(drawPos-camera->right*interSize+camera->up*interSize, ph->bubbletex.xstart, ph->bubbletex.yend,   col);
+#endif // !defined HEADLESS
 }

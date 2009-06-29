@@ -9,7 +9,9 @@
 #include "Game/WaitCommandsAI.h"
 #include "Map/Ground.h"
 #include "Map/ReadMap.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/3DOParser.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/TeamHandler.h"
@@ -25,7 +27,9 @@
 #include "Sync/SyncTracer.h"
 #include "GlobalUnsynced.h"
 #include "EventHandler.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "LogOutput.h"
 #include "Matrix44f.h"
 #include "myMath.h"
@@ -135,12 +139,14 @@ void CFactory::Update()
 
 			script->StartBuilding();
 
+#if !defined HEADLESS
 			int soundIdx = unitDef->sounds.build.getRandomIdx();
 			if (soundIdx >= 0) {
 				Channels::UnitReply.PlaySample(
 					unitDef->sounds.build.getID(soundIdx), pos,
 					unitDef->sounds.build.getVolume(0));
 			}
+#endif // !defined HEADLESS
 		} else {
 			helper->BuggerOff(buildPos - float3(0.01f, 0, 0.02f), radius + 8);
 		}

@@ -3,7 +3,6 @@
 
 #include "Sim/Objects/SolidObject.h"
 #include "Sim/Units/UnitHandler.h"
-#include "Rendering/UnitModels/3DModel.h"
 #include "Matrix44f.h"
 #include <vector>
 #include <list>
@@ -17,7 +16,7 @@ class CUnit;
 struct DamageArray;
 class CFireProjectile;
 struct CollisionVolume;
-
+struct S3DModel;
 
 
 class CFeature: public CSolidObject, public boost::noncopyable

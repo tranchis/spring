@@ -3,7 +3,9 @@
 
 #include "Game/Camera.h"
 #include "LightningProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Weapons/Weapon.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
@@ -83,6 +85,7 @@ void CLightningProjectile::Update(void)
 
 void CLightningProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char) (color.x*255);
@@ -117,13 +120,16 @@ void CLightningProjectile::Draw(void)
 		va->AddVertexQTC(tempPos+dir1*(displacements2[a+1]-weaponDef->thickness),weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->yend,col);
 		va->AddVertexQTC(tempPos+dir1*(displacements2[a+1]+weaponDef->thickness),weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->ystart    ,col);
 	}
+#endif // !defined HEADLESS
 }
 
 void CLightningProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	unsigned char lcolor[4] = {(unsigned char)color[0]*255,(unsigned char)color[1]*255,(unsigned char)color[2]*255,255};
 	lines.AddVertexQC(pos, lcolor);
 	lines.AddVertexQC(endPos, lcolor);
+#endif // !defined HEADLESS
 }
 
 void CLightningProjectile::DependentDied(CObject* o)

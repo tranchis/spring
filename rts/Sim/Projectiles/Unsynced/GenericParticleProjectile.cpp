@@ -4,16 +4,20 @@
 #include "Game/Camera.h"
 #include "GenericParticleProjectile.h"
 #include "GlobalUnsynced.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 
 CR_BIND_DERIVED(CGenericParticleProjectile, CProjectile, (float3(0,0,0),float3(0,0,0),NULL));
 
 CR_REG_METADATA(CGenericParticleProjectile,(
 	CR_MEMBER(gravity),
+#if !defined HEADLESS
 	CR_MEMBER(texture),
 	CR_MEMBER(colorMap),
+#endif // !defined HEADLESS
 	CR_MEMBER(directional),
 	CR_MEMBER(life),
 	CR_MEMBER(decayrate),
@@ -52,6 +56,7 @@ void CGenericParticleProjectile::Update()
 
 void CGenericParticleProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 
 	if(directional)
@@ -82,4 +87,5 @@ void CGenericParticleProjectile::Draw()
 		va->AddVertexTC(drawPos+camera->right*size+camera->up*size,texture->xend ,texture->yend ,color);
 		va->AddVertexTC(drawPos-camera->right*size+camera->up*size,texture->xstart,texture->yend ,color);
 	}
+#endif // !defined HEADLESS
 }

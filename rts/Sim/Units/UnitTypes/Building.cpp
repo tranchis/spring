@@ -6,14 +6,12 @@
 #include "Building.h"
 #include "Map/ReadMap.h"
 #include "Sim/Units/UnitDef.h"
-#include "Rendering/GroundDecalHandler.h"
 #include "Game/GameSetup.h"
+#if !defined HEADLESS
+#include "Rendering/GroundDecalHandler.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
 #include "Rendering/UnitModels/3DModel.h"
-#include "Sim/Units/UnitDef.h"
-#include "Rendering/GroundDecalHandler.h"
-#include "Game/GameSetup.h"
-#include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "GlobalUnsynced.h"
 
 #include "mmgr.h"
@@ -38,6 +36,7 @@ CBuilding::CBuilding()
 // FIXME -- adjust decals for decoys? gets weird?
 CBuilding::~CBuilding()
 {
+#if !defined HEADLESS
 	CUnitDrawer::GhostBuilding* gb = NULL;
 
 	if (unitDrawer && (!gameSetup || gameSetup->ghostedBuildings)) {
@@ -66,6 +65,7 @@ CBuilding::~CBuilding()
 	if (groundDecals && buildingDecal) {
 		groundDecals->RemoveBuilding(this, gb);
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -74,18 +74,22 @@ void CBuilding::Init(const CUnit* builder)
 	mass = 100000.0f;
 	physicalState = OnGround;
 
+#if !defined HEADLESS
 	if (unitDef->useBuildingGroundDecal) {
 		groundDecals->AddBuilding(this);
 	}
+#endif // !defined HEADLESS
 	CUnit::Init(builder);
 }
 
 
 void CBuilding::PostLoad()
 {
+#if !defined HEADLESS
 	if (unitDef->useBuildingGroundDecal) {
 		groundDecals->AddBuilding(this);
 	}
+#endif // !defined HEADLESS
 }
 
 

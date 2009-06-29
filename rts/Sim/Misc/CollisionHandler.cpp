@@ -15,6 +15,8 @@
 #include "CollisionHandler.h"
 #include "CollisionVolume.h"
 
+#include "Rendering/UnitModels/3DModel.h"
+
 #define ZVEC ZeroVector
 
 CR_BIND(CCollisionHandler, );

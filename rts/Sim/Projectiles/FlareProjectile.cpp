@@ -7,8 +7,10 @@
 #include "LogOutput.h"
 #include "Map/MapInfo.h"
 #include "ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/UnitDef.h"
 #include "Sim/Units/Unit.h"
 #include "WeaponProjectiles/MissileProjectile.h"
@@ -98,6 +100,7 @@ void CFlareProjectile::Update(void)
 
 void CFlareProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	if(gs->frameNum<=activateFrame)
 		return;
 
@@ -119,4 +122,5 @@ void CFlareProjectile::Draw(void)
 		va->AddVertexQTC(interPos+camera->right*rad+camera->up*rad,ph->flareprojectiletex.xend,ph->flareprojectiletex.yend,col);
 		va->AddVertexQTC(interPos-camera->right*rad+camera->up*rad,ph->flareprojectiletex.xstart,ph->flareprojectiletex.yend,col);
 	}
+#endif // !defined HEADLESS
 }

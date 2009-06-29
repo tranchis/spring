@@ -3,8 +3,11 @@
 
 #include "Game/Camera.h"
 #include "Sim/Misc/GlobalConstants.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/Env/BaseWater.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/Wind.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "WakeProjectile.h"
@@ -57,23 +60,24 @@ CWakeProjectile::~CWakeProjectile()
 
 void CWakeProjectile::Update()
 {
-	pos+=speed;
-	rotation+=rotSpeed;
-	alpha-=alphaFalloff;
-	size+=sizeExpansion;
-	drawRadius=size;
+	pos += speed;
+	rotation += rotSpeed;
+	alpha -= alphaFalloff;
+	size += sizeExpansion;
+	drawRadius = size;
 
-	if(alphaAddTime!=0){
-		alpha+=alphaAdd;
+	if (alphaAddTime != 0) {
+		alpha += alphaAdd;
 		--alphaAddTime;
-	} else if(alpha<0){
-		alpha=0;
+	} else if (alpha < 0) {
+		alpha = 0;
 		deleteMe=true;
 	}
 }
 
 void CWakeProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char) (255*alpha);
@@ -90,4 +94,5 @@ void CWakeProjectile::Draw()
 	va->AddVertexTC(drawPos+dir1-dir2, ph->waketex.xstart,ph->waketex.yend,col);
 	va->AddVertexTC(drawPos-dir1-dir2, ph->waketex.xend,ph->waketex.yend,col);
 	va->AddVertexTC(drawPos-dir1+dir2, ph->waketex.xend,ph->waketex.ystart,col);
+#endif // !defined HEADLESS
 }

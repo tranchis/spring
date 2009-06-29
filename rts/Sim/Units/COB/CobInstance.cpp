@@ -11,7 +11,9 @@
 #include "Game/GameHelper.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/LosHandler.h"
@@ -40,11 +42,13 @@
 #include "Sim/Weapons/Weapon.h"
 #include "GlobalUnsynced.h"
 #include "Util.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "myMath.h"
 #include "Sync/SyncTracer.h"
 
-#endif
+#endif // _CONSOLE
 
 
 /******************************************************************************/

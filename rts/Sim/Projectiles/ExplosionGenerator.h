@@ -1,10 +1,13 @@
 #ifndef EXPLOSION_GRAPHICS_H
 #define EXPLOSION_GRAPHICS_H
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
-#include "Sim/Misc/DamageArray.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaParser.h"
+#include "Sim/Misc/DamageArray.h"
 #include "Sim/Objects/WorldObject.h"
+#include "lib/gml/gml.h"
 #include <map>
 
 
@@ -131,4 +134,4 @@ public:
 extern CExplosionGeneratorHandler* explGenHandler;
 
 
-#endif
+#endif // EXPLOSION_GRAPHICS_H

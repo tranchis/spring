@@ -9,7 +9,9 @@
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/Env/BaseWater.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/HeatCloudProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
 #include "Sim/Projectiles/WeaponProjectiles/ExplosiveProjectile.h"

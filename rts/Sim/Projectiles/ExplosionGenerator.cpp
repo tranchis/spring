@@ -562,6 +562,8 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 	}
 	else {
 		if (type->GetName() == "AtlasedTexture*") {
+// FIXME: ifdeffing this may cause sync problems
+#if !defined HEADLESS
 			string::size_type end = script.find(';', 0);
 			string texname = script.substr(0, end);
 			void* tex = ph->textureAtlas->GetTexturePtr(texname);
@@ -570,8 +572,11 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 			code += OP_STOREP;
 			boost::uint16_t ofs = offset;
 			code.append((char*)&ofs, (char*)&ofs + 2);
+#endif // !defined HEADLESS
 		}
 		else if (type->GetName() == "GroundFXTexture*") {
+// FIXME: ifdeffing this may cause sync problems
+#if !defined HEADLESS
 			string::size_type end = script.find(';', 0);
 			string texname = script.substr(0, end);
 			void* tex = ph->groundFXAtlas->GetTexturePtr(texname);
@@ -580,6 +585,7 @@ void CCustomExplosionGenerator::ParseExplosionCode(
 			code += OP_STOREP;
 			boost::uint16_t ofs = offset;
 			code.append((char*)&ofs, (char*)&ofs + 2);
+#endif // !defined HEADLESS
 		}
 		else if (type->GetName() == "CColorMap*") {
 // FIXME: ifdeffing this may cause sync problems

@@ -19,9 +19,10 @@
 #if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/glExtra.h"
-#include "Rendering/UnitModels/3DModel.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
 #endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/UnitModels/3DModel.h"
 #include "Lua/LuaRules.h"
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"

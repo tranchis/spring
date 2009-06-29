@@ -7,8 +7,10 @@
 #include "Sim/Misc/GlobalSynced.h"
 #include "Game/Camera.h"
 #include "GfxProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Colors.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -72,15 +74,19 @@ void CGfxProjectile::Update()
 
 void CGfxProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray = true;
 
 	va->AddVertexTC(drawPos - camera->right * drawRadius - camera->up * drawRadius, ph->gfxtex.xstart, ph->gfxtex.ystart, color);
 	va->AddVertexTC(drawPos + camera->right * drawRadius - camera->up * drawRadius, ph->gfxtex.xend,   ph->gfxtex.ystart, color);
 	va->AddVertexTC(drawPos + camera->right * drawRadius + camera->up * drawRadius, ph->gfxtex.xend,   ph->gfxtex.yend,   color);
 	va->AddVertexTC(drawPos - camera->right * drawRadius + camera->up * drawRadius, ph->gfxtex.xstart, ph->gfxtex.yend,   color);
+#endif // !defined HEADLESS
 }
 
 void CGfxProjectile::DrawOnMinimap(CVertexArray& lines, CVertexArray& points)
 {
+#if !defined HEADLESS
 	points.AddVertexQC(pos, color4::green);
+#endif // !defined HEADLESS
 }

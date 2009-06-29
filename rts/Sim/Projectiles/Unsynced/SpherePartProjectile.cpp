@@ -57,8 +57,10 @@ CSpherePartProjectile::CSpherePartProjectile(const float3& centerPos,int xpart,i
 
 	drawRadius=60;
 	alwaysVisible=true;
+#if !defined HEADLESS
 	texx = ph->sphereparttex.xstart + (ph->sphereparttex.xend-ph->sphereparttex.xstart)*0.5f;
 	texy = ph->sphereparttex.ystart + (ph->sphereparttex.yend-ph->sphereparttex.ystart)*0.5f;
+#endif // !defined HEADLESS
 }
 
 CSpherePartProjectile::~CSpherePartProjectile(void)

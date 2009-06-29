@@ -5,7 +5,9 @@
 #include "LaserProjectile.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Unsynced/SimpleParticleSystem.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
@@ -49,7 +51,9 @@ CLaserProjectile::CLaserProjectile(const float3& pos, const float3& speed,
 
 	if (weaponDef) SetRadius(weaponDef->collisionSize);
 	drawRadius=length;
+#if !defined HEADLESS
 	if (weaponDef)midtexx = weaponDef->visuals.texture2->xstart + (weaponDef->visuals.texture2->xend-weaponDef->visuals.texture2->xstart)*0.5f;
+#endif // !defined HEADLESS
 #ifdef TRACE_SYNC
 	tracefile << "New laser: ";
 	tracefile << pos.x << " " << pos.y << " " << pos.z << " " << speed.x << " " << speed.y << " " << speed.z << "\n";
@@ -202,8 +206,9 @@ void CLaserProjectile::Collision()
 }
 
 
-void CLaserProjectile::Draw(void)
+void CLaserProjectile::Draw()
 {
+#if !defined HEADLESS
 	if(s3domodel)	//dont draw if a 3d model has been defined for us
 		return;
 
@@ -292,6 +297,7 @@ void CLaserProjectile::Draw(void)
 		va->AddVertexQTC(pos2+dir1*coresize,weaponDef->visuals.texture1->xend + texEndOffset,weaponDef->visuals.texture1->yend,		col2);
 		va->AddVertexQTC(pos2-dir1*coresize,weaponDef->visuals.texture1->xend + texEndOffset,weaponDef->visuals.texture1->ystart,		col2);
 	}
+#endif // !defined HEADLESS
 }
 
 int CLaserProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)

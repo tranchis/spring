@@ -5,8 +5,10 @@
 #include "Sim/Misc/GlobalConstants.h"
 #include "GenericParticleProjectile.h"
 #include "GlobalUnsynced.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
+#endif // !defined HEADLESS
 #include "SimpleParticleSystem.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 
@@ -18,8 +20,10 @@ CR_REG_METADATA(CSimpleParticleSystem,
 		CR_MEMBER(emitVector),
 		CR_MEMBER(emitMul),
 		CR_MEMBER(gravity),
+#if !defined HEADLESS
 		CR_MEMBER(colorMap),
 		CR_MEMBER(texture),
+#endif // !defined HEADLESS
 		CR_MEMBER(airdrag),
 		CR_MEMBER(particleLife),
 		CR_MEMBER(particleLifeSpread),
@@ -69,6 +73,7 @@ CSimpleParticleSystem::~CSimpleParticleSystem(void)
 
 void CSimpleParticleSystem::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 
 	va->EnlargeArrays(numParticles*4,0,VA_SIZE_TC);
@@ -116,6 +121,7 @@ void CSimpleParticleSystem::Draw()
 			}
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 void CSimpleParticleSystem::Update()
@@ -205,8 +211,10 @@ void CSphereParticleSpawner::Init(const float3& explosionPos, CUnit *owner GML_P
 		particle->life = 0;
 		particle->size = particleSize + gu->usRandFloat()*particleSizeSpread;
 
+#if !defined HEADLESS
 		particle->texture = texture;
 		particle->colorMap = colorMap;
+#endif // !defined HEADLESS
 
 		particle->airdrag = airdrag;
 		particle->sizeGrowth = sizeGrowth;

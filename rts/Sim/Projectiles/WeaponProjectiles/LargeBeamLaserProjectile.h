@@ -2,7 +2,9 @@
 #define LARGEBEAMLASERPROJECTILE_H
 
 #include "WeaponProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
 
 class CLargeBeamLaserProjectile : public CWeaponProjectile
 {
@@ -30,12 +32,14 @@ public:
 	float pulseSpeed;
 	float decay;
 
+#if !defined HEADLESS
 	AtlasedTexture beamtex;
 	AtlasedTexture side;
+#endif // !defined HEADLESS
 
 	void Update(void);
 	void Draw(void);
 	virtual void DrawOnMinimap(CVertexArray& lines, CVertexArray& points);
 };
 
-#endif
+#endif // LARGEBEAMLASERPROJECTILE_H

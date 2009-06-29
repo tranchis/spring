@@ -11,6 +11,7 @@
 #include "LogOutput.h"
 #include "Map/Ground.h"
 #include "myMath.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Sim/Misc/CollisionHandler.h"
 #include "Sim/Misc/CollisionVolume.h"
@@ -354,8 +355,10 @@ void CWeapon::Update()
 				salvoLeft=salvoSize;
 				nextSalvo=gs->frameNum;
 				salvoError=gs->randVector()*(owner->isMoving?weaponDef->movingAccuracy:accuracy);
-				if(targetType==Target_Pos || (targetType==Target_Unit && !(targetUnit->losStatus[owner->allyteam] & LOS_INLOS)))		//area firing stuff is to effective at radar firing...
+				if(targetType==Target_Pos || (targetType==Target_Unit && !(targetUnit->losStatus[owner->allyteam] & LOS_INLOS))) {
+					// area firing stuff is to effective at radar firing ...
 					salvoError*=1.3f;
+				}
 
 				owner->lastMuzzleFlameSize=muzzleFlareSize;
 				owner->lastMuzzleFlameDir=wantedDir;
@@ -405,7 +408,7 @@ void CWeapon::Update()
 			weaponDir = owner->frontdir * weaponDir.z + owner->updir * weaponDir.y + owner->rightdir * weaponDir.x;
 			weaponDir.Normalize();
 
-	//		logOutput.Print("RelPosFire %f %f %f",relWeaponPos.x,relWeaponPos.y,relWeaponPos.z);
+//			logOutput.Print("RelPosFire %f %f %f",relWeaponPos.x,relWeaponPos.y,relWeaponPos.z);
 
 			if (owner->unitDef->decloakOnFire && (owner->scriptCloak <= 2)) {
 				if (owner->isCloaked) {
@@ -480,11 +483,13 @@ bool CWeapon::AttackUnit(CUnit *unit, bool userTarget)
 		+ owner->updir * relWeaponMuzzlePos.y + owner->rightdir * relWeaponMuzzlePos.x;
 	if(weaponMuzzlePos.y < ground->GetHeight2(weaponMuzzlePos.x, weaponMuzzlePos.z))
 		weaponMuzzlePos = owner->pos + UpVector * 10;
-	//hope that we are underground because we are a popup weapon and will come above ground later
+	// hope that we are underground, because we are a popup weapon and will come above ground later
 
 	if(!unit){
-		if(targetType!=Target_Unit)	//make the unit be more likely to keep the current target if user start to move it
+		if(targetType!=Target_Unit) {
+			// make the unit be more likely to keep the current target if user start to move it
 			targetType=Target_None;
+		}
 		haveUserTarget=false;
 		return false;
 	}

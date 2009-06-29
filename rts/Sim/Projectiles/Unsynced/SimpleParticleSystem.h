@@ -2,7 +2,9 @@
 #define __SIMPLE_PARTICLE_SYSTEM_H__
 
 #include "Sim/Projectiles/Projectile.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
 
 class CColorMap;
 
@@ -27,8 +29,10 @@ public:
 	float emitRot;
 	float emitRotSpread;
 
+#if !defined HEADLESS
 	AtlasedTexture *texture;
 	CColorMap *colorMap;
+#endif // !defined HEADLESS
 	bool directional;
 
 	float particleLife;

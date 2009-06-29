@@ -4,7 +4,9 @@
 #include "EmgProjectile.h"
 #include "Game/Camera.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "Sync/SyncTracer.h"
@@ -76,6 +78,7 @@ void CEmgProjectile::Collision() {
 
 void CEmgProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char) (color.x*intensity*255);
@@ -86,6 +89,7 @@ void CEmgProjectile::Draw(void)
 	va->AddVertexTC(drawPos+camera->right*drawRadius-camera->up*drawRadius,weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->ystart,col);
 	va->AddVertexTC(drawPos+camera->right*drawRadius+camera->up*drawRadius,weaponDef->visuals.texture1->xend,weaponDef->visuals.texture1->yend,col);
 	va->AddVertexTC(drawPos-camera->right*drawRadius+camera->up*drawRadius,weaponDef->visuals.texture1->xstart,weaponDef->visuals.texture1->yend,col);
+#endif // !defined HEADLESS
 }
 
 int CEmgProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)

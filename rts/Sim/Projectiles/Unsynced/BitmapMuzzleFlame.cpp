@@ -3,9 +3,11 @@
 
 #include "BitmapMuzzleFlame.h"
 #include "Sim/Misc/GlobalSynced.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
 #include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -14,10 +16,14 @@ CR_BIND_DERIVED(CBitmapMuzzleFlame, CProjectile, );
 CR_REG_METADATA(CBitmapMuzzleFlame,
 (
 	CR_MEMBER_BEGINFLAG(CM_Config),
+#if !defined HEADLESS
 		CR_MEMBER(sideTexture),
 		CR_MEMBER(frontTexture),
+#endif // !defined HEADLESS
 		CR_MEMBER(dir),
+#if !defined HEADLESS
 		CR_MEMBER(colorMap),
+#endif // !defined HEADLESS
 		CR_MEMBER(size),
 		CR_MEMBER(length),
 		CR_MEMBER(sizeGrowth),
@@ -42,6 +48,7 @@ CBitmapMuzzleFlame::~CBitmapMuzzleFlame(void)
 
 void CBitmapMuzzleFlame::Draw(void)
 {
+#if !defined HEADLESS
 	inArray = true;
 	life = (gs->frameNum - createTime + gu->timeOffset) * invttl;
 
@@ -72,14 +79,15 @@ void CBitmapMuzzleFlame::Draw(void)
 	va->AddVertexTC(frontpos + sidedir * isize + updir * isize, frontTexture->xend,   frontTexture->ystart, col);
 	va->AddVertexTC(frontpos + sidedir * isize - updir * isize, frontTexture->xend,   frontTexture->yend,   col);
 	va->AddVertexTC(frontpos - sidedir * isize - updir * isize, frontTexture->xstart, frontTexture->yend,   col);
-
+#endif // !defined HEADLESS
 }
 
 void CBitmapMuzzleFlame::Update(void)
 {
 	ttl--;
-	if(!ttl)
+	if (!ttl) {
 		deleteMe = true;
+	}
 }
 
 void CBitmapMuzzleFlame::Init(const float3 &pos, CUnit *owner GML_PARG_C)

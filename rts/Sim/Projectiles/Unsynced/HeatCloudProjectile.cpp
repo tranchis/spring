@@ -6,7 +6,9 @@
 
 #include "Game/Camera.h"
 #include "HeatCloudProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -22,7 +24,9 @@ CR_REG_METADATA(CHeatCloudProjectile,
 		CR_MEMBER(sizeGrowth),
 		CR_MEMBER(sizemod),
 		CR_MEMBER(sizemodmod),
+#if !defined HEADLESS
 		CR_MEMBER(texture),
+#endif // !defined HEADLESS
 	CR_MEMBER_ENDFLAG(CM_Config),
 	CR_RESERVED(8)
 ));
@@ -37,7 +41,9 @@ CHeatCloudProjectile::CHeatCloudProjectile()
 	heat=maxheat=heatFalloff=size=sizeGrowth=sizemod=sizemodmod=0.0f;
 	checkCol=false;
 	useAirLos=true;
+#if !defined HEADLESS
 	texture = &ph->heatcloudtex;
+#endif // !defined HEADLESS
 }
 
 CHeatCloudProjectile::CHeatCloudProjectile(const float3 pos,const float3 speed,const  float temperature,const float size, CUnit* owner GML_PARG_C)
@@ -53,7 +59,9 @@ CHeatCloudProjectile::CHeatCloudProjectile(const float3 pos,const float3 speed,c
 	SetRadius(size+sizeGrowth*heat/heatFalloff);
 	sizemod=0;
 	sizemodmod=0;
+#if !defined HEADLESS
 	texture = &ph->heatcloudtex;
+#endif // !defined HEADLESS
 }
 
 CHeatCloudProjectile::~CHeatCloudProjectile()
@@ -76,6 +84,7 @@ void CHeatCloudProjectile::Update()
 
 void CHeatCloudProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	float dheat=heat-gu->timeOffset;
@@ -91,4 +100,5 @@ void CHeatCloudProjectile::Draw()
 	va->AddVertexTC(drawPos+camera->right*drawsize-camera->up*drawsize,texture->xend,texture->ystart,col);
 	va->AddVertexTC(drawPos+camera->right*drawsize+camera->up*drawsize,texture->xend,texture->yend,col);
 	va->AddVertexTC(drawPos-camera->right*drawsize+camera->up*drawsize,texture->xstart,texture->yend,col);
+#endif // !defined HEADLESS
 }

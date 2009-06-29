@@ -68,8 +68,9 @@ void CFireProjectile::StopFire(void)
 void CFireProjectile::Update(void)
 {
 	ttl--;
-	if(ttl>0){
-		if(ph->particleSaturation<0.8f || (ph->particleSaturation<1 && (gs->frameNum & 1))){	//this area must be unsynced
+	if (ttl > 0) {
+#if !defined HEADLESS
+		if (ph->particleSaturation<0.8f || (ph->particleSaturation<1 && (gs->frameNum & 1))) { // this section must be unsynced
 			SubParticle sub;
 			sub.age=0;
 			sub.maxSize=(0.7f+gu->usRandFloat()*0.3f)*particleSize;
@@ -89,11 +90,13 @@ void CFireProjectile::Update(void)
 			sub.rotSpeed=(gu->usRandFloat()-0.5f)*4;
 			subParticles2.push_front(sub);
 		}
-		if(!(ttl&31)){		//this area must be synced
+#endif // !defined HEADLESS
+		if (!(ttl&31)) {// this section must be synced
 			std::vector<CFeature*> f=qf->GetFeaturesExact(emitPos+wind.GetCurrentWind()*0.7f,emitRadius*2);
-			for(std::vector<CFeature*>::iterator fi=f.begin();fi!=f.end();++fi){
-				if(gs->randFloat()>0.8f)
+			for (std::vector<CFeature*>::iterator fi=f.begin();fi!=f.end();++fi){
+				if (gs->randFloat()>0.8f) {
 					(*fi)->StartFire();
+				}
 			}
 			std::vector<CUnit*> units=qf->GetUnitsExact(emitPos+wind.GetCurrentWind()*0.7f,emitRadius*2);
 			for(std::vector<CUnit*>::iterator ui=units.begin();ui!=units.end();++ui){
@@ -102,9 +105,9 @@ void CFireProjectile::Update(void)
 		}
 	}
 
-	for(SUBPARTICLE_LIST::iterator pi=subParticles.begin();pi!=subParticles.end();++pi){
+	for (SUBPARTICLE_LIST::iterator pi=subParticles.begin();pi!=subParticles.end();++pi){
 		pi->age+=ageSpeed;
-		if(pi->age>1){
+		if (pi->age>1) {
 			subParticles.pop_back();
 			break;
 		}
@@ -127,6 +130,7 @@ void CFireProjectile::Update(void)
 
 void CFireProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[3]=1;
@@ -210,5 +214,6 @@ void CFireProjectile::Draw(void)
 		va->AddVertexQTC(interPos+dir1+dir2,at->xend,at->yend,col2);
 		va->AddVertexQTC(interPos-dir1+dir2,at->xstart,at->yend,col2);
 	}
+#endif // !defined HEADLESS
 }
 

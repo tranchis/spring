@@ -8,8 +8,10 @@
 #include "ExplosiveProjectile.h"
 #include "Game/Camera.h"
 #include "Map/Ground.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/InterceptHandler.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
@@ -113,7 +115,8 @@ void CExplosiveProjectile::Collision(CUnit *unit)
 
 void CExplosiveProjectile::Draw(void)
 {
-	if (s3domodel) { //dont draw if a 3d model has been defined for us
+#if !defined HEADLESS
+	if (s3domodel) { // do not draw if a 3D model has been defined for us
 		return;
 	}
 
@@ -158,6 +161,7 @@ void CExplosiveProjectile::Draw(void)
 		va->AddVertexQTC(interPos2 + right + up, tex->xend,   tex->yend,   col);
 		va->AddVertexQTC(interPos2 - right + up, tex->xstart, tex->yend,   col);
 	}
+#endif // !defined HEADLESS
 }
 
 int CExplosiveProjectile::ShieldRepulse(CPlasmaRepulser* shield,float3 shieldPos, float shieldForce, float shieldMaxSpeed)

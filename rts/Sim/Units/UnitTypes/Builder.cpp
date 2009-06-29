@@ -14,7 +14,9 @@
 #include "Map/MapDamage.h"
 #include "Map/ReadMap.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/3DOParser.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/ModInfo.h"
@@ -29,7 +31,9 @@
 #include "Sim/Units/UnitLoader.h"
 #include "GlobalUnsynced.h"
 #include "EventHandler.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "mmgr.h"
 
 using std::min;
@@ -689,12 +693,14 @@ void CBuilder::SetBuildStanceToward(float3 pos)
 		script->StartBuilding(ClampRad(h - heading * TAANG2RAD), p - pitch);
 	}
 
+#if !defined HEADLESS
 	int soundIdx = unitDef->sounds.build.getRandomIdx();
 	if (soundIdx >= 0) {
 		Channels::UnitReply.PlaySample(
 			unitDef->sounds.build.getID(soundIdx), pos,
 			unitDef->sounds.build.getVolume(soundIdx));
 	}
+#endif // !defined HEADLESS
 }
 
 

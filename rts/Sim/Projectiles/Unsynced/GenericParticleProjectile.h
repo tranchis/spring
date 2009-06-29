@@ -2,7 +2,10 @@
 #define __GENERIC_PARTICLE_PROJECTILE_H__
 
 #include "Sim/Projectiles/Projectile.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/TextureAtlas.h"
+#endif // !defined HEADLESS
+#include "lib/gml/gml.h"
 
 class CColorMap;
 class CGenericParticleProjectile : public CProjectile
@@ -17,8 +20,10 @@ public:
 
 	float3 gravity;
 
+#if !defined HEADLESS
 	AtlasedTexture *texture;
 	CColorMap *colorMap;
+#endif // !defined HEADLESS
 	bool directional;
 
 	float life;
@@ -30,4 +35,4 @@ public:
 	float sizeMod;
 };
 
-#endif
+#endif // __GENERIC_PARTICLE_PROJECTILE_H__

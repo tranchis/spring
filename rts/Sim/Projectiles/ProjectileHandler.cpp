@@ -14,6 +14,7 @@
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #include "ConfigHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GroundFlash.h"
 #include "Rendering/ShadowHandler.h"
 #include "Rendering/GL/FBO.h"
@@ -24,6 +25,8 @@
 #include "Rendering/Textures/S3OTextureHandler.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
 #include "Rendering/UnitModels/3DOParser.h"
+#endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureDef.h"
@@ -53,11 +56,13 @@ CR_REG_METADATA(ProjectileContainer, (
 	CR_MEMBER(cont),
 	CR_POSTLOAD(PostLoad)
 ));
+#if !defined HEADLESS
 CR_BIND_TEMPLATE(GroundFlashContainer, )
 CR_REG_METADATA(GroundFlashContainer, (
 	CR_MEMBER(cont),
 	CR_POSTLOAD(PostLoad)
 ));
+#endif // !defined HEADLESS
 
 CR_BIND(CProjectileHandler, );
 CR_REG_METADATA(CProjectileHandler, (
@@ -115,7 +120,9 @@ CProjectileHandler::CProjectileHandler()
 	}
 	maxUsedID = freeIDs.size();
 
+#if !defined HEADLESS
 	textureAtlas = new CTextureAtlas(2048, 2048);
+#endif // !defined HEADLESS
 
 	// used to block resources_map.tdf from loading textures
 	set<string> blockMapTexNames;
@@ -126,6 +133,7 @@ CProjectileHandler::CProjectileHandler()
 		logOutput.Print(resourcesParser.GetErrorLog());
 	}
 	const LuaTable rootTable = resourcesParser.GetRoot();
+#if !defined HEADLESS
 	const LuaTable gfxTable = rootTable.SubTable("graphics");
 
 	const LuaTable ptTable = gfxTable.SubTable("projectileTextures");
@@ -357,10 +365,12 @@ CProjectileHandler::CProjectileHandler()
 		drawPerlinTex=perlinFB.CheckStatus("PERLIN");
 		perlinFB.Unbind();
 	}
+#endif // !defined HEADLESS
 }
 
 CProjectileHandler::~CProjectileHandler()
 {
+#if !defined HEADLESS
 	for (int a = 0; a < 8; ++a) {
 		glDeleteTextures (1, &perlinTex[a]);
 	}
@@ -372,6 +382,7 @@ CProjectileHandler::~CProjectileHandler()
 	ph=0;
 	delete textureAtlas;
 	delete groundFXAtlas;
+#endif // !defined HEADLESS
 }
 
 void CProjectileHandler::Serialize(creg::ISerializer *s)
@@ -439,6 +450,7 @@ void CProjectileHandler::Update()
 		projectiles.delay_add();
 	}
 
+#if !defined HEADLESS
 	GroundFlashContainer::iterator gfi = groundFlashes.begin();
 	while (gfi != groundFlashes.end()) {
 		CGroundFlash* gf = *gfi;
@@ -455,6 +467,7 @@ void CProjectileHandler::Update()
 		groundFlashes.delay_delete();
 		groundFlashes.delay_add();
 	}
+#endif // !defined HEADLESS
 
 	FlyingPieceContainer::iterator pti = flyingPieces.begin();
 	while(pti != flyingPieces.end()) {
@@ -481,6 +494,7 @@ void CProjectileHandler::Update()
 
 void CProjectileHandler::Draw(bool drawReflection,bool drawRefraction)
 {
+#if !defined HEADLESS
 	glDisable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(1);
@@ -685,10 +699,12 @@ void CProjectileHandler::Draw(bool drawReflection,bool drawRefraction)
 
 	particleSaturation     = currentParticles     / float(maxParticles);
 	nanoParticleSaturation = currentNanoParticles / float(maxNanoParticles);
+#endif // !defined HEADLESS
 }
 
 void CProjectileHandler::DrawShadowPass(void)
 {
+#if !defined HEADLESS
 	glBindProgramARB( GL_VERTEX_PROGRAM_ARB, projectileShadowVP );
 	glEnable( GL_VERTEX_PROGRAM_ARB );
 	glDisable(GL_TEXTURE_2D);
@@ -728,6 +744,7 @@ void CProjectileHandler::DrawShadowPass(void)
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_VERTEX_PROGRAM_ARB);
+#endif // !defined HEADLESS
 }
 
 
@@ -887,6 +904,7 @@ void CProjectileHandler::AddGroundFlash(CGroundFlash* flash)
 
 void CProjectileHandler::DrawGroundFlashes(void)
 {
+#if !defined HEADLESS
 	static GLfloat black[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	glEnable(GL_BLEND);
@@ -927,6 +945,7 @@ void CProjectileHandler::DrawGroundFlashes(void)
 	glDisable(GL_ALPHA_TEST);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_BLEND);
+#endif // !defined HEADLESS
 }
 
 
@@ -977,13 +996,16 @@ void CProjectileHandler::AddFlyingPiece(int textureType, int team, float3 pos, f
 
 void CProjectileHandler::UpdateTextures()
 {
+#if !defined HEADLESS
 	if (numPerlinProjectiles && drawPerlinTex)
 		UpdatePerlin();
+#endif // !defined HEADLESS
 }
 
 
 void CProjectileHandler::UpdatePerlin()
 {
+#if !defined HEADLESS
 	perlinFB.Bind();
 	glViewport(perlintex.ixstart, perlintex.iystart, 128, 128);
 
@@ -1064,10 +1086,12 @@ void CProjectileHandler::UpdatePerlin()
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
+#endif // !defined HEADLESS
 }
 
 void CProjectileHandler::GenerateNoiseTex(unsigned int tex,int size)
 {
+#if !defined HEADLESS
 	unsigned char* mem=new unsigned char[4*size*size];
 
 	for(int a=0;a<size*size;++a){
@@ -1080,4 +1104,5 @@ void CProjectileHandler::GenerateNoiseTex(unsigned int tex,int size)
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D,0,0,0,size,size,GL_RGBA,GL_UNSIGNED_BYTE,mem);
 	delete[] mem;
+#endif // !defined HEADLESS
 }

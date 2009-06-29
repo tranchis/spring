@@ -8,7 +8,9 @@
 #include "Game/Camera.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -22,8 +24,10 @@ CR_REG_METADATA(CDirtProjectile,
 		CR_MEMBER(size),
 		CR_MEMBER(sizeExpansion),
 		CR_MEMBER(slowdown),
+#if !defined HEADLESS
 		CR_MEMBER(color),
 		CR_MEMBER(texture),
+#endif // !defined HEADLESS
 	CR_MEMBER_ENDFLAG(CM_Config),
 	CR_RESERVED(8)
 ));
@@ -42,7 +46,9 @@ CDirtProjectile::CDirtProjectile(const float3 pos,const float3 speed,const float
 {
 	checkCol=false;
 	alphaFalloff=255/ttl;
+#if !defined HEADLESS
 	texture = &ph->randdotstex;
+#endif // !defined HEADLESS
 }
 
 CDirtProjectile::CDirtProjectile() :
@@ -55,7 +61,9 @@ CDirtProjectile::CDirtProjectile() :
 {
 	checkCol=false;
 	synced=false;
+#if !defined HEADLESS
 	texture = &ph->randdotstex;
+#endif // !defined HEADLESS
 }
 
 CDirtProjectile::~CDirtProjectile()
@@ -79,6 +87,7 @@ void CDirtProjectile::Update()
 
 void CDirtProjectile::Draw()
 {
+#if !defined HEADLESS
 	float partAbove=(pos.y/(size*camera->up.y));
 	if(partAbove<-1)
 		return;
@@ -92,10 +101,11 @@ void CDirtProjectile::Draw()
 	col[3]=(unsigned char) (alpha)/*-gu->timeOffset*alphaFalloff*/;
 
 	float interSize=size+gu->timeOffset*sizeExpansion;
-	float texx = texture->xstart + (texture->xend-texture->xstart)*((1-partAbove)*0.5f);//0.25f*(1-partAbove)
+	float texx = texture->xstart + (texture->xend-texture->xstart)*((1-partAbove)*0.5f); // 0.25f*(1-partAbove)
 
 	va->AddVertexTC(drawPos-camera->right*interSize-camera->up*interSize*partAbove,texx,texture->ystart,col);
 	va->AddVertexTC(drawPos+camera->right*interSize-camera->up*interSize*partAbove,texx,texture->yend,col);
 	va->AddVertexTC(drawPos+camera->right*interSize+camera->up*interSize,texture->xend,texture->yend,col);
 	va->AddVertexTC(drawPos-camera->right*interSize+camera->up*interSize,texture->xend,texture->ystart,col);
+#endif // !defined HEADLESS
 }

@@ -8,16 +8,20 @@
 #include "Game/Game.h"
 #include "Lua/LuaParser.h"
 #include "FileSystem/FileHandler.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Rendering/Textures/ColorMap.h"
 #include "Rendering/Textures/TAPalette.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/DamageArrayHandler.h"
 #include "Sim/Misc/CategoryHandler.h"
 #include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Projectile.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
+#endif // !defined HEADLESS
 #include "mmgr.h"
 #include "Util.h"
 #include "Exceptions.h"
@@ -368,11 +372,13 @@ void CWeaponDefHandler::ParseWeapon(const LuaTable& wdTable, WeaponDef& wd)
 	wd.sizeGrowth = wdTable.GetFloat("sizeGrowth", 0.2f);
 	wd.collisionSize = wdTable.GetFloat("collisionSize", 0.05f);
 
+#if !defined HEADLESS
 	wd.visuals.colorMap = 0;
 	const string colormap = wdTable.GetString("colormap", "");
 	if (colormap != "") {
 		wd.visuals.colorMap = CColorMap::LoadFromDefString(colormap);
 	}
+#endif // !defined HEADLESS
 
 	wd.heightBoostFactor = wdTable.GetFloat("heightBoostFactor", -1.0f);
 	wd.proximityPriority = wdTable.GetFloat("proximityPriority", 1.0f);
@@ -380,8 +386,10 @@ void CWeaponDefHandler::ParseWeapon(const LuaTable& wdTable, WeaponDef& wd)
 	// get some weapon specific defaults
 	if (wd.type == "Cannon") {
 		// CExplosiveProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->plasmatex;
 		wd.visuals.color = wdTable.GetFloat3("rgbColor", float3(1.0f,0.5f,0.0f));
+#endif // !defined HEADLESS
 		wd.intensity = wdTable.GetFloat("intensity", 0.2f);
 	} else if (wd.type == "Rifle") {
 		// ...
@@ -389,37 +397,52 @@ void CWeaponDefHandler::ParseWeapon(const LuaTable& wdTable, WeaponDef& wd)
 		// ...
 	} else if (wd.type == "AircraftBomb") {
 		// CExplosiveProjectile or CTorpedoProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->plasmatex;
+#endif // !defined HEADLESS
 	} else if (wd.type == "Shield") {
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->perlintex;
+#endif // !defined HEADLESS
 	} else if (wd.type == "Flame") {
 		// CFlameProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->flametex;
+#endif // !defined HEADLESS
 		wd.size          = wdTable.GetFloat("size",      tempsize);
 		wd.sizeGrowth    = wdTable.GetFloat("sizeGrowth",    0.5f);
 		wd.collisionSize = wdTable.GetFloat("collisionSize", 0.5f);
 		wd.duration      = wdTable.GetFloat("flameGfxTime",  1.2f);
 
+#if !defined HEADLESS
 		if (wd.visuals.colorMap == 0) {
 			wd.visuals.colorMap = CColorMap::Load12f(1.000f, 1.000f, 1.000f, 0.100f,
 			                                         0.025f, 0.025f, 0.025f, 0.100f,
 			                                         0.000f, 0.000f, 0.000f, 0.000f);
 		}
+#endif // !defined HEADLESS
 
 	} else if (wd.type == "MissileLauncher") {
 		// CMissileProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->missileflaretex;
 		wd.visuals.texture2 = &ph->missiletrailtex;
+#endif // !defined HEADLESS
 	} else if (wd.type == "TorpedoLauncher") {
 		// CExplosiveProjectile or CTorpedoProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->plasmatex;
+#endif // !defined HEADLESS
 	} else if (wd.type == "LaserCannon") {
 		// CLaserProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->laserfallofftex;
 		wd.visuals.texture2 = &ph->laserendtex;
+#endif // !defined HEADLESS
 		wd.visuals.hardStop = wdTable.GetBool("hardstop", false);
 		wd.collisionSize = wdTable.GetFloat("collisionSize", 0.5f);
 	} else if (wd.type == "BeamLaser") {
+#if !defined HEADLESS
 		if (wd.largeBeamLaser) {
 			wd.visuals.texture1 = ph->textureAtlas->GetTexturePtr("largebeam");
 			wd.visuals.texture2 = &ph->laserendtex;
@@ -430,29 +453,39 @@ void CWeaponDefHandler::ParseWeapon(const LuaTable& wdTable, WeaponDef& wd)
 			wd.visuals.texture2 = &ph->laserendtex;
 			wd.visuals.texture3 = &ph->beamlaserflaretex;
 		}
+#endif // !defined HEADLESS
 	} else if (wd.type == "LightingCannon" || wd.type == "LightningCannon") {
 		wd.type = "LightningCannon";
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->laserfallofftex;
+#endif // !defined HEADLESS
 		wd.thickness = wdTable.GetFloat("thickness", 0.8f);
 	} else if (wd.type == "EmgCannon") {
 		// CEmgProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->plasmatex;
 		wd.visuals.color = wdTable.GetFloat3("rgbColor", float3(0.9f,0.9f,0.2f));
+#endif // !defined HEADLESS
 		wd.size = wdTable.GetFloat("size", 3.0f);
 	} else if (wd.type == "DGun") {
 		// CFireBallProjectile
 		wd.collisionSize = wdTable.GetFloat("collisionSize", 10.0f);
 	} else if (wd.type == "StarburstLauncher") {
 		// CStarburstProjectile
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->sbflaretex;
 		wd.visuals.texture2 = &ph->sbtrailtex;
 		wd.visuals.texture3 = &ph->explotex;
+#endif // !defined HEADLESS
 	} else {
+#if !defined HEADLESS
 		wd.visuals.texture1 = &ph->plasmatex;
 		wd.visuals.texture2 = &ph->plasmatex;
+#endif // !defined HEADLESS
 	}
 
 	// FIXME -- remove the 'textureN' format?
+#if !defined HEADLESS
 	LuaTable texTable = wdTable.SubTable("textures");
 	string texName;
 	texName = wdTable.GetString("texture1", "");
@@ -475,6 +508,7 @@ void CWeaponDefHandler::ParseWeapon(const LuaTable& wdTable, WeaponDef& wd)
 	if (texName != "") {
 		wd.visuals.texture4 = ph->textureAtlas->GetTexturePtr(texName);
 	}
+#endif // !defined HEADLESS
 
 	const string expGenTag = wdTable.GetString("explosionGenerator", "");
 	if (expGenTag.empty()) {
@@ -563,6 +597,7 @@ void CWeaponDefHandler::LoadSound(const LuaTable& wdTable,
 	}
 
 	if (name != "") {
+#if !defined HEADLESS
 		if (!sound->HasSoundItem(name))
 		{
 			if (name.find(".wav") == string::npos) {
@@ -586,6 +621,7 @@ void CWeaponDefHandler::LoadSound(const LuaTable& wdTable,
 			int id = sound->GetSoundId(name);
 			gsound.setID(0, id);
 		}
+#endif // !defined HEADLESS
 	}
 }
 
@@ -705,7 +741,9 @@ S3DModel* WeaponDef::LoadModel()
 		if (modelname.find(".") == std::string::npos) {
 			modelname += ".3do";
 		}
+#if !defined HEADLESS
 		visuals.model = modelParser->Load3DModel(modelname);
+#endif // !defined HEADLESS
 	}
 	return visuals.model;
 }

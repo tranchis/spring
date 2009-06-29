@@ -3,7 +3,9 @@
 
 #include "Game/Camera.h"
 #include "GeoSquareProjectile.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -47,6 +49,7 @@ CGeoSquareProjectile::~CGeoSquareProjectile(void)
 
 void CGeoSquareProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	col[0]=(unsigned char) (r*a*255);
@@ -79,6 +82,7 @@ void CGeoSquareProjectile::Draw(void)
 		va->AddVertexTC(p2,u,v0+(v1-v0)*0.5f,col);
 		va->AddVertexTC(p2,u,v0+(v1-v0)*1.5f,col);
 	}
+#endif // !defined HEADLESS
 }
 
 void CGeoSquareProjectile::Update(void)

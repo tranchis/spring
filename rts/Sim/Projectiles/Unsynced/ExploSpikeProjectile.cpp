@@ -3,7 +3,9 @@
 
 #include "ExploSpikeProjectile.h"
 #include "Game/Camera.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -63,6 +65,7 @@ void CExploSpikeProjectile::Update(void)
 
 void CExploSpikeProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 
 	float3 dif(pos-camera->pos2);
@@ -84,6 +87,7 @@ void CExploSpikeProjectile::Draw(void)
 	va->AddVertexTC(drawPos+l-w, ph->laserendtex.xend, ph->laserendtex.ystart, col);
 	va->AddVertexTC(drawPos-l-w, ph->laserendtex.xstart, ph->laserendtex.ystart, col);
 	va->AddVertexTC(drawPos-l+w, ph->laserendtex.xstart, ph->laserendtex.yend, col);
+#endif // !defined HEADLESS
 }
 
 void CExploSpikeProjectile::Init(const float3& pos, CUnit *owner GML_PARG_C)

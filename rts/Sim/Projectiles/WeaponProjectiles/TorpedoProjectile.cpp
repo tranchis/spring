@@ -6,7 +6,9 @@
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Unsynced/BubbleProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
@@ -54,8 +56,10 @@ CTorpedoProjectile::CTorpedoProjectile(const float3& pos, const float3& speed, C
 	SetRadius(0.0f);
 	drawRadius=maxSpeed*8;
 	float3 camDir=(pos-camera->pos).Normalize();
+#if !defined HEADLESS
 	texx = ph->torpedotex.xstart - (ph->torpedotex.xend-ph->torpedotex.xstart)*0.5f;
 	texy = ph->torpedotex.ystart - (ph->torpedotex.yend-ph->torpedotex.ystart)*0.5f;
+#endif // !defined HEADLESS
 #ifdef TRACE_SYNC
 	tracefile << "New projectile: ";
 	tracefile << pos.x << " " << pos.y << " " << pos.z << " " << speed.x << " " << speed.y << " " << speed.z << "\n";
@@ -167,6 +171,7 @@ void CTorpedoProjectile::Update(void)
 
 void CTorpedoProjectile::Draw(void)
 {
+#if !defined HEADLESS
 	if(s3domodel)	//dont draw if a 3d model has been defined for us
 		return;
 
@@ -228,4 +233,5 @@ void CTorpedoProjectile::Draw(void)
 	va->AddVertexQTC(drawPos+r*w+dir*h, texx,texy,col);
 	va->AddVertexQTC(drawPos+dir*h*1.2f, texx,texy,col);
 	va->AddVertexQTC(drawPos+dir*h*1.2f, texx,texy,col);
+#endif // !defined HEADLESS
 }

@@ -197,6 +197,7 @@ void CPieceProjectile::Collision()
 		if (flags & PF_Explode) {
 			helper->Explosion(pos, DamageArray() * 50, 5, 0, 10, owner(), false, 1.0f, false, false, 0, 0, ZeroVector, -1);
 		}
+#if !defined HEADLESS
 		if (flags & PF_Smoke) {
 			if (flags & PF_NoCEGTrail) {
 				float3 dir = speed;
@@ -208,6 +209,7 @@ void CPieceProjectile::Collision()
 				tp->creationTime += (8 - ((age) & 7));
 			}
 		}
+#endif // !defined HEADLESS
 
 		CProjectile::Collision();
 		oldSmoke = pos;
@@ -221,6 +223,7 @@ void CPieceProjectile::Collision(CUnit* unit)
 	if (flags & PF_Explode) {
 		helper->Explosion(pos, DamageArray() * 50, 5, 0, 10, owner(), false, 1.0f, false, false, 0, unit, ZeroVector, -1);
 	}
+#if !defined HEADLESS
 	if (flags & PF_Smoke) {
 		if (flags & PF_NoCEGTrail) {
 			float3 dir = speed;
@@ -232,6 +235,7 @@ void CPieceProjectile::Collision(CUnit* unit)
 			tp->creationTime += (8 - ((age) & 7));
 		}
 	}
+#endif // !defined HEADLESS
 
 	CProjectile::Collision(unit);
 	oldSmoke = pos;
@@ -305,6 +309,7 @@ void CPieceProjectile::Update()
 	age++;
 
 	if (flags & PF_NoCEGTrail) {
+#if !defined HEADLESS
 		if (!(age & 7) && (flags & PF_Smoke)) {
 			float3 dir = speed;
 			dir.Normalize();
@@ -327,13 +332,15 @@ void CPieceProjectile::Update()
 				}
 			}
 		}
+#endif // !defined HEADLESS
 	} else {
 		// TODO: pass a more sensible ttl to the CEG (age-related?)
 		ceg.Explosion(pos, 100, 0.0f, 0x0, 0.0f, 0x0, speed);
 	}
 
-	if (age > 10)
+	if (age > 10) {
 		checkCol = true;
+	}
 }
 
 

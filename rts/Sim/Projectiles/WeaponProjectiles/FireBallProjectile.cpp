@@ -6,7 +6,9 @@
 #include "Game/Camera.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "GlobalUnsynced.h"
@@ -47,6 +49,7 @@ CFireBallProjectile::~CFireBallProjectile(void)
 
 void CFireBallProjectile::Draw()
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4] = {255,150, 100, 1};
 
@@ -81,6 +84,7 @@ void CFireBallProjectile::Draw()
 		va->AddVertexQTC(interPos-camera->right*size+camera->up*size,ph->dguntex.xstart ,ph->dguntex.yend ,col);
 		interPos = interPos-speed*0.5f;
 	}
+#endif // !defined HEADLESS
 }
 
 void CFireBallProjectile::Update()
@@ -146,6 +150,3 @@ void CFireBallProjectile::Collision()
 	CWeaponProjectile::Collision();
 	deleteMe = false;
 }
-
-
-

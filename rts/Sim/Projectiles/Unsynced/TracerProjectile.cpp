@@ -7,7 +7,7 @@
 
 #include "TracerProjectile.h"
 #if !defined HEADLESS
-#include "Rendering/GL/myGL.h"			// Header File For The OpenGL32 Library
+#include "Rendering/GL/myGL.h" // Header File For The OpenGL32 Library
 #endif // !defined HEADLESS
 #include "GlobalUnsynced.h"
 

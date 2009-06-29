@@ -3,7 +3,9 @@
 
 #include "Game/Camera.h"
 #include "MuzzleFlame.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "GlobalUnsynced.h"
 
@@ -61,6 +63,7 @@ void CMuzzleFlame::Update(void)
 
 void CMuzzleFlame::Draw(void)
 {
+#if !defined HEADLESS
 	inArray=true;
 	unsigned char col[4];
 	float alpha=std::max(0.f,1-age/(4+size*30));
@@ -100,6 +103,7 @@ void CMuzzleFlame::Draw(void)
 			va->AddVertexQTC(interPos-camera->right*drawsize+camera->up*drawsize,ph->muzzleflametex.xstart,ph->muzzleflametex.yend ,col);
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 

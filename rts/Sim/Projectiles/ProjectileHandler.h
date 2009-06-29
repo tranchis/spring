@@ -6,14 +6,17 @@
 
 #include <list>
 #include <set>
+#include <map>
 #include <vector>
 #include <stack>
 #include "lib/gml/ThreadSafeContainers.h"
 
 #include "MemPool.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/TextureAtlas.h"
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/FBO.h"
+#endif // !defined HEADLESS
 #include "float3.h"
 
 class CProjectileHandler;
@@ -125,6 +128,7 @@ public:
 
 	int numPerlinProjectiles;
 
+#if !defined HEADLESS
 	CTextureAtlas* textureAtlas;  //texture atlas for projectiles
 	CTextureAtlas* groundFXAtlas; //texture atlas for ground fx
 
@@ -165,17 +169,19 @@ public:
 	AtlasedTexture groundringtex;
 
 	AtlasedTexture seismictex;
+#endif // !defined HEADLESS
 
 private:
 	void UpdatePerlin();
 	void GenerateNoiseTex(unsigned int tex,int size);
 
+#if !defined HEADLESS
 	GLuint perlinTex[8];
 	float perlinBlend[4];
 	FBO perlinFB;
 	bool drawPerlinTex;
+#endif // !defined HEADLESS
 };
-
 
 extern CProjectileHandler* ph;
 

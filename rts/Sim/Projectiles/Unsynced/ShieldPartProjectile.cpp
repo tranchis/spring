@@ -15,7 +15,9 @@ CR_BIND_DERIVED(CShieldPartProjectile, CProjectile, (float3(0,0,0),0,0,0,float3(
 CR_REG_METADATA(CShieldPartProjectile,(
 	CR_MEMBER(centerPos),
 	CR_MEMBER(vectors),
+#if !defined HEADLESS
 	CR_MEMBER(texCoords),
+#endif // !defined HEADLESS
 	CR_MEMBER(sphereSize),
 	CR_MEMBER(baseAlpha),
 	CR_MEMBER(color),
@@ -34,6 +36,7 @@ CShieldPartProjectile::CShieldPartProjectile(
 {
 	checkCol = false;
 
+#if !defined HEADLESS
 	if (texture) {
 		AtlasedTexture* tex = texture;
 
@@ -49,6 +52,7 @@ CShieldPartProjectile::CShieldPartProjectile(
 			}
 		}
 	}
+#endif // !defined HEADLESS
 	pos = centerPos + vectors[12] * sphereSize;
 
 	alwaysVisible = false;
@@ -56,10 +60,12 @@ CShieldPartProjectile::CShieldPartProjectile(
 	drawRadius = sphereSize * 0.4f;
 	usePerlin = false;
 
+#if !defined HEADLESS
 	if (texture == &ph->perlintex) {
 		usePerlin = true;
 		ph->numPerlinProjectiles++;
 	}
+#endif // !defined HEADLESS
 }
 
 CShieldPartProjectile::~CShieldPartProjectile(void)

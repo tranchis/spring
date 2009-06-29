@@ -11,8 +11,12 @@
 #include "myMath.h"
 #include "Sim/Misc/DamageArray.h"
 #include "Sim/Misc/QuadField.h"
+#if !defined HEADLESS
 #include "Rendering/Env/BaseTreeDrawer.h"
+#endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/UnitDrawer.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Misc/ModInfo.h"
@@ -88,9 +92,11 @@ CFeature::~CFeature(void)
 
 	qf->RemoveFeature(this);
 
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->DeleteTree(pos);
 	}
+#endif // !defined HEADLESS
 
 	if (myFire) {
 		myFire->StopFire();
@@ -119,9 +125,11 @@ void CFeature::PostLoad()
 		midPos = pos;
 	}
 
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->AddTree(def->drawType - 1, pos, 1);
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -199,9 +207,11 @@ void CFeature::Initialize(const float3& _pos, const FeatureDef* _def, short int 
 		finalHeight = ground->GetHeight2(pos.x, pos.z);
 	}
 
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->AddTree(def->drawType - 1, pos, 1);
 	}
+#endif // !defined HEADLESS
 
 
 	if (speed != ZeroVector) {
@@ -384,11 +394,13 @@ void CFeature::DoDamage(const DamageArray& damages, CUnit* attacker,const float3
 		featureHandler->DeleteFeature(this);
 		blockHeightChanges = false;
 
+#if !defined HEADLESS
 		if (def->drawType >= DRAWTYPE_TREE) {
 			if (impulse.SqLength2D() > 0.25f) {
 				treeDrawer->AddFallingTree(pos, impulse, def->drawType - 1);
 			}
 		}
+#endif // !defined HEADLESS
 	}
 }
 
@@ -418,9 +430,11 @@ void CFeature::ForcedMove(const float3& newPos)
 
 	// remove from managers
 	qf->RemoveFeature(this);
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->DeleteTree(pos);
 	}
+#endif // !defined HEADLESS
 
 	pos = newPos;
 
@@ -445,9 +459,11 @@ void CFeature::ForcedMove(const float3& newPos)
 
 	// insert into managers
 	qf->AddFeature(this);
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->AddTree(def->drawType - 1, pos, 1.0f);
 	}
+#endif // !defined HEADLESS
 
 	if (blocking) {
 		Block();
@@ -460,10 +476,12 @@ void CFeature::ForcedSpin(const float3& newDir)
 /*
 	heading = GetHeadingFromVector(newDir.x, newDir.z);
 	CalculateTransform();
+#if !defined HEADLESS
 	if (def->drawType >= DRAWTYPE_TREE) {
 		treeDrawer->DeleteTree(pos);
 		treeDrawer->AddTree(def->drawType - 1, pos, 1.0f);
 	}
+#endif // !defined HEADLESS
 */
 
 	CMatrix44f tmp;
@@ -554,8 +572,11 @@ bool CFeature::UpdatePosition()
 
 	if (pos.y > finalHeight) {
 		//! feature is falling
-		if (def->drawType >= DRAWTYPE_TREE)
+#if !defined HEADLESS
+		if (def->drawType >= DRAWTYPE_TREE) {
 			treeDrawer->DeleteTree(pos);
+		}
+#endif // !defined HEADLESS
 
 		if (pos.y > 0.0f) {
 			speed.y += mapInfo->map.gravity; //! gravity is negative
@@ -566,12 +587,18 @@ bool CFeature::UpdatePosition()
 		midPos.y += speed.y;
 		transMatrix[13] += speed.y;
 
-		if (def->drawType >= DRAWTYPE_TREE)
+#if !defined HEADLESS
+		if (def->drawType >= DRAWTYPE_TREE) {
 			treeDrawer->AddTree(def->drawType - 1, pos, 1.0f);
+		}
+#endif // !defined HEADLESS
 	} else if (pos.y < finalHeight) {
 		//! if ground is restored, make sure feature does not get buried
-		if (def->drawType >= DRAWTYPE_TREE)
+#if !defined HEADLESS
+		if (def->drawType >= DRAWTYPE_TREE) {
 			treeDrawer->DeleteTree(pos);
+		}
+#endif // !defined HEADLESS
 
 		float diff = finalHeight - pos.y;
 		pos.y = finalHeight;
@@ -579,8 +606,11 @@ bool CFeature::UpdatePosition()
 		transMatrix[13] += diff;
 		speed.y = 0.0f;
 
-		if (def->drawType >= DRAWTYPE_TREE)
+#if !defined HEADLESS
+		if (def->drawType >= DRAWTYPE_TREE) {
 			treeDrawer->AddTree(def->drawType - 1, pos, 1.0f);
+		}
+#endif // !defined HEADLESS
 	}
 
 	if (pos.y != finalHeight)
@@ -706,5 +736,7 @@ float CFeature::RemainingEnergy() const
 
 void CFeature::DrawS3O()
 {
+#if !defined HEADLESS
 	unitDrawer->DrawFeatureStatic(this);
+#endif // !defined HEADLESS
 }
