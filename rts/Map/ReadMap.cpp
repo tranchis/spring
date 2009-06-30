@@ -8,7 +8,9 @@
 #include "mmgr.h"
 
 #include "ReadMap.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/Bitmap.h"
+#endif // !defined HEADLESS
 #include "Ground.h"
 #include "ConfigHandler.h"
 #include "MapDamage.h"

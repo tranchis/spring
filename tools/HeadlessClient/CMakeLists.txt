@@ -156,6 +156,7 @@ SET(lua_files
 	${sr}/Lua/LuaWeaponDefs.cpp
 	)
 SET(rendering_files
+	${sr}/Rendering/InMapDraw.cpp
 	${sr}/Rendering/UnitModels/3DModel.cpp
 	${sr}/Rendering/UnitModels/3DOParser.cpp
 	${sr}/Rendering/UnitModels/IModelParser.cpp

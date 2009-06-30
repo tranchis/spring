@@ -13,6 +13,7 @@ using std::set;
 #include <boost/cstdint.hpp>
 
 #include "EventClient.h"
+#if !defined HEADLESS
 //FIXME#include "LuaArrays.h"
 #include "LuaShaders.h"
 #include "LuaTextures.h"
@@ -20,6 +21,7 @@ using std::set;
 #include "LuaRBOs.h"
 //FIXME#include "LuaVBOs.h"
 #include "LuaDisplayLists.h"
+#endif // !defined HEADLESS
 
 
 #define LUA_HANDLE_ORDER_RULES            100
@@ -76,12 +78,14 @@ class CLuaHandle : public CEventClient
 		bool WantsToDie() const { return killMe; }
 
 //FIXME		LuaArrays& GetArrays() { return arrays; }
+#if !defined HEADLESS
 		LuaShaders& GetShaders() { return shaders; }
 		LuaTextures& GetTextures() { return textures; }
 //FIXME		LuaVBOs& GetVBOs() { return vbos; }
 		LuaFBOs& GetFBOs() { return fbos; }
 		LuaRBOs& GetRBOs() { return rbos; }
 		CLuaDisplayLists& GetDisplayLists() { return displayLists; }
+#endif // !defined HEADLESS
 
 	public:
 		const bool userMode;
@@ -256,12 +260,14 @@ class CLuaHandle : public CEventClient
 		int  selectTeam;
 
 //FIXME		LuaArrays arrays;
+#if !defined HEADLESS
 		LuaShaders shaders;
 		LuaTextures textures;
 //FIXME		LuaVBOs vbos;
 		LuaFBOs fbos;
 		LuaRBOs rbos;
 		CLuaDisplayLists displayLists;
+#endif // !defined HEADLESS
 
 		vector<bool> watchWeapons; // for the Explosion call-in
 
@@ -296,6 +302,7 @@ class CLuaHandle : public CEventClient
 		static const bool& GetActiveFullRead()     { return activeFullRead; }
 		static const int&  GetActiveReadAllyTeam() { return activeReadAllyTeam; }
 //FIXME		static LuaArrays&   GetActiveArrays()   { return activeHandle->arrays; }
+#if !defined HEADLESS
 		static LuaShaders&  GetActiveShaders()  { return activeHandle->shaders; }
 		static LuaTextures& GetActiveTextures() { return activeHandle->textures; }
 //FIXME		static LuaVBOs&     GetActiveVBOs()     { return activeHandle->vbos; }
@@ -304,6 +311,7 @@ class CLuaHandle : public CEventClient
 		static CLuaDisplayLists& GetActiveDisplayLists() {
 			return activeHandle->displayLists;
 		}
+#endif // !defined HEADLESS
 
 		static void SetDevMode(bool value) { devMode = value; }
 		static bool GetDevMode() { return devMode; }

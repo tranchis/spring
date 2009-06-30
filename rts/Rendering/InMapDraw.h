@@ -4,7 +4,11 @@
 #include <string>
 #include <list>
 
+#if !defined HEADLESS
 #include "GL/myGL.h"
+#endif // !defined HEADLESS
+#include "creg/creg_cond.h"
+#include "float3.h"
 
 class CPlayer;
 
@@ -86,7 +90,9 @@ public:
 		NET_LINE
 	};
 
+#if !defined HEADLESS
 	GLuint texture;
+#endif // !defined HEADLESS
 	float lastLeftClickTime;
 	float lastLineTime;
 	float3 lastPos;

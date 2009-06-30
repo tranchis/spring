@@ -5,7 +5,6 @@
 #include "float3.h"
 #include "Lua/LuaParser.h"
 
-
 class MapParser
 {
 	public:
@@ -26,6 +25,5 @@ class MapParser
 	private:
 		LuaParser* parser;
 };
-
 
 #endif // MAP_PARSER_H

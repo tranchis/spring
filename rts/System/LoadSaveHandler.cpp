@@ -27,6 +27,7 @@
 #include "Sim/Units/CommandAI/BuilderCAI.h"
 #include "Sim/Units/Groups/GroupHandler.h"
 #include "Game/GameServer.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/InMapDraw.h"
 #include "GlobalUnsynced.h"
 #include "Exceptions.h"
@@ -114,7 +115,9 @@ void PrintSize(const char *txt, int size)
 
 void CLoadSaveHandler::SaveGame(const std::string& file)
 {
+#if !defined HEADLESS
 	LoadStartPicture(teamHandler->Team(gu->myTeam)->side);
+#endif // !defined HEADLESS
 	PrintLoadMsg("Saving game");
 	try {
 		std::ofstream ofs(filesystem.LocateFile(file, FileSystem::WRITE).c_str(), std::ios::out|std::ios::binary);
@@ -151,7 +154,9 @@ void CLoadSaveHandler::SaveGame(const std::string& file)
 	} catch (...) {
 		logOutput.Print("Save faild(unknwon error)");
 	}
+#if !defined HEADLESS
 	UnloadStartPicture();
+#endif // !defined HEADLESS
 }
 
 /// this just loads the mapname and some other early stuff
@@ -187,7 +192,9 @@ void CLoadSaveHandler::LoadGameStartInfo(const std::string& file)
 /// this should be called on frame 0 when the game has started
 void CLoadSaveHandler::LoadGame()
 {
+#if !defined HEADLESS
 	LoadStartPicture(teamHandler->Team(gu->myTeam)->side);
+#endif // !defined HEADLESS
 	PrintLoadMsg("Loading game");
 	creg::CInputStreamSerializer inputStream;
 	void *pGSC = 0;
@@ -212,7 +219,9 @@ void CLoadSaveHandler::LoadGame()
 		gameServer->isPaused = false;
 		gameServer->syncErrorFrame = 0;
 	}
+#if !defined HEADLESS
 	UnloadStartPicture();
+#endif // !defined HEADLESS
 }
 
 std::string CLoadSaveHandler::FindSaveFile(const char* name)

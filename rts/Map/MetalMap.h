@@ -36,5 +36,4 @@ protected:
 	int sizeZ;
 };
 
-
-#endif /* METALMAP_H */
+#endif // METALMAP_H

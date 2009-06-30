@@ -63,7 +63,7 @@ public:
 		return units.size();
 	};
 
-	std::vector< vector<CUnitSet> > unitsByDefs; // units sorted by team and unitDef
+	std::vector< std::vector<CUnitSet> > unitsByDefs; // units sorted by team and unitDef
 
 	std::list<CUnit*> activeUnits;				//used to get all active units
 	std::vector<int> freeIDs;

@@ -13,13 +13,17 @@
 #include "Map/Ground.h"
 #include "Map/ReadMap.h"
 #include "Sim/Misc/TeamHandler.h"
+#if !defined HEADLESS
 #include "glFont.h"
 #include "GL/VertexArray.h"
+#endif // !defined HEADLESS
 #include "EventHandler.h"
 #include "NetProtocol.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "creg/STL_List.h"
 
 

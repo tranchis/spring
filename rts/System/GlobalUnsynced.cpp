@@ -97,6 +97,7 @@ CGlobalUnsyncedStuff::CGlobalUnsyncedStuff()
 	directControl = 0;
 	compressTextures = false;
 	atiHacks = false;
+#if !defined HEADLESS
 	supportNPOTs = GLEW_ARB_texture_non_power_of_two;
 	{
 		std::string vendor = std::string((char*)glGetString(GL_VENDOR));
@@ -108,6 +109,7 @@ CGlobalUnsyncedStuff::CGlobalUnsyncedStuff()
 			supportNPOTs = (renderer.find(" x") == string::npos && renderer.find(" 9") == string::npos); //! x-series doesn't support NPOTs
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 /**
