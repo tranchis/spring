@@ -4,7 +4,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "EventHandler.h"
-#include "Lua/LuaOpenGL.h"  // FIXME -- should be moved
+#if !defined HEADLESS
+#include "Lua/LuaOpenGL.h" // FIXME -- should be moved
+#endif // !defined HEADLESS
 
 using std::string;
 using std::vector;
@@ -365,6 +367,7 @@ void CEventHandler::ViewResize()
 }
 
 
+#if !defined HEADLESS
 #define DRAW_CALLIN(name)                         \
   void CEventHandler:: Draw ## name ()        \
   {                                               \
@@ -387,6 +390,9 @@ void CEventHandler::ViewResize()
                                                   \
     LuaOpenGL::DisableDraw ## name ();            \
   }
+#else // !defined HEADLESS
+#define DRAW_CALLIN(name)
+#endif // !defined HEADLESS
 
 DRAW_CALLIN(Genesis)
 DRAW_CALLIN(World)

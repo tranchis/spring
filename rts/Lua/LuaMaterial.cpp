@@ -19,8 +19,10 @@ using std::vector;
 #include "LuaOpenGL.h"
 
 #include "Game/Camera.h"
+#if !defined HEADLESS
 #include "Rendering/ShadowHandler.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/Unit.h"
 #include "LogOutput.h"
 #include "Util.h"

@@ -19,7 +19,9 @@
 #include "LuaWeaponDefs.h"
 #include "LuaOpenGL.h"
 
+#if !defined HEADLESS
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/GlobalSynced.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Units/Unit.h"

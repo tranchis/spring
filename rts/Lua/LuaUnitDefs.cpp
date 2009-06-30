@@ -25,8 +25,10 @@
 #include "Map/Ground.h"
 #include "Map/MapDamage.h"
 #include "Map/MapInfo.h"
+#if !defined HEADLESS
 #include "Rendering/IconHandler.h"
 #include "Rendering/UnitModels/IModelParser.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/CategoryHandler.h"

@@ -1,11 +1,7 @@
 #ifndef __COMMAND_QUEUE_H__
 #define __COMMAND_QUEUE_H__
 
-#if !defined BUILDING_AI && !defined HEADLESS
-#include "Rendering/GL/myGL.h"
-#else // !defined BUILDING_AI && !defined HEADLESS
-#define GML_STDMUTEX_LOCK(x)
-#endif // !defined BUILDING_AI && !defined HEADLESS
+#include "lib/gml/gml.h"
 #include <deque>
 #include "Command.h"
 
@@ -156,6 +152,5 @@ inline CCommandQueue::iterator CCommandQueue::insert(iterator pos,
 	GML_STDMUTEX_LOCK(cai); // insert
 	return queue.insert(pos, tmpCmd);
 }
-
 
 #endif // __COMMAND_QUEUE_H__

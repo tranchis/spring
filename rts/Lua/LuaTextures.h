@@ -9,7 +9,9 @@
 using std::string;
 using std::map;
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 
 class LuaTextures {

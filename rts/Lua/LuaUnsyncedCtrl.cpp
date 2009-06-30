@@ -41,11 +41,13 @@
 #include "Game/UI/MouseHandler.h"
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
+#if !defined HEADLESS
 #include "Map/BaseGroundDrawer.h"
 #include "Rendering/GL/myGL.h"
 #include "Rendering/FontTexture.h"
 #include "Rendering/IconHandler.h"
 #include "Rendering/InMapDraw.h"
+#endif // !defined HEADLESS
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitDefHandler.h"
@@ -56,9 +58,11 @@
 #include "Sim/Units/Groups/GroupHandler.h"
 #include "LogOutput.h"
 #include "NetProtocol.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/Music.h"
+#endif // !defined HEADLESS
 
 #include "FileSystem/FileHandler.h"
 #include "FileSystem/FileSystem.h"

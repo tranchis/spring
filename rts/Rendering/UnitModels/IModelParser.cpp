@@ -1,5 +1,7 @@
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include <algorithm>
 #include <cctype>
 #include "mmgr.h"
@@ -10,7 +12,9 @@
 #include "s3oParser.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Units/COB/CobInstance.h"
+#if !defined HEADLESS
 #include "Rendering/FartextureHandler.h"
+#endif // !defined HEADLESS
 #include "Util.h"
 #include "LogOutput.h"
 #include "Exceptions.h"

@@ -39,6 +39,7 @@
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 #include "Map/HeightMapTexture.h"
+#if !defined HEADLESS
 #include "Rendering/glFont.h"
 #include "Rendering/IconHandler.h"
 #include "Rendering/ShadowHandler.h"
@@ -51,6 +52,7 @@
 #include "Rendering/Textures/S3OTextureHandler.h"
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/LosHandler.h"

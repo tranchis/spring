@@ -10,12 +10,14 @@
 #include "mmgr.h"
 
 #include "s3oParser.h"
-#include "Rendering/GL/myGL.h"
-#include "FileSystem/FileHandler.h"
 #include "s3o.h"
+#include "FileSystem/FileHandler.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Units/COB/CobInstance.h"
+#if !defined HEADLESS
+#include "Rendering/GL/myGL.h"
 #include "Rendering/Textures/S3OTextureHandler.h"
+#endif // !defined HEADLESS
 #include "Platform/byteorder.h"
 #include "Platform/errorhandler.h"
 #include "Util.h"

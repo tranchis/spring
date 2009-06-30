@@ -15,8 +15,10 @@
 
 #include "LuaOpenGL.h"
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/glFont.h"
+#endif // !defined HEADLESS
 #include "LogOutput.h"
 #include "Exceptions.h"
 

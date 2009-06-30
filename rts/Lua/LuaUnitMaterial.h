@@ -6,7 +6,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 #include <vector>
 using std::vector;

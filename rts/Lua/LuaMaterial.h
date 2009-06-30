@@ -14,8 +14,10 @@ using std::set;
 #include "LuaUnitMaterial.h" // for LuaMatRef
 #include "LuaUniqueBin.h"
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/ShadowHandler.h"
+#endif // !defined HEADLESS
 
 class CUnit;
 

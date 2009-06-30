@@ -8,7 +8,9 @@
 #include <vector>
 using std::vector;
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 
 class CLuaDisplayLists {

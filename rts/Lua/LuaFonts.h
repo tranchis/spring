@@ -4,8 +4,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/glFont.h"
+#endif // !defined HEADLESS
 
 struct lua_State;
 
@@ -51,6 +53,5 @@ class LuaFonts {
 
 		static int BindTexture(lua_State* L);
 };
-
 
 #endif /* LUA_FONTS_H */

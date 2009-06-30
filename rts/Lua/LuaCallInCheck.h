@@ -27,7 +27,9 @@ class LuaCallInCheck {
 #endif
 
 #ifdef USE_GML // hack to add some degree of thread safety to LUA
+#if !defined HEADLESS
 #	include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #	include "lib/gml/gmlsrv.h"
 #	if GML_ENABLE_SIM
 #		undef LUA_CALL_IN_CHECK

@@ -8,7 +8,9 @@
 #include <vector>
 #include <string>
 
+#if !defined HEADLESS
 #include "Lua/LuaUnitMaterial.h"
+#endif // !defined HEADLESS
 #include "Sim/Objects/SolidObject.h"
 #include "Matrix44f.h"
 #include "Vec2.h"
@@ -505,8 +507,10 @@ public:
 	unsigned int lodCount;
 	unsigned int currentLOD;
 	/// length-per-pixel
-	vector<float> lodLengths;
+	std::vector<float> lodLengths;
+#if !defined HEADLESS
 	LuaUnitMaterial luaMats[LUAMAT_TYPE_COUNT];
+#endif // !defined HEADLESS
 
 	/// minimum alpha value for a texel to be drawn
 	float alphaThreshold;

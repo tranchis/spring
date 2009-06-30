@@ -7,7 +7,9 @@
 #include <vector>
 #include <string>
 #include "float3.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/3DOTextureHandler.h"
+#endif // !defined HEADLESS
 #include <map>
 #include <set>
 #include "IModelParser.h"

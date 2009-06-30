@@ -9,7 +9,9 @@
 using std::string;
 using std::vector;
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 
 struct lua_State;

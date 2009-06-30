@@ -10,7 +10,9 @@
 using std::set;
 using std::string;
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 struct lua_State;
 

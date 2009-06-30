@@ -40,10 +40,12 @@ using namespace std;
 #include "Map/BaseGroundDrawer.h"
 #include "Map/Ground.h"
 #include "Map/ReadMap.h"
+#if !defined HEADLESS
 #include "Rendering/IconHandler.h"
 #include "Rendering/ShadowHandler.h"
 #include "Rendering/Env/BaseWater.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Units/Unit.h"
@@ -55,7 +57,9 @@ using namespace std;
 #include "FileSystem/FileHandler.h"
 #include "FileSystem/VFSHandler.h"
 #include "FileSystem/FileSystem.h"
+#if !defined HEADLESS
 #include "Sound/Music.h"
+#endif // !defined HEADLESS
 
 
 extern boost::uint8_t *keys;

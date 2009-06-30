@@ -11,24 +11,26 @@
 #include <stdexcept>
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
-#include "LogOutput.h"
 #include "Rendering/GL/VertexArray.h"
+#include "Rendering/Textures/TAPalette.h"
+#endif // !defined HEADLESS
+#include "3DOParser.h"
+#include "s3oParser.h"
 #include "FileSystem/VFSHandler.h"
 #include "FileSystem/FileHandler.h"
 #include "FileSystem/SimpleParser.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Units/COB/CobInstance.h"
-#include "Rendering/Textures/TAPalette.h"
-#include "Matrix44f.h"
 #include "Sim/Misc/Team.h"
 #include "Game/Player.h"
 #include "Platform/errorhandler.h"
 #include "Platform/byteorder.h"
-#include "3DOParser.h"
-#include "s3oParser.h"
 #include "Util.h"
 #include "Exceptions.h"
+#include "LogOutput.h"
+#include "Matrix44f.h"
 #include <boost/cstdint.hpp>
 
 using namespace std;

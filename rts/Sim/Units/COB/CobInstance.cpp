@@ -554,9 +554,11 @@ void CCobInstance::Signal(int signal)
 
 void CCobInstance::PlayUnitSound(int snr, int attr)
 {
+#if !defined HEADLESS
 	int sid = script.sounds[snr];
 	//logOutput.Print("Playing %d %d %d", snr, attr, sid);
 	Channels::UnitReply.PlaySample(sid, unit->pos, unit->speed, attr);
+#endif // !defined HEADLESS
 }
 
 
