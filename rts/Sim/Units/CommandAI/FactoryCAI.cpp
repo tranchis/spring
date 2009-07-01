@@ -9,9 +9,9 @@
 #include "Game/GameHelper.h"
 #include "Game/SelectedUnits.h"
 #include "Game/WaitCommandsAI.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
 #include "Game/UI/CursorIcons.h"
-#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/glExtra.h"
 #include "Rendering/UnitModels/UnitDrawer.h"

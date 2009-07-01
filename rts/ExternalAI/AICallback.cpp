@@ -1,16 +1,17 @@
 // Generalized callback interface - shared between global AI and group AI
 #include "StdAfx.h"
 #include "FileSystem/FileHandler.h"
-#include "Game/Camera/CameraController.h"
-#include "Game/Camera.h"
-#include "Game/CameraHandler.h"
 #include "Game/GameHelper.h"
 #include "Game/GameSetup.h"
 #include "Game/PlayerHandler.h"
 #include "Game/SelectedUnits.h"
-#include "Sim/Misc/TeamHandler.h"
+#if !defined HEADLESS
+#include "Game/Camera.h"
+#include "Game/CameraHandler.h"
+#include "Game/Camera/CameraController.h"
 #include "Game/UI/MiniMap.h"
 #include "Game/UI/MouseHandler.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaRules.h"
 #include "Map/MapInfo.h"
 #include "Map/MetalMap.h"
@@ -19,9 +20,13 @@
 #include "ConfigHandler.h"
 #include "Platform/errorhandler.h"
 #include "FileSystem/FileSystem.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/InMapDraw.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DModel.h"
+#if !defined HEADLESS
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/DamageArrayHandler.h"
@@ -30,6 +35,7 @@
 #include "Sim/Misc/LosHandler.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/ModInfo.h"
+#include "Sim/Misc/TeamHandler.h"
 #include "Sim/Path/PathManager.h"
 #include "Sim/Units/CommandAI/CommandAI.h"
 #include "Sim/Units/CommandAI/LineDrawer.h"
@@ -46,6 +52,7 @@
 #include "Sim/Units/Groups/Group.h"
 #include "Sim/Units/Groups/GroupHandler.h"
 #include "LogOutput.h"
+#include "GlobalUnsynced.h"
 #include "mmgr.h"
 
 /* Cast id to unsigned to catch negative ids in the same operations,
@@ -97,7 +104,9 @@ void CAICallback::SetLastMsgPos(float3 pos)
 
 void CAICallback::AddNotification(float3 pos, float3 color, float alpha)
 {
+#if !defined HEADLESS
 	minimap->AddNotification(pos,color,alpha);
+#endif // !defined HEADLESS
 }
 
 
@@ -180,7 +189,13 @@ int CAICallback::SendUnits(const std::vector<int>& unitIds, int receivingTeamId)
 
 bool CAICallback::PosInCamera(float3 pos, float radius)
 {
-	return camera->InView(pos,radius);
+	bool posInCamera = false;
+
+#if !defined HEADLESS
+	posInCamera = camera->InView(pos,radius);
+#endif // !defined HEADLESS
+
+	return posInCamera;
 }
 
 // see if the AI hasn't modified any parts of this callback
@@ -1059,8 +1074,10 @@ void CAICallback::DeleteFigureGroup(int group)
 	geometricObjects->DeleteGroup(group);
 }
 
-void CAICallback::DrawUnit(const char* unitName,float3 pos,float rotation,int lifetime,int teamId,bool transparent,bool drawBorder,int facing)
+void CAICallback::DrawUnit(const char* unitName, float3 pos, float rotation,
+		int lifetime, int teamId, bool transparent, bool drawBorder, int facing)
 {
+#if !defined HEADLESS
 	CUnitDrawer::TempDrawUnit tdu;
 	tdu.unitdef=unitDefHandler->GetUnitByName(unitName);
 	if(!tdu.unitdef){
@@ -1076,10 +1093,12 @@ void CAICallback::DrawUnit(const char* unitName,float3 pos,float rotation,int li
 
 	GML_STDMUTEX_LOCK(temp); // DrawUnit
 
-	if(transparent)
+	if (transparent) {
 		unitDrawer->tempTransparentDrawUnits.insert(tp);
-	else
+	} else {
 		unitDrawer->tempDrawUnits.insert(tp);
+	}
+#endif // !defined HEADLESS
 }
 
 bool CAICallback::CanBuildAt(const UnitDef* unitDef, float3 pos, int facing)
@@ -1327,10 +1346,19 @@ bool CAICallback::GetValue(int id, void *data)
 			*(float*)data = gu->viewSizeY;
 			return true;
 		}case AIVAL_GUI_CAMERA_DIR:{
+#if !defined HEADLESS
 			*(float3*)data = camHandler->GetCurrentController().GetDir();
 			return true;
+#else // !defined HEADLESS
+			return false;
+#endif // !defined HEADLESS
 		}case AIVAL_GUI_CAMERA_POS:{
+#if !defined HEADLESS
 			*(float3*)data = camHandler->GetCurrentController().GetPos();
+			return true;
+#else // !defined HEADLESS
+			return false;
+#endif // !defined HEADLESS
 			return true;
 		}case AIVAL_LOCATE_FILE_R:{
 			std::string f((char*) data);

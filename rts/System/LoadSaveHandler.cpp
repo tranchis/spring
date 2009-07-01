@@ -117,8 +117,8 @@ void CLoadSaveHandler::SaveGame(const std::string& file)
 {
 #if !defined HEADLESS
 	LoadStartPicture(teamHandler->Team(gu->myTeam)->side);
-#endif // !defined HEADLESS
 	PrintLoadMsg("Saving game");
+#endif // !defined HEADLESS
 	try {
 		std::ofstream ofs(filesystem.LocateFile(file, FileSystem::WRITE).c_str(), std::ios::out|std::ios::binary);
 		if (ofs.bad() || !ofs.is_open()) {
@@ -194,8 +194,8 @@ void CLoadSaveHandler::LoadGame()
 {
 #if !defined HEADLESS
 	LoadStartPicture(teamHandler->Team(gu->myTeam)->side);
-#endif // !defined HEADLESS
 	PrintLoadMsg("Loading game");
+#endif // !defined HEADLESS
 	creg::CInputStreamSerializer inputStream;
 	void *pGSC = 0;
 	creg::Class* gsccls = 0;

@@ -11,9 +11,11 @@
 #include "Sim/Units/UnitTypes/TransportUnit.h"
 #include "Map/Ground.h"
 #include "Sim/Misc/QuadField.h"
-#include "Game/UI/CommandColors.h"
 #include "LogOutput.h"
 #include "Game/GameHelper.h"
+#if !defined HEADLESS
+#include "Game/UI/CommandColors.h"
+#endif // !defined HEADLESS
 #include "Sim/MoveTypes/TAAirMoveType.h"
 #include "Sim/Misc/ModInfo.h"
 #if !defined HEADLESS
@@ -24,6 +26,8 @@
 #include "creg/STL_List.h"
 #include "GlobalUnsynced.h"
 #include "myMath.h"
+
+#include <vector>
 
 #define AIRTRANSPORT_DOCKING_RADIUS 16
 #define AIRTRANSPORT_DOCKING_ANGLE 50
@@ -392,9 +396,9 @@ bool CTransportCAI::SpotIsClearIgnoreSelf(float3 pos,CUnit* unitToUnload) {
 	if(ground->GetSlope(pos.x,pos.z) > unitToUnload->unitDef->movedata->maxSlope)
 		return false;
 
-	vector<CUnit*> units = qf->GetUnitsExact(pos,unitToUnload->radius+8);
+	std::vector<CUnit*> units = qf->GetUnitsExact(pos,unitToUnload->radius+8);
 	CTransportUnit* me = (CTransportUnit*)owner;
-	for (vector<CUnit*>::iterator it = units.begin(); it != units.end(); ++it) {
+	for (std::vector<CUnit*>::iterator it = units.begin(); it != units.end(); ++it) {
 		// check if the units are in the transport
 		bool found = false;
 		for (std::list<CTransportUnit::TransportedUnit>::iterator it2 = me->transported.begin();

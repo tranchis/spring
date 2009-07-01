@@ -2,8 +2,8 @@
 #include "mmgr.h"
 
 #include "BeamLaserProjectile.h"
-#include "Game/Camera.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
 #endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"

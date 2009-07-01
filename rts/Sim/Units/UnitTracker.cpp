@@ -4,14 +4,17 @@
 #include "UnitTracker.h"
 #include "Unit.h"
 #include "UnitHandler.h"
+#if !defined HEADLESS
 #include "Game/Camera/FPSController.h"
 #include "Game/CameraHandler.h"
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/SelectedUnits.h"
 #include "Map/Ground.h"
 #include "ConfigHandler.h"
 #include "GlobalUnsynced.h"
 #include "LogOutput.h"
+#include "lib/gml/gml.h"
 
 
 CUnitTracker unitTracker;
@@ -232,6 +235,7 @@ float3 CUnitTracker::CalcExtentsPos() const
 
 void CUnitTracker::SetCam()
 {
+#if !defined HEADLESS
 	if(firstUpdate){
 		firstUpdate=false;
 		doRoll=!configHandler->Get("ReflectiveWater",1);
@@ -324,4 +328,5 @@ void CUnitTracker::SetCam()
 
 	oldCamDir=camera->forward;
 	oldCamPos=camera->pos;
+#endif // !defined HEADLESS
 }

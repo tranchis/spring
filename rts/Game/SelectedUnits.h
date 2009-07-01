@@ -20,14 +20,14 @@ public:
 	int GetDefaultCmd(CUnit* unit,CFeature* feature);
 	bool CommandsChanged();
 	void NetOrder(Command& c,int player);
-	void NetSelect(vector<int>& s,int player);
+	void NetSelect(std::vector<int>& s,int player);
 	void DependentDied(CObject* o);
 	void Draw();
 	CSelectedUnits();
 	virtual ~CSelectedUnits();
 
 	struct AvailableCommandsStruct{
-		vector<CommandDescription> commands;
+		std::vector<CommandDescription> commands;
 		int commandPage;
 	};
 	AvailableCommandsStruct GetAvailableCommands();
@@ -44,7 +44,7 @@ public:
 	bool selectionChanged;
 	bool possibleCommandsChanged;
 
-	std::vector< vector<int> > netSelected;
+	std::vector< std::vector<int> > netSelected;
 
 	bool buildIconsFirst;
 	int selectedGroup;
@@ -54,7 +54,7 @@ public:
 	void SetCommandPage(int page);
 	void SendSelection(void);
 	void SendCommand(Command& c);
-	void SendCommandsToUnits(const vector<int>& unitIDs, const vector<Command>& commands);
+	void SendCommandsToUnits(const std::vector<int>& unitIDs, const std::vector<Command>& commands);
 };
 
 extern CSelectedUnits selectedUnits;

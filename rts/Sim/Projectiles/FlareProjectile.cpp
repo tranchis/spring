@@ -3,7 +3,9 @@
 
 #include "FlareProjectile.h"
 #include "Sim/Misc/GlobalSynced.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "LogOutput.h"
 #include "Map/MapInfo.h"
 #include "ProjectileHandler.h"

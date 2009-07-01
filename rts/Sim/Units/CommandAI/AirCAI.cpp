@@ -6,7 +6,9 @@
 #include "Sim/Units/Groups/Group.h"
 #include "Game/GameHelper.h"
 #include "Game/SelectedUnits.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
+#endif // !defined HEADLESS
 #include "Map/Ground.h"
 #if !defined HEADLESS
 #include "Rendering/GL/glExtra.h"
@@ -23,6 +25,8 @@
 #include <assert.h>
 #include "GlobalUnsynced.h"
 #include "Util.h"
+
+#include <vector>
 
 
 CR_BIND_DERIVED(CAirCAI,CMobileCAI , );
@@ -118,7 +122,7 @@ void CAirCAI::GiveCommandReal(const Command &c)
 			case 2: { airMT->repairBelowHealth = 0.5f; break; }
 			case 3: { airMT->repairBelowHealth = 0.8f; break; }
 		}
-		for(vector<CommandDescription>::iterator cdi = possibleCommands.begin();
+		for(std::vector<CommandDescription>::iterator cdi = possibleCommands.begin();
 				cdi != possibleCommands.end(); ++cdi){
 			if(cdi->id==CMD_AUTOREPAIRLEVEL){
 				char t[10];
@@ -145,7 +149,7 @@ void CAirCAI::GiveCommandReal(const Command &c)
 			case 0: { airMT->autoLand = false; break; }
 			case 1: { airMT->autoLand = true;  break; }
 		}
-		for(vector<CommandDescription>::iterator cdi = possibleCommands.begin();
+		for(std::vector<CommandDescription>::iterator cdi = possibleCommands.begin();
 				cdi != possibleCommands.end(); ++cdi){
 			if(cdi->id == CMD_IDLEMODE){
 				char t[10];
@@ -172,7 +176,7 @@ void CAirCAI::GiveCommandReal(const Command &c)
 			case 0: { airMT->loopbackAttack = false; break; }
 			case 1: { airMT->loopbackAttack = true;  break; }
 		}
-		for(vector<CommandDescription>::iterator cdi = possibleCommands.begin();
+		for(std::vector<CommandDescription>::iterator cdi = possibleCommands.begin();
 				cdi != possibleCommands.end(); ++cdi){
 			if(cdi->id == CMD_LOOPBACKATTACK){
 				char t[10];

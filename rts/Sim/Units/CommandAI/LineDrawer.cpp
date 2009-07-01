@@ -2,7 +2,9 @@
 
 #include "StdAfx.h"
 #include "LineDrawer.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
+#endif // !defined HEADLESS
 #include "GlobalUnsynced.h"
 
 CLineDrawer lineDrawer;

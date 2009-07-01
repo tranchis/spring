@@ -17,6 +17,7 @@
 #include "Sim/Misc/TeamHandler.h"
 #include "LogOutput.h"
 #include "creg/STL_List.h"
+#include "lib/gml/gml.h"
 
 CR_BIND(CQuadField, );
 CR_REG_METADATA(CQuadField, (
@@ -73,11 +74,11 @@ CQuadField::~CQuadField()
 	delete[] tempQuads;
 }
 
-vector<int> CQuadField::GetQuads(float3 pos,float radius)
+std::vector<int> CQuadField::GetQuads(float3 pos,float radius)
 {
 	pos.CheckInBounds();
 
-	vector<int> ret;
+	std::vector<int> ret;
 	int maxx = std::min(((int)(pos.x + radius)) / QUAD_SIZE + 1, numQuadsX - 1);
 	int maxz = std::min(((int)(pos.z + radius)) / QUAD_SIZE + 1, numQuadsZ - 1);
 
@@ -122,10 +123,10 @@ void CQuadField::GetQuads(float3 pos,float radius, int*& dst)
 
 void CQuadField::MovedUnit(CUnit *unit)
 {
-	vector<int> newQuads=GetQuads(unit->pos,unit->radius);
+	std::vector<int> newQuads=GetQuads(unit->pos,unit->radius);
 
 	if(newQuads.size()==unit->quads.size()){
-		vector<int>::iterator qi1,qi2;
+		std::vector<int>::iterator qi1,qi2;
 		qi1=unit->quads.begin();
 		for(qi2=newQuads.begin();qi2!=newQuads.end();++qi2){
 			if(*qi1!=*qi2)
@@ -404,9 +405,9 @@ void CQuadField::AddFeature(CFeature* feature)
 {
 	GML_RECMUTEX_LOCK(quad); // AddFeature
 
-	vector<int> newQuads=GetQuads(feature->pos,feature->radius);
+	std::vector<int> newQuads=GetQuads(feature->pos,feature->radius);
 
-	vector<int>::iterator qi;
+	std::vector<int>::iterator qi;
 	for(qi=newQuads.begin();qi!=newQuads.end();++qi){
 		baseQuads[*qi].features.push_front(feature);
 	}
@@ -416,7 +417,7 @@ void CQuadField::RemoveFeature(CFeature* feature)
 {
 	GML_RECMUTEX_LOCK(quad); // RemoveFeature
 
-	vector<int> quads=GetQuads(feature->pos,feature->radius);
+	std::vector<int> quads=GetQuads(feature->pos,feature->radius);
 
 	std::vector<int>::iterator qi;
 	for(qi=quads.begin();qi!=quads.end();++qi){
@@ -424,17 +425,17 @@ void CQuadField::RemoveFeature(CFeature* feature)
 	}
 }
 
-vector<CFeature*> CQuadField::GetFeaturesExact(const float3& pos,float radius)
+std::vector<CFeature*> CQuadField::GetFeaturesExact(const float3& pos,float radius)
 {
 	GML_RECMUTEX_LOCK(qnum); // GetFeaturesExact
 
-	vector<CFeature*> features;
+	std::vector<CFeature*> features;
 /*	if(pos.x<0 || pos.z<0 || pos.x>gs->mapx*SQUARE_SIZE || pos.z>gs->mapy*SQUARE_SIZE){
 		logOutput.Print("Trying to get units outside map %.0f %.0f",pos.x,pos.z);
 		return units;
 	}*/
 
-	vector<int> quads=GetQuads(pos,radius);
+	std::vector<int> quads=GetQuads(pos,radius);
 
 	int tempNum=gs->tempNum++;
 

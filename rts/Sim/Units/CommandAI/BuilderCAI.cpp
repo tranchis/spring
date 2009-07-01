@@ -8,12 +8,12 @@
 #include "TransportCAI.h"
 #include "ExternalAI/EngineOutHandler.h"
 #include "LineDrawer.h"
-#include "Sim/Units/Groups/Group.h"
 #include "Game/GameHelper.h"
 #include "Game/SelectedUnits.h"
-#include "Sim/Misc/Team.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
 #include "Game/UI/CursorIcons.h"
+#endif // !defined HEADLESS
 #include "LogOutput.h"
 #include "Map/Ground.h"
 #if !defined HEADLESS
@@ -29,6 +29,7 @@
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/TeamHandler.h"
+#include "Sim/Misc/Team.h"
 #include "Sim/MoveTypes/MoveType.h"
 #include "Sim/Units/UnitSet.h"
 #include "Sim/Units/UnitDefHandler.h"
@@ -38,6 +39,7 @@
 #include "Sim/Units/UnitTypes/Building.h"
 #include "Sim/Units/UnitTypes/Factory.h"
 #include "Sim/Units/UnitTypes/TransportUnit.h"
+#include "Sim/Units/Groups/Group.h"
 #include "myMath.h"
 #include "creg/STL_Map.h"
 #include "GlobalUnsynced.h"

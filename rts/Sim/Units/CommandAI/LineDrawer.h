@@ -3,8 +3,10 @@
 
 #if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
-#endif // !defined HEADLESS
 #include "Game/UI/CursorIcons.h"
+#endif // !defined HEADLESS
+
+#include "float3.h"
 
 class CLineDrawer {
 	public:
@@ -16,7 +18,7 @@ class CLineDrawer {
 
 		void SetupLineStipple();
 		void UpdateLineStipple();
-		               
+
 		void StartPath(const float3& pos, const float* color);
 		void FinishPath();
 		void DrawLine(const float3& endPos, const float* color);
@@ -33,13 +35,12 @@ class CLineDrawer {
 		bool useRestartColor;
 		float restartAlpha;
 		const float* restartColor;
-		
+
 		float3 lastPos;
 		const float* lastColor;
-		
+
 		float stippleTimer;
 };
-
 
 extern CLineDrawer lineDrawer;
 

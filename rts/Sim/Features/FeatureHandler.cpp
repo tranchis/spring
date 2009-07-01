@@ -3,7 +3,9 @@
 
 #include "FeatureHandler.h"
 #include "Feature.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/Game.h"
 #include "LoadSaveInterface.h"
 #include "LogOutput.h"
@@ -108,7 +110,9 @@ CR_REG_METADATA_SUB(CFeatureHandler,DrawQuad,(
 
 CFeatureHandler::CFeatureHandler() : nextFreeID(0)
 {
+#if !defined HEADLESS
 	PrintLoadMsg("Loading feature definitions");
+#endif // !defined HEADLESS
 
 	drawQuadsX = gs->mapx/DRAW_QUAD_SIZE;
 	drawQuadsY = gs->mapy/DRAW_QUAD_SIZE;
@@ -317,7 +321,9 @@ const FeatureDef* CFeatureHandler::GetFeatureDefByID(int id)
 
 void CFeatureHandler::LoadFeaturesFromMap(bool onlyCreateDefs)
 {
+#if !defined HEADLESS
 	PrintLoadMsg("Initializing map features");
+#endif // !defined HEADLESS
 
 	int numType = readmap->GetNumFeatureTypes ();
 

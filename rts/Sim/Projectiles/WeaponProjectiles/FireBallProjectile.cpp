@@ -3,10 +3,10 @@
 
 #include "creg/STL_Deque.h"
 #include "FireBallProjectile.h"
-#include "Game/Camera.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
 #endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"

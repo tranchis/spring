@@ -76,7 +76,9 @@ CUnitDefHandler::CUnitDefHandler(void) : noCost(false)
 {
 	weaponDefHandler = new CWeaponDefHandler();
 
+#if !defined HEADLESS
 	PrintLoadMsg("Loading unit definitions");
+#endif // !defined HEADLESS
 
 	const LuaTable rootTable = game->defsParser->GetRoot().SubTable("UnitDefs");
 	if (!rootTable.IsValid()) {

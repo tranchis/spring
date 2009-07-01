@@ -9,12 +9,14 @@
 #include "CommandAI/FactoryCAI.h"
 #include "creg/STL_List.h"
 #include "ExternalAI/EngineOutHandler.h"
+#if !defined HEADLESS
+#include "Game/UI/MiniMap.h"
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "Game/GameSetup.h"
 #include "Game/Player.h"
 #include "Game/SelectedUnits.h"
-#include "Game/UI/MiniMap.h"
 #include "Lua/LuaRules.h"
 #include "Map/Ground.h"
 #include "Map/MetalMap.h"
@@ -54,9 +56,12 @@
 #include "EventHandler.h"
 #include "LoadSaveInterface.h"
 #include "LogOutput.h"
+#include "GlobalUnsynced.h"
 #include "Matrix44f.h"
 #include "myMath.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "UnitDef.h"
 #include "Unit.h"
 #include "UnitHandler.h"
@@ -1075,10 +1080,14 @@ void CUnit::DoDamage(const DamageArray& damages, CUnit *attacker,const float3& i
 			if ((team == gu->myTeam)
 			    && ((!unitDef->isCommander && (uh->lastDamageWarning < warnFrame)) ||
 			        ( unitDef->isCommander && (uh->lastCmdDamageWarning < warnFrame)))
-					&& !camera->InView(midPos, radius + 50) && !gu->spectatingFullView) {
+#if !defined HEADLESS
+			        && !camera->InView(midPos, radius + 50)
+#endif // !defined HEADLESS
+			        && !gu->spectatingFullView) {
 				logOutput.Print("%s is being attacked", unitDef->humanName.c_str());
 				logOutput.SetLastMsgPos(pos);
 
+#if !defined HEADLESS
 				if (unitDef->isCommander || uh->lastDamageWarning + 150 < gs->frameNum) {
 					const int soundIdx = unitDef->sounds.underattack.getRandomIdx();
 					if (soundIdx >= 0) {
@@ -1090,6 +1099,7 @@ void CUnit::DoDamage(const DamageArray& damages, CUnit *attacker,const float3& i
 
 				minimap->AddNotification(pos, float3(1.0f, 0.3f, 0.3f),
 				                         unitDef->isCommander ? 1.0f : 0.5f);
+#endif // !defined HEADLESS
 
 				uh->lastDamageWarning = gs->frameNum;
 				if (unitDef->isCommander) {
@@ -1917,6 +1927,7 @@ void CUnit::KillUnit(bool selfDestruct, bool reclaimed, CUnit* attacker, bool sh
 					false, false, wd->explosionGenerator, 0, ZeroVector, wd->id
 				);
 
+#if !defined HEADLESS
 				// play explosion sound
 				if (wd->soundhit.getID(0) > 0) {
 					// HACK: loading code doesn't set sane defaults for explosion sounds, so we do it here
@@ -1924,6 +1935,7 @@ void CUnit::KillUnit(bool selfDestruct, bool reclaimed, CUnit* attacker, bool sh
 					float volume = wd->soundhit.getVolume(0);
 					Channels::Battle.PlaySample(wd->soundhit.getID(0), pos, (volume == -1) ? 1.0f : volume);
 				}
+#endif // !defined HEADLESS
 			}
 		}
 
@@ -2033,12 +2045,14 @@ void CUnit::Activate()
 	if (hasRadarCapacity)
 		radarhandler->MoveUnit(this);
 
+#if !defined HEADLESS
 	int soundIdx = unitDef->sounds.activate.getRandomIdx();
 	if (soundIdx >= 0) {
 		Channels::UnitReply.PlaySample(
 			unitDef->sounds.activate.getID(soundIdx), this,
 			unitDef->sounds.activate.getVolume(soundIdx));
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -2056,12 +2070,14 @@ void CUnit::Deactivate()
 	if (hasRadarCapacity)
 		radarhandler->RemoveUnit(this);
 
+#if !defined HEADLESS
 	int soundIdx = unitDef->sounds.deactivate.getRandomIdx();
 	if (soundIdx >= 0) {
 		Channels::UnitReply.PlaySample(
 			unitDef->sounds.deactivate.getID(soundIdx), this,
 			unitDef->sounds.deactivate.getVolume(soundIdx));
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -2132,12 +2148,15 @@ float CUnit::lodFactor = 1.0f;
 
 void CUnit::SetLODFactor(float value)
 {
+#if !defined HEADLESS
 	lodFactor = (value * camera->lppScale);
+#endif // !defined HEADLESS
 }
 
 
 void CUnit::SetLODCount(unsigned int count)
 {
+#if !defined HEADLESS
 	const unsigned int oldCount = lodCount;
 
 	lodCount = count;
@@ -2152,13 +2171,13 @@ void CUnit::SetLODCount(unsigned int count)
 	for (int m = 0; m < LUAMAT_TYPE_COUNT; m++) {
 		luaMats[m].SetLODCount(count);
 	}
-
-	return;
+#endif // !defined HEADLESS
 }
 
 
 unsigned int CUnit::CalcLOD(unsigned int lastLOD) const
 {
+#if !defined HEADLESS
 	if (lastLOD == 0) { return 0; }
 
 	const float3 diff = (pos - camera->pos);
@@ -2169,12 +2188,14 @@ unsigned int CUnit::CalcLOD(unsigned int lastLOD) const
 			break;
 		}
 	}
+#endif // !defined HEADLESS
 	return lastLOD;
 }
 
 
 unsigned int CUnit::CalcShadowLOD(unsigned int lastLOD) const
 {
+#if !defined HEADLESS
 	return CalcLOD(lastLOD); // FIXME
 
 	// FIXME -- the more 'correct' method
@@ -2192,6 +2213,7 @@ unsigned int CUnit::CalcShadowLOD(unsigned int lastLOD) const
 			break;
 		}
 	}
+#endif // !defined HEADLESS
 	return lastLOD;
 }
 

@@ -149,12 +149,16 @@ void CPathEstimator::InitEstimator(const std::string& name) {
 	InitVertices();
 	InitBlocks();
 
+#if !defined HEADLESS
 	PrintLoadMsg("Reading estimate path costs");
+#endif // !defined HEADLESS
 
 	if (!ReadFile(name)) {
 		char calcMsg[512];
 		sprintf(calcMsg, "Analyzing map accessibility [%d]", BLOCK_SIZE);
+#if !defined HEADLESS
 		PrintLoadMsg(calcMsg);
+#endif // !defined HEADLESS
 
 		pathBarrier=new boost::barrier(numThreads);
 
@@ -175,7 +179,9 @@ void CPathEstimator::InitEstimator(const std::string& name) {
 
 		delete pathBarrier;
 
+#if !defined HEADLESS
 		PrintLoadMsg("Writing path data file...");
+#endif // !defined HEADLESS
 		WriteFile(name);
 	}
 }
@@ -228,10 +234,12 @@ void CPathEstimator::CalculateBlockOffsets(int idx, int thread) {
 		char calcMsg[128];
 		sprintf(calcMsg, "Block offset: %d of %d (size %d)", lastOffsetMessage*1000, nbrOfBlocks, BLOCK_SIZE);
 		net->Send(CBaseNetProtocol::Get().SendCPUUsage(BLOCK_SIZE | (lastOffsetMessage<<8)));
+#if !defined HEADLESS
 		PrintLoadMsg(calcMsg);
+#endif // !defined HEADLESS
 	}
 
-	for (vector<MoveData*>::iterator mi = moveinfo->moveData.begin(); mi != moveinfo->moveData.end(); mi++)
+	for (std::vector<MoveData*>::iterator mi = moveinfo->moveData.begin(); mi != moveinfo->moveData.end(); mi++)
 		FindOffset(**mi, x, z);
 }
 
@@ -244,10 +252,12 @@ void CPathEstimator::EstimatePathCosts(int idx, int thread) {
 		char calcMsg[128];
 		sprintf(calcMsg, "Path cost: %d of %d (size %d)", lastCostMessage*1000, nbrOfBlocks, BLOCK_SIZE);
 		net->Send(CBaseNetProtocol::Get().SendCPUUsage(0x1 | BLOCK_SIZE | (lastCostMessage<<8)));
+#if !defined HEADLESS
 		PrintLoadMsg(calcMsg);
+#endif // !defined HEADLESS
 	}
 
-	for (vector<MoveData*>::iterator mi = moveinfo->moveData.begin(); mi != moveinfo->moveData.end(); mi++)
+	for (std::vector<MoveData*>::iterator mi = moveinfo->moveData.begin(); mi != moveinfo->moveData.end(); mi++)
 		CalculateVertices(**mi, x, z, thread);
 }
 
@@ -387,7 +397,7 @@ void CPathEstimator::MapChanged(unsigned int x1, unsigned int z1, unsigned int x
 	for (int z = upperZ; z >= lowerZ; z--) {
 		for (int x = upperX; x >= lowerX; x--) {
 			if (!(blockState[z * nbrOfBlocksX + x].options & PATHOPT_OBSOLETE)) {
-				vector<MoveData*>::iterator mi;
+				std::vector<MoveData*>::iterator mi;
 
 				for (mi = moveinfo->moveData.begin(); mi < moveinfo->moveData.end(); mi++) {
 					SingleBlock sb;
@@ -543,8 +553,9 @@ IPath::SearchResult CPathEstimator::DoSearch(const MoveData& moveData, const CPa
 		openBlocks.pop();
 
 		// check if the block has been marked as unaccessible during its time in the queue
-		if (blockState[ob->blocknr].options & (PATHOPT_BLOCKED | PATHOPT_CLOSED | PATHOPT_FORBIDDEN))
+		if (blockState[ob->blocknr].options & (PATHOPT_BLOCKED | PATHOPT_CLOSED | PATHOPT_FORBIDDEN)) {
 			continue;
+		}
 
 		// no, check if the goal is already reached
 		int xBSquare = blockState[ob->blocknr].sqrCenter[moveData.pathType].x;

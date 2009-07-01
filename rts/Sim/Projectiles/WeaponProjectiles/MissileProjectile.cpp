@@ -1,7 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
@@ -98,7 +100,6 @@ CMissileProjectile::CMissileProjectile(const float3& pos, const float3& speed, C
 			SetRadius(s3domodel->radius);
 		}
 	}
-#endif // !defined HEADLESS
 
 	drawRadius = radius + maxSpeed * 8;
 
@@ -108,6 +109,7 @@ CMissileProjectile::CMissileProjectile(const float3& pos, const float3& speed, C
 	}
 
 	castShadow = true;
+#endif // !defined HEADLESS
 
 #ifdef TRACE_SYNC
 	tracefile << "New missile: ";
@@ -303,11 +305,14 @@ void CMissileProjectile::Update(void)
 		numParts = 0;
 		useAirLos = tp->useAirLos;
 
+#if !defined HEADLESS
 		if (!drawTrail) {
 			float3 camDir = (pos - camera->pos).Normalize();
-			if ((camera->pos.distance(pos) * 0.2f + (1 - fabs(camDir.dot(dir))) * 3000) > 300)
+			if ((camera->pos.distance(pos) * 0.2f + (1 - fabs(camDir.dot(dir))) * 3000) > 300) {
 				drawTrail = true;
+			}
 		}
+#endif // !defined HEADLESS
 	}
 
 	UpdateGroundBounce();

@@ -1,3 +1,4 @@
+#if !defined HEADLESS
 #ifndef SELECT_MENU
 #define SELECT_MENU
 
@@ -41,4 +42,5 @@ private:
 	CglList* showList;
 };
 
-#endif
+#endif // SELECT_MENU
+#endif // !defined HEADLESS

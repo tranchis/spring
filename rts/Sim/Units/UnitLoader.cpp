@@ -29,6 +29,7 @@
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 #include "Platform/errorhandler.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Misc/TeamHandler.h"
@@ -51,7 +52,9 @@
 #include "Sim/Weapons/StarburstLauncher.h"
 #include "Sim/Weapons/TorpedoLauncher.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "myMath.h"
 #include "LogOutput.h"
 #include "Exceptions.h"

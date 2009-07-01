@@ -1,7 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
@@ -93,9 +95,13 @@ CStarburstProjectile::CStarburstProjectile(const float3& pos, const float3& spee
 	numCallback=new int;
 	*numCallback=0;
 
+#if !defined HEADLESS
 	float3 camDir=(pos-camera->pos).Normalize();
 	if(camera->pos.distance(pos)*0.2f+(1-fabs(camDir.dot(dir)))*3000 < 200)
 		drawTrail=false;
+#else // !defined HEADLESS
+	drawTrail=false;
+#endif // !defined HEADLESS
 
 	for(int a = 0; a < 5; ++a) {
 		oldInfos[a]=new OldInfo;
@@ -257,11 +263,13 @@ void CStarburstProjectile::Update(void)
 		oldSmokeDir = dir;
 		numParts = 0;
 		useAirLos = curCallback->useAirLos;
+#if !defined HEADLESS
 		if (!drawTrail) {
 			float3 camDir = (pos - camera->pos).Normalize();
 			if (camera->pos.distance(pos) * 0.2f + (1 - fabs(camDir.dot(dir))) * 3000 > 300)
 				drawTrail = true;
 		}
+#endif // !defined HEADLESS
 	}
 }
 

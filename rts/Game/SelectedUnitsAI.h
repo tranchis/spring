@@ -4,6 +4,7 @@
 #include "Sim/Units/CommandAI/Command.h"
 #include "Sim/Units/Unit.h"
 #include "float3.h"
+#include <vector>
 #include <map>
 #include <set>
 
@@ -34,9 +35,9 @@ private:
 	void AddGroupSetMaxSpeedCommand(CUnit* unit, unsigned char options);
 	void SelectAttack(const Command& cmd, int player);
 	void SelectCircleUnits(const float3& pos, float radius,
-	                       vector<int>& units, int player);
+	                       std::vector<int>& units, int player);
 	void SelectRectangleUnits(const float3& pos0, const float3& pos1,
-	                          vector<int>& units, int player);
+	                          std::vector<int>& units, int player);
 	float3 LastQueuePosition(CUnit* unit);
 
 	float3 minCoor, maxCoor, centerCoor;
@@ -51,4 +52,4 @@ private:
 
 extern CSelectedUnitsAI selectedUnitsAI;
 
-#endif
+#endif // SELECTED_UNITS_H

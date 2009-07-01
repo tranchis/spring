@@ -3,7 +3,9 @@
 
 #include "GroundMoveType.h"
 #include "ExternalAI/EngineOutHandler.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/Game.h"
 #include "Game/GameHelper.h"
 #include "Game/Player.h"
@@ -36,7 +38,9 @@
 #include "GlobalUnsynced.h"
 #include "EventHandler.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "FastMath.h"
 #include "myMath.h"
 
@@ -262,8 +266,11 @@ void CGroundMoveType::Update()
 				deltaHeading -= (short) turnRate;
 			}
 
-			if (gu->directControl == owner)
+			if (gu->directControl == owner) {
+#if !defined HEADLESS
 				camera->rot.y += deltaHeading * TAANG2RAD;
+#endif // !defined HEADLESS
+			}
 
 			ChangeHeading(owner->heading + deltaHeading);
 		} else
@@ -505,6 +512,7 @@ void CGroundMoveType::StartMoving(float3 moveGoalPos, float goalRadius, float sp
 	StartEngine();
 
 	if (owner->team == gu->myTeam) {
+#if !defined HEADLESS
 		// Play "activate" sound.
 		int soundIdx = owner->unitDef->sounds.activate.getRandomIdx();
 		if (soundIdx >= 0) {
@@ -512,6 +520,7 @@ void CGroundMoveType::StartMoving(float3 moveGoalPos, float goalRadius, float sp
 				owner->unitDef->sounds.activate.getID(soundIdx), owner,
 				owner->unitDef->sounds.activate.getVolume(soundIdx));
 		}
+#endif // !defined HEADLESS
 	}
 }
 
@@ -1377,12 +1386,14 @@ void CGroundMoveType::Arrived()
 		StopEngine();
 
 		if (owner->team == gu->myTeam) {
+#if !defined HEADLESS
 			int soundIdx = owner->unitDef->sounds.arrived.getRandomIdx();
 			if (soundIdx >= 0) {
 				Channels::UnitReply.PlaySample(
 					owner->unitDef->sounds.arrived.getID(soundIdx), owner,
 					owner->unitDef->sounds.arrived.getVolume(soundIdx));
 			}
+#endif // !defined HEADLESS
 		}
 
 		// and the action is done
@@ -1414,6 +1425,7 @@ void CGroundMoveType::Fail()
 
 	// sends a message to user.
 	if (game->moveWarnings && (owner->team == gu->myTeam)) {
+#if !defined HEADLESS
 		// playing "cant" sound.
 		int soundIdx = owner->unitDef->sounds.cant.getRandomIdx();
 		if (soundIdx >= 0) {
@@ -1421,6 +1433,7 @@ void CGroundMoveType::Fail()
 				owner->unitDef->sounds.cant.getID(soundIdx), owner,
 				owner->unitDef->sounds.cant.getVolume(soundIdx));
 		}
+#endif // !defined HEADLESS
 		if (!owner->commandAI->unimportantMove &&
 		    (owner->pos.SqDistance(goalPos) > Square(goalRadius + 150.0f))) {
 			logOutput.Print(owner->unitDef->humanName + ": Can't reach destination!");

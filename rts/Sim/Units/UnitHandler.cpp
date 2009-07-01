@@ -488,12 +488,16 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo)
 
 int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vector<Command> &cv)
 {
+	int canbuild = 2;
+
+#if !defined HEADLESS
 	glDisable(GL_DEPTH_TEST );
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBegin(GL_QUADS);
+#endif // !defined HEADLESS
 
 	int xsize=buildInfo.GetXSize();
 	int zsize=buildInfo.GetZSize();
@@ -505,16 +509,14 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vec
 	int z2 = z1+zsize*SQUARE_SIZE;
 	float h=GetBuildHeight(pos,buildInfo.def);
 
-	int canbuild=2;
-
-	if(buildInfo.def->needGeo)
+	if (buildInfo.def->needGeo)
 	{
-		canbuild=0;
+		canbuild = 0;
 		std::vector<CFeature*> features=qf->GetFeaturesExact(pos,max(xsize,zsize)*6);
 
-		for(std::vector<CFeature*>::iterator fi=features.begin();fi!=features.end();++fi){
-			if((*fi)->def->geoThermal && fabs((*fi)->pos.x-pos.x)<xsize*4-4 && fabs((*fi)->pos.z-pos.z)<zsize*4-4){
-				canbuild=2;
+		for (std::vector<CFeature*>::iterator fi=features.begin();fi!=features.end();++fi) {
+			if ((*fi)->def->geoThermal && fabs((*fi)->pos.x-pos.x)<xsize*4-4 && fabs((*fi)->pos.z-pos.z)<zsize*4-4) {
+				canbuild = 2;
 				break;
 			}
 		}
@@ -523,12 +525,12 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vec
 	std::vector<float3> featurepos;
 	std::vector<float3> nobuildpos;
 
-	for(int x=x1; x<x2; x+=SQUARE_SIZE){
-		for(int z=z1; z<z2; z+=SQUARE_SIZE){
+	for (int x=x1; x<x2; x+=SQUARE_SIZE) {
+		for (int z=z1; z<z2; z+=SQUARE_SIZE) {
 
 			CFeature* feature=0;
 			int tbs=TestBuildSquare(float3(x,pos.y,z),buildInfo.def,feature,gu->myAllyTeam);
-			if(tbs){
+			if (tbs) {
 				std::vector<Command>::const_iterator ci = cv.begin();
 				for(;ci != cv.end() && tbs; ci++){
 					BuildInfo bc(*ci);
@@ -537,13 +539,14 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vec
 						tbs=0;
 					}
 				}
-				if(!tbs){
+				if (!tbs) {
 					nobuildpos.push_back(float3(x,h,z));
 					canbuild = 0;
-				} else if(feature || tbs==1)
+				} else if (feature || tbs==1) {
 					featurepos.push_back(float3(x,h,z));
-				else
+				} else {
 					canbuildpos.push_back(float3(x,h,z));
+				}
 				canbuild=min(canbuild,tbs);
 			} else {
 				nobuildpos.push_back(float3(x,h,z));
@@ -553,10 +556,12 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vec
 		}
 	}
 
-	if(canbuild)
+#if !defined HEADLESS
+	if (canbuild) {
 		glColor4f(0,0.8f,0,1.0f);
-	else
+	} else {
 		glColor4f(0.5f,0.5f,0,1.0f);
+	}
 
 	for(unsigned int i=0; i<canbuildpos.size(); i++)
 	{
@@ -607,6 +612,7 @@ int CUnitHandler::ShowUnitBuildSquare(const BuildInfo& buildInfo, const std::vec
 	glEnable(GL_DEPTH_TEST );
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//glDisable(GL_BLEND);
+#endif // !defined HEADLESS
 
 	return canbuild;
 }

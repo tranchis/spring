@@ -8,16 +8,18 @@
 
 #include "Player.h"
 #include "PlayerHandler.h"
+#include "Game/GameHelper.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Misc/GlobalSynced.h"
-#include "Game/GameHelper.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitHandler.h"
 #include "Sim/Weapons/Weapon.h"
 #include "Sim/Units/COB/CobInstance.h"
+#if !defined HEADLESS
 #include "UI/MouseHandler.h"
 #include "CameraHandler.h"
 #include "Camera.h"
+#endif // !defined HEADLESS
 #include "myMath.h"
 #include "EventHandler.h"
 #include "GlobalUnsynced.h"
@@ -183,13 +185,15 @@ void CPlayer::StopControllingUnit()
 		assert(playerHandler->Player(gu->myPlayerNum) == this);
 		gu->directControl = 0;
 
-		/* Switch back to the camera we were using before. */
+#if !defined HEADLESS
+		// Switch back to the camera we were using before.
 		camHandler->PopMode();
 
 		if (mouse->locked && !mouse->wasLocked){
 			mouse->locked = false;
 			mouse->ShowMouse();
 		}
+#endif // !defined HEADLESS
 	}
 
 	playerControlledUnit = 0;

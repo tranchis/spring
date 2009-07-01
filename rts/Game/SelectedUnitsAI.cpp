@@ -93,8 +93,8 @@ static inline bool MayRequireSetMaxSpeedCommand(const Command &c)
 
 void CSelectedUnitsAI::GiveCommandNet(Command &c, int player)
 {
-	const vector<int>& netSelected = selectedUnits.netSelected[player];
-	vector<int>::const_iterator ui;
+	const std::vector<int>& netSelected = selectedUnits.netSelected[player];
+	std::vector<int>::const_iterator ui;
 
 	int nbrOfSelectedUnits = netSelected.size();
 
@@ -248,7 +248,7 @@ void CSelectedUnitsAI::CalculateGroupData(int player, bool queueing) {
 	sumLength = 0; ///
 	int mobileUnits = 0;
 	minMaxSpeed = 1e9f;
-	for(vector<int>::iterator ui = selectedUnits.netSelected[player].begin(); ui != selectedUnits.netSelected[player].end(); ++ui) {
+	for(std::vector<int>::iterator ui = selectedUnits.netSelected[player].begin(); ui != selectedUnits.netSelected[player].end(); ++ui) {
 		CUnit* unit=uh->units[*ui];
 		if(unit){
 			const UnitDef* ud = unit->unitDef;
@@ -304,7 +304,7 @@ void CSelectedUnitsAI::MakeFrontMove(Command* c,int player)
 	float3 nextPos(0.0f, 0.0f, 0.0f);//it's in "front" coordinates (rotated to real, moved by rightPos)
 
 	if(centerPos.distance(rightPos)<selectedUnits.netSelected[player].size()+33){	//Strange line! treat this as a standard move if the front isnt long enough
-		for(vector<int>::iterator ui = selectedUnits.netSelected[player].begin(); ui != selectedUnits.netSelected[player].end(); ++ui) {
+		for(std::vector<int>::iterator ui = selectedUnits.netSelected[player].begin(); ui != selectedUnits.netSelected[player].end(); ++ui) {
 			CUnit* unit=uh->units[*ui];
 			if(unit){
 				unit->commandAI->GiveCommand(*c, false);
@@ -340,8 +340,8 @@ void CSelectedUnitsAI::MakeFrontMove(Command* c,int player)
 
 void CSelectedUnitsAI::CreateUnitOrder(std::multimap<float,int>& out,int player)
 {
-	const vector<int>& netUnits = selectedUnits.netSelected[player];
-	for(vector<int>::const_iterator ui = netUnits.begin(); ui != netUnits.end(); ++ui){
+	const std::vector<int>& netUnits = selectedUnits.netSelected[player];
+	for(std::vector<int>::const_iterator ui = netUnits.begin(); ui != netUnits.end(); ++ui){
 		CUnit* unit=uh->units[*ui];
 		if(unit){
 			const UnitDef* ud = unit->unitDef;
@@ -399,7 +399,7 @@ struct DistInfo {
 
 void CSelectedUnitsAI::SelectAttack(const Command& cmd, int player)
 {
-	vector<int> targets;
+	std::vector<int> targets;
 	const float3 pos0(cmd.params[0], cmd.params[1], cmd.params[2]);
 	if (cmd.params.size() == 4) {
 		SelectCircleUnits(pos0, cmd.params[3], targets, player);
@@ -412,7 +412,7 @@ void CSelectedUnitsAI::SelectAttack(const Command& cmd, int player)
 		return;
 	}
 
-	const vector<int>& selected = selectedUnits.netSelected[player];
+	const std::vector<int>& selected = selectedUnits.netSelected[player];
 	const int selectedCount = (int)selected.size();
 	if (selectedCount <= 0) {
 		return;
@@ -465,7 +465,7 @@ void CSelectedUnitsAI::SelectAttack(const Command& cmd, int player)
 	midPos /= (float)realCount;
 
 	// sort the targets
-	vector<DistInfo> distVec;
+	std::vector<DistInfo> distVec;
 	int t;
 	for (t = 0; t < targetsCount; t++) {
 		DistInfo di;
@@ -502,7 +502,7 @@ void CSelectedUnitsAI::SelectAttack(const Command& cmd, int player)
 
 
 void CSelectedUnitsAI::SelectCircleUnits(const float3& pos, float radius,
-                                         vector<int>& units, int player)
+                                         std::vector<int>& units, int player)
 {
 	units.clear();
 
@@ -515,7 +515,7 @@ void CSelectedUnitsAI::SelectCircleUnits(const float3& pos, float radius,
 	}
 	const int allyTeam = teamHandler->AllyTeam(p->team);
 
-	vector<CUnit*> tmpUnits = qf->GetUnits(pos, radius);
+	std::vector<CUnit*> tmpUnits = qf->GetUnits(pos, radius);
 
 	const float radiusSqr = (radius * radius);
 	const int count = (int)tmpUnits.size();
@@ -536,7 +536,7 @@ void CSelectedUnitsAI::SelectCircleUnits(const float3& pos, float radius,
 
 void CSelectedUnitsAI::SelectRectangleUnits(const float3& pos0,
                                             const float3& pos1,
-                                            vector<int>& units, int player)
+                                            std::vector<int>& units, int player)
 {
 	units.clear();
 
@@ -552,7 +552,7 @@ void CSelectedUnitsAI::SelectRectangleUnits(const float3& pos0,
 	const float3 mins(std::min(pos0.x, pos1.x), 0.0f, std::min(pos0.z, pos1.z));
 	const float3 maxs(std::max(pos0.x, pos1.x), 0.0f, std::max(pos0.z, pos1.z));
 
-	vector<CUnit*> tmpUnits = qf->GetUnitsExact(mins, maxs);
+	std::vector<CUnit*> tmpUnits = qf->GetUnitsExact(mins, maxs);
 
 	const int count = (int)tmpUnits.size();
 	for (int i = 0; i < count; i++) {

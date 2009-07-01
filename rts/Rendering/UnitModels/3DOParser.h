@@ -7,9 +7,6 @@
 #include <vector>
 #include <string>
 #include "float3.h"
-#if !defined HEADLESS
-#include "Rendering/Textures/3DOTextureHandler.h"
-#endif // !defined HEADLESS
 #include <map>
 #include <set>
 #include "IModelParser.h"
@@ -17,6 +14,10 @@
 
 class CMatrix44f;
 class CFileHandler;
+class C3DOTextureHandler {
+public:
+	struct UnitTexture;
+};
 
 struct S3DOVertex {
 	float3 pos;
@@ -26,7 +27,7 @@ struct S3DOVertex {
 
 struct S3DOPrimitive {
 	std::vector<int> vertices;
-	std::vector<float3> normals;		//normals per vertex
+	std::vector<float3> normals; ///< normals per vertex
 	float3 normal;
 	int numVertex;
 	C3DOTextureHandler::UnitTexture* texture;

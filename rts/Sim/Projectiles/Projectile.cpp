@@ -9,15 +9,15 @@
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Rendering/Colors.h"
+#include "Game/Camera.h"
 #endif // !defined HEADLESS
 #include "Projectile.h"
 #include "ProjectileHandler.h"
-#include "Game/Camera.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Misc/GlobalConstants.h"
-#include "LogOutput.h"
 #include "Map/MapInfo.h"
 #include "GlobalUnsynced.h"
+#include "LogOutput.h"
 
 CR_BIND_DERIVED(CProjectile, CExpGenSpawnable, );
 

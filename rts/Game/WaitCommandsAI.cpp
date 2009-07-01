@@ -22,8 +22,10 @@
 #include "Sim/Misc/GlobalSynced.h"
 #include "GlobalUnsynced.h"
 #include "Object.h"
+#if !defined HEADLESS
 #include "UI/CommandColors.h"
 #include "UI/CursorIcons.h"
+#endif // !defined HEADLESS
 #include "creg/STL_Map.h"
 #include "creg/STL_List.h"
 #include "Util.h"
@@ -330,6 +332,7 @@ void CWaitCommandsAI::RemoveWaitObject(Wait* wait)
 
 void CWaitCommandsAI::AddIcon(const Command& cmd, const float3& pos) const
 {
+#if !defined HEADLESS
 	if (cmd.params.size() != 2) {
 		lineDrawer.DrawIconAtLastPos(CMD_WAIT);
 		return;
@@ -352,7 +355,7 @@ void CWaitCommandsAI::AddIcon(const Command& cmd, const float3& pos) const
 	}
 	else if (code == CMD_WAITCODE_DEATHWAIT) {
 		lineDrawer.DrawIconAtLastPos(CMD_DEATHWAIT);
-    it->second->AddUnitPosition(pos);
+		it->second->AddUnitPosition(pos);
 	}
 	else if (code == CMD_WAITCODE_GATHERWAIT) {
 		lineDrawer.DrawIconAtLastPos(CMD_GATHERWAIT);
@@ -360,6 +363,7 @@ void CWaitCommandsAI::AddIcon(const Command& cmd, const float3& pos) const
 	else {
 		lineDrawer.DrawIconAtLastPos(CMD_WAIT);
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -370,7 +374,7 @@ void CWaitCommandsAI::AddIcon(const Command& cmd, const float3& pos) const
 
 CWaitCommandsAI::KeyType CWaitCommandsAI::Wait::keySource = 0;
 
-const string CWaitCommandsAI::Wait::noText = "";
+const std::string CWaitCommandsAI::Wait::noText = "";
 
 
 // static
@@ -654,7 +658,7 @@ void CWaitCommandsAI::TimeWait::Update()
 }
 
 
-const string& CWaitCommandsAI::TimeWait::GetStateText() const
+const std::string& CWaitCommandsAI::TimeWait::GetStateText() const
 {
 	static char buf[32];
 	if (enabled) {
@@ -664,7 +668,7 @@ const string& CWaitCommandsAI::TimeWait::GetStateText() const
 	} else {
 		SNPRINTF(buf, sizeof(buf), "%i", duration / GAME_SPEED);
 	}
-	static string text;
+	static std::string text;
 	text = buf;
 	return text;
 }
@@ -840,6 +844,7 @@ void CWaitCommandsAI::DeathWait::Update()
 
 void CWaitCommandsAI::DeathWait::Draw() const
 {
+#if !defined HEADLESS
 	CUnitSet drawSet;
 	CUnitSet::const_iterator it;
 
@@ -872,13 +877,13 @@ void CWaitCommandsAI::DeathWait::Draw() const
 	}
 
 	unitPos.clear();
+#endif // !defined HEADLESS
 }
 
 
 void CWaitCommandsAI::DeathWait::AddUnitPosition(const float3& pos) const
 {
 	unitPos.push_back(pos);
-	return;
 }
 
 

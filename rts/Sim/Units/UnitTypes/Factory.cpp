@@ -4,7 +4,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Factory.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "Game/WaitCommandsAI.h"
 #include "Map/Ground.h"

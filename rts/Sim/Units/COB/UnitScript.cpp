@@ -13,7 +13,9 @@
 #include "Game/GameHelper.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/LosHandler.h"
@@ -41,7 +43,9 @@
 #include "Sim/Weapons/Weapon.h"
 #include "GlobalUnsynced.h"
 #include "Util.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "myMath.h"
 #include "Sync/SyncTracer.h"
 
@@ -648,9 +652,11 @@ void CUnitScript::EmitSfx(int type, int piece)
 				}
 				// detonate weapon from piece
 				const WeaponDef* weaponDef = unit->weapons[index]->weaponDef;
+#if !defined HEADLESS
 				if (weaponDef->soundhit.getID(0) > 0) {
 					Channels::Battle.PlaySample(weaponDef->soundhit.getID(0), unit, weaponDef->soundhit.getVolume(0));
 				}
+#endif // !defined HEADLESS
 
 				helper->Explosion(
 					pos, weaponDef->damages, weaponDef->areaOfEffect, weaponDef->edgeEffectiveness,
@@ -1193,11 +1199,13 @@ int CUnitScript::GetUnitVal(int val, int p1, int p2, int p3, int p4)
 				if (unit->allyteam == gu->myAllyTeam) { return 0; }
 				break;
 		}
+#if !defined HEADLESS
 		if (p4 == 0) {
 			Channels::UnitReply.PlaySample(script->sounds[p1], unit->pos, unit->speed, float(p2) / COBSCALE);
 		} else {
 			Channels::UnitReply.PlaySample(script->sounds[p1], float(p2) / COBSCALE);
 		}
+#endif // !defined HEADLESS
 		return 0;
 	}
 	case SET_WEAPON_UNIT_TARGET: {

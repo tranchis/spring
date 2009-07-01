@@ -21,13 +21,15 @@
 #include "Game/GameSetup.h"
 #include "Game/ClientSetup.h"
 #include "Game/GameController.h"
+#if !defined HEADLESS
 #include "Game/SelectMenu.h"
+#endif // !defined HEADLESS
 #include "Game/PreGame.h"
 #include "Game/Game.h"
 #include "Sim/Misc/Team.h"
+#if !defined HEADLESS
 #include "Game/UI/KeyBindings.h"
 #include "Game/UI/MouseHandler.h"
-#if !defined HEADLESS
 #include "Lua/LuaOpenGL.h"
 #endif // !defined HEADLESS
 #include "Platform/BaseCmd.h"
@@ -48,13 +50,15 @@
 #include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Misc/GlobalConstants.h"
 #include "LogOutput.h"
-#include "MouseInput.h"
 #include "bitops.h"
 #include "GlobalUnsynced.h"
 #include "Util.h"
 #include "Exceptions.h"
 #include "System/TimeProfiler.h"
+#if !defined HEADLESS
+#include "MouseInput.h"
 #include "System/Sound/Sound.h"
+#endif // !defined HEADLESS
 
 #include "mmgr.h"
 
@@ -198,7 +202,9 @@ bool SpringApp::Initialize()
 		return false;
 	}
 
+#if !defined HEADLESS
 	mouseInput = IMouseInput::Get();
+#endif // !defined HEADLESS
 
 	// Global structures
 	gs = new CGlobalSyncedStuff();
@@ -769,7 +775,9 @@ void SpringApp::Startup()
 #ifdef SYNCDEBUG
 		CSyncDebugger::GetInstance()->Initialize(server, 64);
 #endif
+#if !defined HEADLESS
 		activeController = new SelectMenu(server);
+#endif // !defined HEADLESS
 	}
 	else if (inputFile.rfind("sdf") == inputFile.size() - 3)
 	{
@@ -992,8 +1000,10 @@ int SpringApp::Run(int argc, char *argv[])
 	gmlStartSim=0;
 	gmlProcessor->AuxWork(&SpringApp::Simcb,this); // start sim thread
 #	endif
-#endif
+#endif // USE_GML
+#if !defined HEADLESS
 	SDL_Event event;
+#endif // !defined HEADLESS
 	bool done = false;
 
 	while (!done) {
@@ -1006,7 +1016,8 @@ int SpringApp::Run(int argc, char *argv[])
 			if(SystemParametersInfo(SPI_GETSCREENSAVETIMEOUT, 0, &timeout, 0))
 				SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, timeout, NULL, 0);
 		}
-#endif
+#endif // WIN32
+#if !defined HEADLESS
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_VIDEORESIZE: {
@@ -1019,7 +1030,7 @@ int SpringApp::Run(int argc, char *argv[])
 					// HACK   We don't want to break resizing on windows (again?),
 					//        so someone should test this very well before enabling it.
 					SetSDLVideoMode();
-#endif
+#endif // WIN32
 					InitOpenGL();
 					activeController->ResizeEvent();
 					break;
@@ -1137,12 +1148,15 @@ int SpringApp::Run(int argc, char *argv[])
 					break;
 			}
 		}
-		if (globalQuit)
+#endif // !defined HEADLESS
+		if (globalQuit) {
 			break;
+		}
 
 		try {
-			if (!Update())
+			if (!Update()) {
 				break;
+			}
 		} catch (content_error &e) {
 			LogObject() << "Caught content exception: " << e.what() << "\n";
 			handleerror(NULL, e.what(), "Content error", MBF_OK | MBF_EXCL);
@@ -1278,8 +1292,10 @@ void SpringApp::Shutdown()
 	GLContext::Free();
 #endif // !defined HEADLESS
 	ConfigHandler::Deallocate();
+#if !defined HEADLESS
 	UnloadExtensions();
 	delete mouseInput;
+#endif // !defined HEADLESS
 	SDL_WM_GrabInput(SDL_GRAB_OFF);
 	SDL_Quit();
 	delete gs;

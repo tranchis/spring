@@ -8,7 +8,9 @@
 #include "Sim/Units/Groups/Group.h"
 #include "Game/GameHelper.h"
 #include "Game/SelectedUnits.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
+#endif // !defined HEADLESS
 #include "Map/Ground.h"
 #include "Sim/Misc/AirBaseHandler.h"
 #include "Sim/Misc/LosHandler.h"
@@ -28,6 +30,8 @@
 #include <assert.h>
 #include "Util.h"
 #include "GlobalUnsynced.h"
+
+#include <vector>
 
 CR_BIND_DERIVED(CMobileCAI ,CCommandAI , );
 
@@ -232,7 +236,7 @@ void CMobileCAI::GiveCommandReal(const Command &c, bool fromSynced)
 			case 2: { airMT->repairBelowHealth = 0.5f; break; }
 			case 3: { airMT->repairBelowHealth = 0.8f; break; }
 		}
-		for (vector<CommandDescription>::iterator cdi = possibleCommands.begin();
+		for (std::vector<CommandDescription>::iterator cdi = possibleCommands.begin();
 				cdi != possibleCommands.end(); ++cdi) {
 			if (cdi->id == CMD_AUTOREPAIRLEVEL) {
 				char t[10];
@@ -258,7 +262,7 @@ void CMobileCAI::GiveCommandReal(const Command &c, bool fromSynced)
 			case 0: { airMT->autoLand = false; airMT->Takeoff(); break; }
 			case 1: { airMT->autoLand = true; break; }
 		}
-		for (vector<CommandDescription>::iterator cdi = possibleCommands.begin();
+		for (std::vector<CommandDescription>::iterator cdi = possibleCommands.begin();
 				cdi != possibleCommands.end(); ++cdi) {
 			if (cdi->id == CMD_IDLEMODE) {
 				char t[10];
@@ -875,7 +879,7 @@ void CMobileCAI::ExecuteAttack(Command &c)
 			if (c.id == CMD_DGUN) {
 				float rr = owner->maxRange * owner->maxRange;
 
-				for (vector<CWeapon*>::iterator it = owner->weapons.begin();
+				for (std::vector<CWeapon*>::iterator it = owner->weapons.begin();
 						it != owner->weapons.end(); ++it) {
 
 					if (dynamic_cast<CDGunWeapon*>(*it))
@@ -957,6 +961,7 @@ void CMobileCAI::StopMove()
 
 void CMobileCAI::DrawCommands(void)
 {
+#if !defined HEADLESS
 	lineDrawer.StartPath(owner->drawMidPos, cmdColors.start);
 
 	if (owner->selfDCountdown != 0) {
@@ -1027,6 +1032,7 @@ void CMobileCAI::DrawCommands(void)
 		}
 	}
 	lineDrawer.FinishPath();
+#endif // !defined HEADLESS
 }
 
 

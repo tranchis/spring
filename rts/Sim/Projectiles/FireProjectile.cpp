@@ -2,13 +2,15 @@
 #include "mmgr.h"
 
 #include "FireProjectile.h"
-#include "Sim/Misc/Wind.h"
+#include "ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
+#include "Sim/Misc/Wind.h"
 #include "Sim/Misc/GlobalSynced.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Features/Feature.h"
-#include "ProjectileHandler.h"
 #include "Sim/Units/Unit.h"
 #include "GlobalUnsynced.h"
 #include "creg/STL_List.h"

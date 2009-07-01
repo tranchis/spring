@@ -21,6 +21,7 @@
 #include "myMath.h"
 #include "Matrix44f.h"
 
+#include <vector>
 
 CR_BIND_DERIVED(CTAAirMoveType, AAirMoveType, (NULL));
 
@@ -861,8 +862,8 @@ void CTAAirMoveType::Update()
 		oldpos = pos;
 
 		if (!dontCheckCol && collide) {
-			vector<CUnit*> nearUnits = qf->GetUnitsExact(pos, owner->radius + 6);
-			vector<CUnit*>::iterator ui;
+			std::vector<CUnit*> nearUnits = qf->GetUnitsExact(pos, owner->radius + 6);
+			std::vector<CUnit*>::iterator ui;
 
 			for (ui = nearUnits.begin(); ui != nearUnits.end(); ++ui) {
 				if ((*ui)->transporter)

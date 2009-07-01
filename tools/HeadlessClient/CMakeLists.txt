@@ -77,7 +77,7 @@ SET(system_files
 	${sr}/System/MemPool.cpp
 	${sr}/System/Messages.cpp
 	${sr}/System/mmgr.cpp
-	${sr}/System/MouseInput.cpp
+#	${sr}/System/MouseInput.cpp
 	${sr}/System/myMath.cpp
 	${sr}/System/NetProtocol.cpp
 	${sr}/System/Object.cpp
@@ -107,14 +107,51 @@ AUX_SOURCE_DIRECTORY(${sr}/Sim/Path sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles/WeaponProjectiles sim_files)
 #AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles/Unsynced sim_files)
-AUX_SOURCE_DIRECTORY(${sr}/Sim/Units sim_files)
+#AUX_SOURCE_DIRECTORY(${sr}/Sim/Units sim_files)
+SET(sim_files
+	${sr}/Sim/Units/Unit.cpp
+	${sr}/Sim/Units/UnitDefHandler.cpp
+	${sr}/Sim/Units/UnitHandler.cpp
+	${sr}/Sim/Units/UnitLoader.cpp
+	${sr}/Sim/Units/UnitSet.cpp
+#	${sr}/Sim/Units/UnitTracker.cpp
+	}
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/COB sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/CommandAI sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/Groups sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/UnitTypes sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Weapons sim_files)
 
-AUX_SOURCE_DIRECTORY(${sr}/Game game_files)
+#AUX_SOURCE_DIRECTORY(${sr}/Game game_files)
+SET(game_files
+	${sr}/Game/Action.cpp
+#	${sr}/Game/Camera.cpp
+#	${sr}/Game/CameraHandler.cpp
+	${sr}/Game/ChatMessage.cpp
+	${sr}/Game/ClientSetup.cpp
+	${sr}/Game/CommandMessage.cpp
+	${sr}/Game/Console.cpp
+	${sr}/Game/ConsoleHistory.cpp
+	${sr}/Game/GameController.cpp
+	${sr}/Game/Game.cpp
+	${sr}/Game/GameData.cpp
+	${sr}/Game/GameHelper.cpp
+	${sr}/Game/GameServer.cpp
+	${sr}/Game/GameSetup.cpp
+	${sr}/Game/GameVersion.cpp
+	${sr}/Game/OSCStatsSender.cpp
+	${sr}/Game/PlayerBase.cpp
+	${sr}/Game/Player.cpp
+	${sr}/Game/PlayerHandler.cpp
+	${sr}/Game/PlayerRoster.cpp
+	${sr}/Game/PreGame.cpp
+	${sr}/Game/SelectedUnitsAI.cpp
+	${sr}/Game/SelectedUnits.cpp
+#	${sr}/Game/SelectMenu.cpp
+	${sr}/Game/WaitCommandsAI.cpp
+	${sr}/Game/WordCompletion.cpp
+	)
+
 AUX_SOURCE_DIRECTORY(${sr}/Game/Server server_files)
 #AUX_SOURCE_DIRECTORY(${sr}/Lua lua_files)
 SET(lua_files

@@ -9,7 +9,9 @@
 
 #include "Projectile.h"
 #include "ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaParser.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
@@ -102,7 +104,9 @@ FlyingPiece::~FlyingPiece() {
 
 CProjectileHandler::CProjectileHandler()
 {
+#if !defined HEADLESS
 	PrintLoadMsg("Creating projectile texture");
+#endif // !defined HEADLESS
 
 	maxParticles     = configHandler->Get("MaxParticles",      4000);
 	maxNanoParticles = configHandler->Get("MaxNanoParticles", 10000);

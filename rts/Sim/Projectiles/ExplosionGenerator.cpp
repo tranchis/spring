@@ -6,11 +6,11 @@
 #include "creg/VarTypes.h"
 #include "ExplosionGenerator.h"
 #include "FileSystem/FileHandler.h"
-#include "Game/Camera.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
 #include "ConfigHandler.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GroundFlash.h"
 #include "Rendering/Textures/ColorMap.h"
@@ -184,22 +184,27 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 	bool airExplosion = pos.y - max((float)0, h2) > 20;
 
 	damage=damage/20;
-	if (damage>radius*1.5f) //limit the visual effects based on the radius
+	if (damage>radius*1.5f) {
+		// limit the visual effects based on the radius
 		damage=radius*1.5f;
+	}
 	damage*=gfxMod;
-	for (int a=0;a<1;++a) {
+#if !defined HEADLESS
+	{
 //		float3 speed((gs->randFloat()-0.5f)*(radius*0.04f),0.05f+(gs->randFloat())*(radius*0.007f),(gs->randFloat()-0.5f)*(radius*0.04f));
 		float3 speed(0,0.3f,0);
 		float3 camVect=camera->pos-pos;
 		float camLength=camVect.Length();
 		camVect/=camLength;
 		float moveLength=radius*0.03f;
-		if (camLength<moveLength+2)
+		if (camLength<moveLength+2) {
 			moveLength=camLength-2;
+		}
 		float3 npos=pos+camVect*moveLength;
 
 		new CHeatCloudProjectile(npos,speed,8+sqrt(damage)*0.5f,7+damage*2.8f,owner);
 	}
+#endif // !defined HEADLESS
 	if (ph->particleSaturation<1) {		//turn off lots of graphic only particles when we have more particles than we want
 		float smokeDamage=damage;
 		if (uwExplosion)

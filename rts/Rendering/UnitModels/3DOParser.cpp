@@ -15,6 +15,7 @@
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/TAPalette.h"
+#include "Rendering/Textures/3DOTextureHandler.h"
 #endif // !defined HEADLESS
 #include "3DOParser.h"
 #include "s3oParser.h"

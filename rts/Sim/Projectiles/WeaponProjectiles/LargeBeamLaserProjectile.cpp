@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
-#include "Game/Camera.h"
 #include "LargeBeamLaserProjectile.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
 #endif // !defined HEADLESS

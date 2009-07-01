@@ -1,3 +1,4 @@
+#if !defined HEADLESS
 #include "SelectMenu.h"
 #include "Rendering/GL/myGL.h"
 
@@ -318,3 +319,4 @@ void SelectMenu::SelectMod(const std::string& s)
 	ShowScriptList();
 }
 
+#endif // !defined HEADLESS

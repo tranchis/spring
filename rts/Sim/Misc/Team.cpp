@@ -14,7 +14,9 @@
 #include "Game/PlayerHandler.h"
 #include "Game/GameSetup.h"
 #include "GlobalUnsynced.h"
+#if !defined HEADLESS
 #include "Game/UI/LuaUI.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaRules.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitHandler.h"
@@ -282,7 +284,9 @@ void CTeam::Died()
 		eoh->DestroySkirmishAI(teamNum);
 	}
 
+#if !defined HEADLESS
 	CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 	CPlayer::UpdateControlledTeams();
 	eventHandler.TeamDied(teamNum);
 }

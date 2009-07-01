@@ -13,6 +13,7 @@
 #include "Platform/errorhandler.h"
 #include "mmgr.h"
 #include "creg/STL_List.h"
+#include "lib/gml/gml.h"
 
 CR_BIND(CGroup, (0,NULL))
 

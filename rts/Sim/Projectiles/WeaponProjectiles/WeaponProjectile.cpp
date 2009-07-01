@@ -3,8 +3,8 @@
 
 #include "WeaponProjectile.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
-#include "Sound/AudioChannel.h"
 #if !defined HEADLESS
+#include "Sound/AudioChannel.h"
 #include "Rendering/UnitModels/IModelParser.h"
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Rendering/UnitModels/3DOParser.h"
@@ -148,9 +148,11 @@ void CWeaponProjectile::Collision()
 		);
 	}
 
+#if !defined HEADLESS
 	if (weaponDef->soundhit.getID(0) > 0) {
 		Channels::Battle.PlaySample(weaponDef->soundhit.getID(0), this, weaponDef->soundhit.getVolume(0));
 	}
+#endif // !defined HEADLESS
 
 	if (!weaponDef->noExplode){
 		CProjectile::Collision();
@@ -210,16 +212,19 @@ void CWeaponProjectile::Collision(CUnit* unit)
 		);
 	}
 
+#if !defined HEADLESS
 	if (weaponDef->soundhit.getID(0) > 0) {
 		Channels::Battle.PlaySample(weaponDef->soundhit.getID(0), this,
 				weaponDef->soundhit.getVolume(0));
 	}
+#endif // !defined HEADLESS
 
-	if(!weaponDef->noExplode)
+	if(!weaponDef->noExplode) {
 		CProjectile::Collision(unit);
-	else {
-		if (TraveledRange())
+	} else {
+		if (TraveledRange()) {
 			CProjectile::Collision();
+		}
 	}
 }
 

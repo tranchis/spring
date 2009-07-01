@@ -2,9 +2,9 @@
 #include "mmgr.h"
 
 #include "EmgProjectile.h"
-#include "Game/Camera.h"
 #include "Map/Ground.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
 #endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"

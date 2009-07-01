@@ -6,9 +6,9 @@
 #include "mmgr.h"
 
 #include "ExplosiveProjectile.h"
-#include "Game/Camera.h"
 #include "Map/Ground.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/Textures/ColorMap.h"
 #endif // !defined HEADLESS

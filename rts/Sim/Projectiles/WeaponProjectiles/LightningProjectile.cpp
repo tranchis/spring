@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
-#include "Game/Camera.h"
 #include "LightningProjectile.h"
 #if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
 #endif // !defined HEADLESS
 #include "Sim/Weapons/Weapon.h"

@@ -46,7 +46,9 @@
 #include "Map/ReadMap.h"
 #include "Map/MetalMap.h"
 #include "Game/SelectedUnits.h"
+#if !defined HEADLESS
 #include "Game/UI/GuiHandler.h" //TODO: fix some switch for new gui
+#endif // !defined HEADLESS
 #include "Game/GameVersion.h"
 #include "Game/GameSetup.h"
 #include "GlobalUnsynced.h" // for myTeam
@@ -2795,8 +2797,8 @@ EXPORT(int) skirmishAiCallback_0MULTI1VALS3FeaturesIn0Feature(int teamId, SAIFlo
 	const size_t featureIds_max = static_cast<size_t>(_featureIds_max);
 
 	if (skirmishAiCallback_Cheats_isEnabled(teamId)) {
-		const vector<CFeature*>& fset = qf->GetFeaturesExact(pos, radius);
-		vector<CFeature*>::const_iterator it;
+		const std::vector<CFeature*>& fset = qf->GetFeaturesExact(pos, radius);
+		std::vector<CFeature*>::const_iterator it;
 		size_t i=0;
 		for (it = fset.begin(); it != fset.end() && i < featureIds_max; ++it) {
 			CFeature *f = *it;
@@ -3110,60 +3112,96 @@ EXPORT(int) skirmishAiCallback_Group_SupportedCommand_0ARRAY1VALS0getParams(int 
 
 EXPORT(int) skirmishAiCallback_Group_OrderPreview_getId(int teamId, int groupId) {
 
-	if (!isControlledByLocalPlayer(teamId)) return -1;
+	int orderPreview_id = -1;
 
-	//TODO: need to add support for new gui
-	Command tmpCmd = guihandler->GetOrderPreview();
-	return tmpCmd.id;
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		orderPreview_id = tmpCmd.id;
+	}
+#endif // !defined HEADLESS
+
+	return orderPreview_id;
 }
 EXPORT(unsigned char) skirmishAiCallback_Group_OrderPreview_getOptions(int teamId, int groupId) {
 
-	if (!isControlledByLocalPlayer(teamId)) return '\0';
+	int orderPreview_options = '\0';
 
-	//TODO: need to add support for new gui
-	Command tmpCmd = guihandler->GetOrderPreview();
-	return tmpCmd.options;
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		orderPreview_options = tmpCmd.options;
+	}
+#endif // !defined HEADLESS
+
+	return orderPreview_options;
 }
 EXPORT(unsigned int) skirmishAiCallback_Group_OrderPreview_getTag(int teamId, int groupId) {
 
-	if (!isControlledByLocalPlayer(teamId)) return 0;
+	unsigned int orderPreview_tag = 0;
 
-	//TODO: need to add support for new gui
-	Command tmpCmd = guihandler->GetOrderPreview();
-	return tmpCmd.tag;
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		orderPreview_tag = tmpCmd.tag;
+	}
+#endif // !defined HEADLESS
+
+	return orderPreview_tag;
 }
 EXPORT(int) skirmishAiCallback_Group_OrderPreview_getTimeOut(int teamId, int groupId) {
 
-	if (!isControlledByLocalPlayer(teamId)) return -1;
+	int orderPreview_timeOut = -1;
 
-	//TODO: need to add support for new gui
-	Command tmpCmd = guihandler->GetOrderPreview();
-	return tmpCmd.timeOut;
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		orderPreview_timeOut = tmpCmd.timeOut;
+	}
+#endif // !defined HEADLESS
+
+	return orderPreview_timeOut;
 }
 EXPORT(int) skirmishAiCallback_Group_OrderPreview_0ARRAY1SIZE0getParams(int teamId,
 		int groupId) {
 
-	if (!isControlledByLocalPlayer(teamId)) return 0;
+	int orderPreview_params_size = 0;
 
-	//TODO: need to add support for new gui
-	return guihandler->GetOrderPreview().params.size();
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		orderPreview_params_size = tmpCmd.params.size();
+	}
+#endif // !defined HEADLESS
+
+	return orderPreview_params_size;
 }
 EXPORT(int) skirmishAiCallback_Group_OrderPreview_0ARRAY1VALS0getParams(int teamId,
 		int groupId, float params[], int params_max) {
 
-	if (!isControlledByLocalPlayer(teamId)) return 0;
+	int orderPreview_params_size = 0;
 
-	//TODO: need to add support for new gui
-	Command tmpCmd = guihandler->GetOrderPreview();
-	int numParams = params_max < (int)(tmpCmd.params.size()) ? params_max
-			: tmpCmd.params.size();
+#if !defined HEADLESS
+	if (isControlledByLocalPlayer(teamId)) {
+		//TODO: need to add support for new gui
+		Command tmpCmd = guihandler->GetOrderPreview();
+		int numParams = params_max < (int)(tmpCmd.params.size()) ? params_max
+				: tmpCmd.params.size();
 
-	int i;
-	for (i = 0; i < numParams; i++) {
-		params[i] = tmpCmd.params[i];
+		int i;
+		for (i = 0; i < numParams; i++) {
+			params[i] = tmpCmd.params[i];
+		}
+		orderPreview_params_size = numParams;
 	}
+#endif // !defined HEADLESS
 
-	return numParams;
+	return orderPreview_params_size;
 }
 
 EXPORT(bool) skirmishAiCallback_Group_isSelected(int teamId, int groupId) {

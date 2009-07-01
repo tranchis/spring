@@ -1,7 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "Map/Ground.h"
 #include "Map/MapInfo.h"
@@ -55,8 +57,8 @@ CTorpedoProjectile::CTorpedoProjectile(const float3& pos, const float3& speed, C
 
 	SetRadius(0.0f);
 	drawRadius=maxSpeed*8;
-	float3 camDir=(pos-camera->pos).Normalize();
 #if !defined HEADLESS
+	float3 camDir=(pos-camera->pos).Normalize();
 	texx = ph->torpedotex.xstart - (ph->torpedotex.xend-ph->torpedotex.xstart)*0.5f;
 	texy = ph->torpedotex.ystart - (ph->torpedotex.yend-ph->torpedotex.ystart)*0.5f;
 #endif // !defined HEADLESS

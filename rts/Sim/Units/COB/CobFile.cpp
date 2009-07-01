@@ -8,7 +8,9 @@
 #include "CobFile.h"
 #include "FileSystem/FileHandler.h"
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
+#endif // !defined HEADLESS
 #include "Platform/byteorder.h"
 #include "Util.h"
 
@@ -165,14 +167,15 @@ CCobFile::CCobFile(CFileHandler &in, string name)
 			ofs = swabdword(ofs);
 			string s = &cobdata[ofs];
 
-			if (sound->HasSoundItem(s))
+#if !defined HEADLESS
+			if (sound->HasSoundItem(s)) {
 				sounds.push_back(sound->GetSoundId(s));
-			else
-			{
+			} else {
 				// Load the wave file and store the ID for future use
 				s = "sounds/" + s + ".wav";
 				sounds.push_back(sound->GetSoundId(s));
 			}
+#endif // !defined HEADLESS
 		}
 	}
 

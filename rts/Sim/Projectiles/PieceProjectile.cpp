@@ -1,7 +1,9 @@
 #include "StdAfx.h"
 #include "mmgr.h"
 
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "GlobalUnsynced.h"
 #include "Sim/Misc/GlobalSynced.h"
@@ -147,11 +149,15 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 	*numCallback = 0;
 	oldSmokeDir = speed;
 	oldSmokeDir.Normalize();
+#if !defined HEADLESS
 	float3 camDir = (pos-camera->pos).Normalize();
 
 	if (camera->pos.distance(pos) + (1 - fabs(camDir.dot(oldSmokeDir))) * 3000 < 200) {
 		drawTrail = false;
 	}
+#else // !defined HEADLESS
+	drawTrail = false;
+#endif // !defined HEADLESS
 
 	spinVec = gu->usRandVector();
 	spinVec.Normalize();

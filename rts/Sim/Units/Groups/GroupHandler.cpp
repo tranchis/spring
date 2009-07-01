@@ -9,15 +9,18 @@
 #include "Game/SelectedUnits.h"
 #include "TimeProfiler.h"
 #include "Sim/Units/Unit.h"
+#if !defined HEADLESS
 #include "Game/UI/MouseHandler.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/CameraHandler.h"
+#endif // !defined HEADLESS
 #include "Platform/SharedLib.h"
 #include "Platform/errorhandler.h"
 #include "FileSystem/FileSystem.h"
 #include "SDL_keysym.h"
 #include "mmgr.h"
 #include <boost/cstdint.hpp>
+#include "lib/gml/gml.h"
 
 //CGroupHandler* grouphandler;
 std::vector<CGroupHandler*> grouphandlers;
@@ -128,7 +131,9 @@ void CGroupHandler::GroupCommand(int num)
 			p+=(*gi)->pos;
 		}
 		p/=groups[num]->units.size();
+#if !defined HEADLESS
 		camHandler->GetCurrentController().SetPos(p);
+#endif // !defined HEADLESS
 	}
 
 	selectedUnits.SelectGroup(num);
@@ -185,7 +190,9 @@ void CGroupHandler::GroupCommand(int num, const std::string& cmd)
 			p+=(*gi)->pos;
 		}
 		p/=groups[num]->units.size();
+#if !defined HEADLESS
 		camHandler->GetCurrentController().SetPos(p);
+#endif // !defined HEADLESS
 	}
 
 	selectedUnits.SelectGroup(num);

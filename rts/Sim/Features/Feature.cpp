@@ -13,11 +13,10 @@
 #include "Sim/Misc/QuadField.h"
 #if !defined HEADLESS
 #include "Rendering/Env/BaseTreeDrawer.h"
+#include "Rendering/UnitModels/UnitDrawer.h"
 #endif // !defined HEADLESS
 // sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
-// sync relevant -> needed for HEADLESS too
-#include "Rendering/UnitModels/UnitDrawer.h"
 #include "Sim/Misc/CollisionVolume.h"
 #include "Sim/Misc/ModInfo.h"
 #include "Sim/Misc/TeamHandler.h"

@@ -5,7 +5,9 @@
 #include "StdAfx.h"
 #include "creg/STL_List.h"
 #include "float3.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameHelper.h"
 #include "Game/Player.h"
 #include "LogOutput.h"
@@ -26,7 +28,9 @@
 #include "Sim/Units/CommandAI/CommandAI.h"
 #include "Sim/Units/Unit.h"
 #include "Sync/SyncTracer.h"
+#if !defined HEADLESS
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "EventHandler.h"
 #include "WeaponDefHandler.h"
 #include "Weapon.h"
@@ -887,8 +891,11 @@ void CWeapon::Fire()
 	tracefile << sprayAngle << " " <<  " " << salvoError.x << " " << salvoError.z << " " << owner->limExperience << " " << projectileSpeed << "\n";
 #endif
 	FireImpl();
-	if(fireSoundId && (!weaponDef->soundTrigger || salvoLeft==salvoSize-1))
+#if !defined HEADLESS
+	if (fireSoundId && (!weaponDef->soundTrigger || salvoLeft==salvoSize-1)) {
 		Channels::Battle.PlaySample(fireSoundId, owner, fireSoundVolume);
+	}
+#endif // !defined HEADLESS
 }
 
 void CWeapon::CheckIntercept(void)

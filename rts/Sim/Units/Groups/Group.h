@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string>
+#include <vector>
 #include <set>
 #include "Sim/Units/CommandAI/Command.h"
 #include "Platform/SharedLib.h"
@@ -30,7 +31,7 @@ public:
 	void CommandFinished(int unitId, int commandTopicId);
 	void RemoveUnit(CUnit* unit);	//call setgroup(0) instead of calling this directly
 	bool AddUnit(CUnit* unit);		//dont call this directly call unit.SetGroup and let that call this
-	const vector<CommandDescription>& GetPossibleCommands();
+	const std::vector<CommandDescription>& GetPossibleCommands();
 	int GetDefaultCmd(CUnit* unit,CFeature* feature);
 	void GiveCommand(Command c);
 	void ClearUnits(void);
@@ -39,7 +40,7 @@ public:
 
 	CUnitSet units;
 
-	vector<CommandDescription> myCommands;
+	std::vector<CommandDescription> myCommands;
 
 	int lastCommandPage;
 
