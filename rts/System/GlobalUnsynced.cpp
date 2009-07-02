@@ -21,7 +21,7 @@
 #include "Sim/Misc/Team.h"
 #include "Game/Player.h"
 #include "Sim/Misc/GlobalConstants.h"
-#include "Rendering/Textures/TAPalette.h"
+//#include "Rendering/Textures/TAPalette.h"
 #include "Lua/LuaGaia.h"
 #include "Lua/LuaRules.h"
 #include "SDL_timer.h"

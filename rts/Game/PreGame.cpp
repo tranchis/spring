@@ -1,5 +1,7 @@
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include <map>
 #include <SDL_keysym.h>
 #include <SDL_timer.h>
@@ -34,10 +36,13 @@
 #include "Map/MapParser.h"
 #include "ConfigHandler.h"
 #include "FileSystem/FileSystem.h"
+//#include "Rendering/Textures/TAPalette.h"
+#if !defined HEADLESS
 #include "Rendering/glFont.h"
-#include "Rendering/Textures/TAPalette.h"
-#include "StartScripts/ScriptHandler.h"
 #include "UI/InfoConsole.h"
+#endif // !defined HEADLESS
+#include "StartScripts/ScriptHandler.h"
+#include "GlobalUnsynced.h"
 #include "Exceptions.h"
 
 
@@ -106,6 +111,7 @@ int CPreGame::KeyPressed(unsigned short k,bool isRepeat)
 
 bool CPreGame::Draw()
 {
+#if !defined HEADLESS
 	SDL_Delay(10); // milliseconds
 	ClearScreen();
 
@@ -134,6 +140,7 @@ bool CPreGame::Draw()
 	font->glPrint(0.5f,0.02f,0.6f,FONT_CENTER | FONT_SCALE | FONT_NORM, "This program is distributed under the GNU General Public License, see license.html for more info");
 
 	font->End();
+#endif // !defined HEADLESS
 
 	return true;
 }
@@ -240,7 +247,9 @@ void CPreGame::UpdateClientNet()
 
 				const CTeam* team = teamHandler->Team(gu->myTeam);
 				assert(team);
+#if !defined HEADLESS
 				LoadStartPicture(team->side);
+#endif // !defined HEADLESS
 
 				game = new CGame(gameData->GetMap(), modArchive, savefile);
 

@@ -115,7 +115,7 @@ SET(sim_files
 	${sr}/Sim/Units/UnitLoader.cpp
 	${sr}/Sim/Units/UnitSet.cpp
 #	${sr}/Sim/Units/UnitTracker.cpp
-	}
+	)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/COB sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/CommandAI sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/Groups sim_files)
@@ -199,6 +199,7 @@ SET(rendering_files
 	${sr}/Rendering/UnitModels/IModelParser.cpp
 	${sr}/Rendering/UnitModels/s3oParser.cpp
 #	${sr}/Rendering/UnitModels/UnitDrawer.cpp
+	${sr}/Rendering/Textures/TAPalette.cpp
 	)
 
 SET(springHeadless_files

@@ -3,7 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 #include <stdlib.h>
 #include <time.h>
@@ -27,11 +29,13 @@
 
 #include "Game.h"
 #include "float.h"
+#if !defined HEADLESS
 #include "Camera.h"
 #include "Camera/CameraController.h"
 #include "Camera/FPSController.h"
 #include "Camera/OverheadController.h"
 #include "CameraHandler.h"
+#endif // !defined HEADLESS
 #include "ConsoleHistory.h"
 #include "FPUCheck.h"
 #include "GameHelper.h"
@@ -58,9 +62,11 @@
 #include "FileSystem/ArchiveScanner.h"
 #include "FileSystem/FileHandler.h"
 #include "FileSystem/VFSHandler.h"
+#if !defined HEADLESS
 #include "Map/BaseGroundDrawer.h"
-#include "Map/Ground.h"
 #include "Map/HeightMapTexture.h"
+#endif // !defined HEADLESS
+#include "Map/Ground.h"
 #include "Map/MapDamage.h"
 #include "Map/MapInfo.h"
 #include "Map/MetalMap.h"
@@ -69,6 +75,7 @@
 #include "DemoRecorder.h"
 #include "ConfigHandler.h"
 #include "FileSystem/FileSystem.h"
+#if !defined HEADLESS
 #include "Rendering/Env/BaseSky.h"
 #include "Rendering/Env/BaseTreeDrawer.h"
 #include "Rendering/Env/BaseWater.h"
@@ -77,19 +84,25 @@
 #include "Rendering/GL/glList.h"
 #include "Rendering/GroundDecalHandler.h"
 #include "Rendering/IconHandler.h"
-#include "Rendering/InMapDraw.h"
 #include "Rendering/ShadowHandler.h"
 #include "Rendering/VerticalSync.h"
 #include "Rendering/Textures/Bitmap.h"
 #include "Rendering/Textures/3DOTextureHandler.h"
+#include "Rendering/Textures/ColorMap.h"
 #include "Rendering/Textures/S3OTextureHandler.h"
-#include "Rendering/UnitModels/3DOParser.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/InMapDraw.h"
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/UnitModels/3DOParser.h"
+#if !defined HEADLESS
 #include "Lua/LuaInputReceiver.h"
+#include "Lua/LuaOpenGL.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaHandle.h"
 #include "Lua/LuaGaia.h"
 #include "Lua/LuaRules.h"
-#include "Lua/LuaOpenGL.h"
 #include "Lua/LuaParser.h"
 #include "Lua/LuaSyncedRead.h"
 #include "Lua/LuaUnsyncedCtrl.h"
@@ -106,7 +119,9 @@
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Misc/Wind.h"
 #include "Sim/MoveTypes/MoveInfo.h"
+#include "Sim/MoveTypes/MoveType.h"
 #include "Sim/Path/PathManager.h"
+#include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Projectiles/Projectile.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Units/COB/CobEngine.h"
@@ -116,20 +131,28 @@
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitHandler.h"
 #include "Sim/Units/UnitLoader.h"
+#if !defined HEADLESS
 #include "Sim/Units/UnitTracker.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/CommandAI/LineDrawer.h"
+#include "Sim/Weapons/Weapon.h"
+#include "Sim/Weapons/WeaponDefHandler.h"
 #include "StartScripts/Script.h"
 #include "StartScripts/ScriptHandler.h"
 #include "Sync/SyncedPrimitiveIO.h"
 #include "Util.h"
 #include "Exceptions.h"
 #include "EventHandler.h"
+#include "GlobalUnsynced.h"
+#if !defined HEADLESS
 #include "Sound/Sound.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/Music.h"
+#endif // !defined HEADLESS
 #include "FileSystem/SimpleParser.h"
 #include "Net/RawPacket.h"
 #include "Net/UnpackPacket.h"
+#if !defined HEADLESS
 #include "UI/CommandColors.h"
 #include "UI/CursorIcons.h"
 #include "UI/EndGameBox.h"
@@ -148,8 +171,7 @@
 #include "UI/ShareBox.h"
 #include "UI/TooltipConsole.h"
 #include "UI/ProfileDrawer.h"
-#include "Rendering/Textures/ColorMap.h"
-#include "Sim/Projectiles/ExplosionGenerator.h"
+#endif // !defined HEADLESS
 #include <boost/cstdint.hpp>
 
 #ifndef NO_AVI
@@ -157,9 +179,6 @@
 #endif
 
 #include "myMath.h"
-#include "Sim/MoveTypes/MoveType.h"
-#include "Sim/Weapons/Weapon.h"
-#include "Sim/Weapons/WeaponDefHandler.h"
 
 
 #ifdef USE_GML
@@ -281,11 +300,14 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 
 	memset(gameID, 0, sizeof(gameID));
 
+#if !defined HEADLESS
 	infoConsole = new CInfoConsole();
+#endif // !defined HEADLESS
 
 	time(&starttime);
 	lastTick = clock();
 
+#if !defined HEADLESS
 	for(int a = 0; a < 8; ++a) {
 		camMove[a] = false;
 	}
@@ -305,6 +327,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	  (PlayerRoster::SortType)configHandler->Get("ShowPlayerInfo", 1));
 
 	CInputReceiver::guiAlpha = configHandler->Get("GuiOpacity",  0.8f);
+#endif // !defined HEADLESS
 
 	const string inputTextGeo = configHandler->GetString("InputTextGeo", "");
 	ParseInputTextGeometry("default");
@@ -326,11 +349,14 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	oldHeading = 0;
 	oldStatus  = 255;
 
+#if !defined HEADLESS
 	sound = new CSound();
 	chatSound = sound->GetSoundId("IncomingChat", false);
+#endif // !defined HEADLESS
 
 	moveWarnings = !!configHandler->Get("MoveWarnings", 1);
 
+#if !defined HEADLESS
 	camera = new CCamera();
 	cam2 = new CCamera();
 	mouse = new CMouseHandler();
@@ -338,6 +364,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	selectionKeys = new CSelectionKeyHandler();
 	tooltip = new CTooltipConsole();
 	iconHandler = new CIconHandler();
+#endif // !defined HEADLESS
 
 	selectedUnits.Init(playerHandler->ActivePlayers());
 
@@ -349,7 +376,9 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 		throw content_error(sideParser.GetErrorLog());
 	}
 
+#if !defined HEADLESS
 	PrintLoadMsg("Parsing definitions");
+#endif // !defined HEADLESS
 
 	defsParser = new LuaParser("gamedata/defs.lua",
 	                                SPRING_VFS_MOD_BASE, SPRING_VFS_ZIP);
@@ -386,22 +415,30 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 
 	explGenHandler = new CExplosionGeneratorHandler();
 
+#if !defined HEADLESS
 	shadowHandler = new CShadowHandler();
+#endif // !defined HEADLESS
 
 	ground = new CGround();
 
+#if !defined HEADLESS
 	PrintLoadMsg("Loading map informations");
+#endif // !defined HEADLESS
 
 	mapInfo = new CMapInfo(mapname); // must go before readmap
 	readmap = CReadMap::LoadMap (mapname);
 	groundBlockingObjectMap = new CGroundBlockingObjectMap(gs->mapSquares);
 	wind.LoadWind();
 	moveinfo = new CMoveInfo();
+#if !defined HEADLESS
 	groundDecals = new CGroundDecalHandler();
+#endif // !defined HEADLESS
 	ReColorTeams();
 
+#if !defined HEADLESS
 	guihandler = new CGuiHandler();
 	minimap = new CMiniMap();
+#endif // !defined HEADLESS
 
 	ph = new CProjectileHandler();
 
@@ -409,7 +446,9 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	unitDefHandler = new CUnitDefHandler();
 
 	inMapDrawer = new CInMapDraw();
+#if !defined HEADLESS
 	cmdColors.LoadConfig("cmdcolors.txt");
+#endif // !defined HEADLESS
 
 	const std::map<std::string, int>& unitMap = unitDefHandler->unitID;
 	std::map<std::string, int>::const_iterator uit;
@@ -428,8 +467,10 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	radarhandler = new CRadarHandler(false);
 
 	uh = new CUnitHandler();
+#if !defined HEADLESS
 	unitDrawer = new CUnitDrawer();
 	fartextureHandler = new CFartextureHandler();
+#endif // !defined HEADLESS
 	modelParser = new C3DModelLoader();
 
 	featureHandler->LoadFeaturesFromMap(saveFile || CScriptHandler::Instance().chosenScript->loadGame);
@@ -444,6 +485,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	delete defsParser;
 	defsParser = NULL;
 
+#if !defined HEADLESS
 	sky = CBaseSky::GetSky();
 
 	resourceBar = new CResourceBar();
@@ -452,27 +494,35 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	keyBindings->Load("uikeys.txt");
 
 	water=CBaseWater::GetWater(NULL);
+#endif // !defined HEADLESS
 	for(int a = 0; a < teamHandler->ActiveTeams(); ++a)
 		grouphandlers.push_back(new CGroupHandler(a));
 	CCobInstance::InitVars(teamHandler->ActiveTeams(), teamHandler->ActiveAllyTeams());
 	CEngineOutHandler::Initialize();
 
 	CPlayer* p = playerHandler->Player(gu->myPlayerNum);
+#if !defined HEADLESS
 	GameSetupDrawer::Enable();
 
 	PrintLoadMsg("Loading LuaRules");
+#endif // !defined HEADLESS
 	CLuaRules::LoadHandler();
 
 	if (gs->useLuaGaia) {
+#if !defined HEADLESS
 		PrintLoadMsg("Loading LuaGaia");
+#endif // !defined HEADLESS
 		CLuaGaia::LoadHandler();
 	}
+#if !defined HEADLESS
 	if (!!configHandler->Get("LuaUI", 1)) {
 		PrintLoadMsg("Loading LuaUI");
 		CLuaUI::LoadHandler();
 	}
 	PrintLoadMsg("Finalizing...");
+#endif // !defined HEADLE
 
+#if !defined HEADLESS
 	if (true || !shadowHandler->drawShadows) { // FIXME ?
 		glLightfv(GL_LIGHT1, GL_AMBIENT, mapInfo->light.unitAmbientColor);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, mapInfo->light.unitSunColor);
@@ -480,6 +530,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
 	}
+#endif // !defined HEADLESS
 
 	lastframe = SDL_GetTicks();
 	lastModGameTimeMeasure = lastframe;
@@ -491,6 +542,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	assert(script);
 	eventHandler.GamePreload();
 
+#if !defined HEADLESS
 	glFogfv(GL_FOG_COLOR, mapInfo->atmosphere.fogColor);
 	glFogf(GL_FOG_START, 0.0f);
 	glFogf(GL_FOG_END, gu->viewRange * 0.98f);
@@ -498,6 +550,7 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	glFogi(GL_FOG_MODE,GL_LINEAR);
 	glEnable(GL_FOG);
 	glClearColor(mapInfo->atmosphere.fogColor[0], mapInfo->atmosphere.fogColor[1], mapInfo->atmosphere.fogColor[2], 0.0f);
+#endif // !defined HEADLESS
 #ifdef TRACE_SYNC
 	tracefile.NewInterval();
 	tracefile.NewInterval();
@@ -507,13 +560,15 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 	tracefile.NewInterval();
 	tracefile.NewInterval();
 	tracefile.NewInterval();
-#endif
+#endif // TRACE_SYNC
 
 	activeController = this;
 
+#if !defined HEADLESS
 	if (!saveFile) {
 		UnloadStartPicture();
 	}
+#endif // !defined HEADLESS
 
 	net->loading = false;
 	thread.join();
@@ -528,15 +583,18 @@ CGame::CGame(std::string mapname, std::string modName, CLoadSaveHandler *saveFil
 
 	lastCpuUsageTime = gu->gameTime + 10;
 
+#if !defined HEADLESS
 	mouse->ShowMouse();
 
 	// last in, first served
 	luaInputReceiver = new LuaInputReceiver();
+#endif // !defined HEADLESS
 }
 
 
 CGame::~CGame()
 {
+#if !defined HEADLESS
 	if (treeDrawer) {
 		configHandler->Set("TreeRadius",
 		                     (unsigned int)(treeDrawer->baseTreeDistance * 256));
@@ -549,7 +607,8 @@ CGame::~CGame()
 		creatingVideo = false;
 		SafeDelete(aviGenerator);
 	}
-#endif
+#endif // NO_AVI
+#endif // !defined HEADLESS
 
 #ifdef TRACE_SYNC
 	tracefile << "End game\n";
@@ -557,8 +616,10 @@ CGame::~CGame()
 
 	CLuaGaia::FreeHandler();
 	CLuaRules::FreeHandler();
+#if !defined HEADLESS
 	LuaOpenGL::Free();
 	heightMapTexture.Kill();
+#endif // !defined HEADLESS
 
 	SafeDelete(gameServer);
 
@@ -567,26 +628,37 @@ CGame::~CGame()
 
 	grouphandlers.clear();
 
+#if !defined HEADLESS
 	SafeDelete(water);
 	SafeDelete(sky);
 	SafeDelete(resourceBar);
+#endif // !defined HEADLESS
 
 	SafeDelete(featureHandler);
 	SafeDelete(uh);
+#if !defined HEADLESS
 	SafeDelete(unitDrawer);
+#endif // !defined HEADLESS
 	SafeDelete(geometricObjects);
 	SafeDelete(ph);
+#if !defined HEADLESS
 	SafeDelete(minimap);
+#endif // !defined HEADLESS
 	SafeDelete(pathManager);
+#if !defined HEADLESS
 	SafeDelete(groundDecals);
+#endif // !defined HEADLESS
 	SafeDelete(ground);
+#if !defined HEADLESS
 	SafeDelete(luaInputReceiver);
+#endif // !defined HEADLESS
 	SafeDelete(inMapDrawer);
 	SafeDelete(net);
 	SafeDelete(radarhandler);
 	SafeDelete(loshandler);
 	SafeDelete(mapDamage);
 	SafeDelete(qf);
+#if !defined HEADLESS
 	SafeDelete(tooltip);
 	SafeDelete(keyBindings);
 	SafeDelete(keyCodes);
@@ -594,14 +666,18 @@ CGame::~CGame()
 	SafeDelete(selectionKeys);
 	SafeDelete(mouse);
 	SafeDelete(camHandler);
+#endif // !defined HEADLESS
 	SafeDelete(helper);
+#if !defined HEADLESS
 	SafeDelete(shadowHandler);
+#endif // !defined HEADLESS
 	SafeDelete(moveinfo);
 	SafeDelete(unitDefHandler);
 	SafeDelete(damageArrayHandler);
 	SafeDelete(vfsHandler);
 	SafeDelete(archiveScanner);
 	SafeDelete(modelParser);
+#if !defined HEADLESS
 	SafeDelete(iconHandler);
 	SafeDelete(fartextureHandler);
 	SafeDelete(texturehandler3DO);
@@ -609,6 +685,7 @@ CGame::~CGame()
 	SafeDelete(camera);
 	SafeDelete(cam2);
 	SafeDelete(infoConsole);
+#endif // !defined HEADLESS
 	SafeDelete(consoleHistory);
 	SafeDelete(wordCompletion);
 	SafeDelete(explGenHandler);
@@ -618,7 +695,9 @@ CGame::~CGame()
 	SafeDelete(groundBlockingObjectMap);
 
 	CCategoryHandler::RemoveInstance();
+#if !defined HEADLESS
 	CColorMap::DeleteColormaps();
+#endif // !defined HEADLESS
 }
 
 
@@ -632,6 +711,7 @@ void CGame::PostLoad()
 
 void CGame::ResizeEvent()
 {
+#if !defined HEADLESS
 	if (minimap != NULL) {
 		minimap->UpdateGeometry();
 	}
@@ -640,11 +720,13 @@ void CGame::ResizeEvent()
 	water = CBaseWater::GetWater(water);
 
 	eventHandler.ViewResize();
+#endif // !defined HEADLESS
 }
 
 
 int CGame::KeyPressed(unsigned short k, bool isRepeat)
 {
+#if !defined HEADLESS
 	if (!gameOver && !isRepeat) {
 		playerHandler->Player(gu->myPlayerNum)->currentStats.keyPresses++;
 	}
@@ -850,6 +932,7 @@ int CGame::KeyPressed(unsigned short k, bool isRepeat)
 			return 0;
 		}
 	}
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -857,6 +940,7 @@ int CGame::KeyPressed(unsigned short k, bool isRepeat)
 
 int CGame::KeyReleased(unsigned short k)
 {
+#if !defined HEADLESS
 	//	keys[k] = false;
 
 	if ((userWriting) && (((k>=' ') && (k<='Z')) || (k==8) || (k==190))) {
@@ -881,7 +965,7 @@ int CGame::KeyReleased(unsigned short k)
 			return 0;
 		}
 	}
-
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -891,15 +975,18 @@ int CGame::KeyReleased(unsigned short k)
 bool CGame::ActionPressed(const Action& action,
                           const CKeySet& ks, bool isRepeat)
 {
+#if !defined HEADLESS
 	// we may need these later
 	CBaseGroundDrawer* gd = readmap->GetGroundDrawer();
 	std::deque<CInputReceiver*>& inputReceivers = GetInputReceivers();
+#endif // !defined HEADLESS
 
 	const string& cmd = action.command;
 	bool notfound1=false;
 
 	// process the action
 	if (cmd == "select") {
+#if !defined HEADLESS
 		selectionKeys->DoSelection(action.extra);
 	}
 	else if (cmd == "selectunits") {
@@ -964,6 +1051,7 @@ bool CGame::ActionPressed(const Action& action,
 			logOutput.Print("Advanced shading %s",
 			                unitDrawer->advShading ? "enabled" : "disabled");
 		}
+#endif // !defined HEADLESS
 	}
 	else if (cmd == "say") {
 		SendNetChat(action.extra);
@@ -1002,6 +1090,7 @@ bool CGame::ActionPressed(const Action& action,
 			configHandler->SetString(varName, action.extra.substr(pos+1));
 		}
 	}
+#if !defined HEADLESS
 	else if (cmd == "drawinmap") {
 		inMapDrawer->keyPressed = true;
 	}
@@ -1070,7 +1159,8 @@ bool CGame::ActionPressed(const Action& action,
 	else if (cmd == "moveslow") {
 		camMove[7]=true;
 	}
-	else if (cmd == "team"){
+#endif // !defined HEADLESS
+	else if (cmd == "team") {
 		if (gs->cheatEnabled)
 		{
 			int team=atoi(action.extra.c_str());
@@ -1079,7 +1169,7 @@ bool CGame::ActionPressed(const Action& action,
 			}
 		}
 	}
-	else if (cmd == "spectator"){
+	else if (cmd == "spectator") {
 		net->Send(CBaseNetProtocol::Get().SendResign(gu->myPlayerNum));
 	}
 	else if ((cmd == "specteam") && gu->spectating) {
@@ -1088,7 +1178,9 @@ bool CGame::ActionPressed(const Action& action,
 			gu->myTeam = team;
 			gu->myAllyTeam = teamHandler->AllyTeam(team);
 		}
+#if !defined HEADLESS
 		CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 	}
 	else if ((cmd == "specfullview") && gu->spectating) {
 		if (!action.extra.empty()) {
@@ -1099,7 +1191,9 @@ bool CGame::ActionPressed(const Action& action,
 			gu->spectatingFullView = !gu->spectatingFullView;
 			gu->spectatingFullSelect = gu->spectatingFullView;
 		}
+#if !defined HEADLESS
 		CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 	}
 	else if (cmd == "ally" && !gu->spectating){
 		if (action.extra.size() > 0)
@@ -1161,6 +1255,7 @@ bool CGame::ActionPressed(const Action& action,
 	else if (cmd == "group9") {
 		grouphandlers[gu->myTeam]->GroupCommand(9);
 	}
+#if !defined HEADLESS
 	else if (cmd == "lastmsgpos") {
 		// cycle through the positions
 		camHandler->GetCurrentController().SetPos(infoConsole->GetMsgPos());
@@ -1202,6 +1297,7 @@ bool CGame::ActionPressed(const Action& action,
 			unitDrawer->showHealthBars = !!atoi(action.extra.c_str());
 		}
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "pause") {
 		// disallow pausing prior to start of game proper
 		if (playing) {
@@ -1218,23 +1314,30 @@ bool CGame::ActionPressed(const Action& action,
 	else if (cmd == "debug") {
 		if (gu->drawdebug)
 		{
+#if !defined HEADLESS
 			ProfileDrawer::Disable();
+#endif // !defined HEADLESS
 			gu->drawdebug = false;
 		}
 		else
 		{
+#if !defined HEADLESS
 			ProfileDrawer::Enable();
+#endif // !defined HEADLESS
 			gu->drawdebug = true;
 		}
 	}
 	else if (cmd == "nosound") {
+#if !defined HEADLESS
 		if (sound->Mute()) {
 			logOutput.Print("Sound disabled");
 		} else {
 			logOutput.Print("Sound enabled");
 		}
+#endif // !defined HEADLESS
 	}
 	else if (cmd == "soundchannelenable") {
+#if !defined HEADLESS
 		std::string channel;
 		int enableInt, enable;
 		std::istringstream buf(action.extra);
@@ -1255,6 +1358,7 @@ bool CGame::ActionPressed(const Action& action,
 			Channels::UserInterface.Enable(enable);
 		else if (channel == "Music")
 			Channels::BGMusic.Enable(enable);
+#endif // !defined HEADLESS
 	}
 	else if (cmd == "savegame"){
 		if (filesystem.CreateDirectory("Saves")) {
@@ -1305,8 +1409,9 @@ bool CGame::ActionPressed(const Action& action,
 			streflop_init<streflop::Simple>();
 		}
 	}
-#endif
+#endif // NO_AVI
 
+#if !defined HEADLESS
 	else if (cmd == "updatefov") {
 		if (action.extra.empty()) {
 			gd->updateFov = !gd->updateFov;
@@ -1437,6 +1542,7 @@ bool CGame::ActionPressed(const Action& action,
 		sky->cloudDensity*=1.05f;
 		LogObject() << "Cloud density " << 1/sky->cloudDensity << "\n";
 	}
+#endif // !defined HEADLESS
 
 	// Break up the if/else chain to workaround MSVC compiler limit
 	// "fatal error C1061: compiler limit : blocks nested too deeply"
@@ -1474,11 +1580,13 @@ bool CGame::ActionPressed(const Action& action,
 		net->Send(CBaseNetProtocol::Get().SendUserSpeed(gu->myPlayerNum, speed));
 	}
 
+#if !defined HEADLESS
 	else if (cmd == "controlunit") {
 		Command c;
 		c.id=CMD_STOP;
 		c.options=0;
-		selectedUnits.GiveCommand(c,false);		//force it to update selection and clear order que
+		// force it to update selection and clear order queue
+		selectedUnits.GiveCommand(c, false);
 		net->Send(CBaseNetProtocol::Get().SendDirectControl(gu->myPlayerNum));
 	}
 	else if (cmd == "showshadowmap") {
@@ -1519,10 +1627,12 @@ bool CGame::ActionPressed(const Action& action,
 		if (!inputReceivers.empty() && dynamic_cast<CQuitBox*>(inputReceivers.front()) == 0)
 			new CQuitBox();
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "quitforce" || cmd == "quit") {
 		logOutput.Print("User exited");
 		globalQuit = true;
 	}
+#if !defined HEADLESS
 	else if (cmd == "incguiopacity") {
 		CInputReceiver::guiAlpha = std::min(CInputReceiver::guiAlpha+0.1f,1.0f);
 		configHandler->Set("GuiOpacity", CInputReceiver::guiAlpha);
@@ -1626,11 +1736,13 @@ bool CGame::ActionPressed(const Action& action,
 		}
 		configHandler->Set("ShowPlayerInfo", (int)playerRoster.GetSortType());
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "techlevels") {
 		unitDefHandler->SaveTechLevels("", modInfo.filename); // stdout
 		unitDefHandler->SaveTechLevels("techlevels.txt", modInfo.filename);
 		logOutput.Print("saved techlevels.txt");
 	}
+#if !defined HEADLESS
 	else if (cmd == "cmdcolors") {
 		const string name = action.extra.empty() ? "cmdcolors.txt" : action.extra;
 		cmdColors.LoadConfig(name);
@@ -1730,6 +1842,7 @@ bool CGame::ActionPressed(const Action& action,
 			drawFpsHUD = !!atoi(action.extra.c_str());
 		}
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "movewarnings") {
 		if (action.extra.empty()) {
 			moveWarnings = !moveWarnings;
@@ -1740,6 +1853,7 @@ bool CGame::ActionPressed(const Action& action,
 		logOutput.Print(string("movewarnings ") +
 		                (moveWarnings ? "enabled" : "disabled"));
 	}
+#if !defined HEADLESS
 	else if (cmd == "mapmarks") {
 		if (action.extra.empty()) {
 			drawMapMarks = !drawMapMarks;
@@ -1764,6 +1878,7 @@ bool CGame::ActionPressed(const Action& action,
 			guihandler->RunLayoutCommand(action.extra);
 		}
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "luamoduictrl") {
 		bool modUICtrl;
 		if (action.extra.empty()) {
@@ -1774,6 +1889,7 @@ bool CGame::ActionPressed(const Action& action,
 		CLuaHandle::SetModUICtrl(modUICtrl);
 		configHandler->Set("LuaModUICtrl", modUICtrl ? 1 : 0);
 	}
+#if !defined HEADLESS
 	else if (cmd == "minimap") {
 		if (minimap != NULL) {
 			minimap->ConfigCommand(action.extra);
@@ -1896,6 +2012,7 @@ bool CGame::ActionPressed(const Action& action,
 			logOutput.Print("Unknown gamma format");
 		}
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "crash" && gs->cheatEnabled) {
 		int *a=0;
 		*a=0;
@@ -1907,6 +2024,7 @@ bool CGame::ActionPressed(const Action& action,
 		float a = 0;
 		logOutput.Print("Result: %f", 1.0f/a);
 	}
+#if !defined HEADLESS
 	else if (cmd == "give" && gs->cheatEnabled) {
 		if (action.extra.find('@') == string::npos) {
 			std::string msg = "give "; //FIXME lazyness
@@ -1934,6 +2052,7 @@ bool CGame::ActionPressed(const Action& action,
 			net->Send(pckt.Pack());
 		}
 	}
+#endif // !defined HEADLESS
 	else if (cmd == "destroy" && gs->cheatEnabled) {
 		// kill selected units
 		std::stringstream ss;
@@ -1967,8 +2086,10 @@ bool CGame::ActionPressed(const Action& action,
 		}
 	}
 	else if (cmd == "debuginfo") {
+#if !defined HEADLESS
 		if (action.extra == "sound")
 			sound->PrintDebugInfo();
+#endif // !defined HEADLESS
 	}
 	else if (cmd == "benchmark-script") {
 		CUnitScript::BenchmarkScript(action.extra);
@@ -1987,8 +2108,10 @@ bool CGame::ActionPressed(const Action& action,
 	else {
 		if (!Console::Instance().ExecuteAction(action))
 		{
+#if !defined HEADLESS
 			if (guihandler != NULL) // maybe a widget is interested?
 				guihandler->RunLayoutCommand(action.rawline);
+#endif // !defined HEADLESS
 			return false;
 		}
 	}
@@ -2006,6 +2129,7 @@ bool CGame::ActionReleased(const Action& action)
 	if (cmd == "drawinmap"){
 		inMapDrawer->keyPressed=false;
 	}
+#if !defined HEADLESS
 	else if (cmd == "moveforward") {
 		camMove[0]=false;
 	}
@@ -2048,6 +2172,7 @@ bool CGame::ActionReleased(const Action& action)
 	else if (cmd == "gameinfoclose") {
 		CGameInfo::Disable();
 	}
+#endif // !defined HEADLESS
 	// HACK   somehow weird things happen when MouseRelease is called for button 4 and 5.
 	// Note that SYS_WMEVENT on windows also only sends MousePress events for these buttons.
 // 	else if (cmd == "mouse4") {
@@ -2107,7 +2232,9 @@ void CGame::ActionReceived(const Action& action, int playernum)
 			logOutput.Print("godmode requires /cheat");
 		else {
 			SetBoolArg(gs->godMode, action.extra);
+#if !defined HEADLESS
 			CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 			if (gs->godMode) {
 				logOutput.Print("God Mode Enabled");
 			} else {
@@ -2526,15 +2653,17 @@ bool CGame::Update()
 		GameEnd();
 	}
 
+#if !defined HEADLESS
 	// send out new console lines
 	if (infoConsole) {
-		vector<CInfoConsole::RawLine> lines;
+		std::vector<CInfoConsole::RawLine> lines;
 		infoConsole->GetNewRawLines(lines);
 		for (unsigned int i = 0; i < lines.size(); i++) {
 			const CInfoConsole::RawLine& rawLine = lines[i];
 			eventHandler.AddConsoleLine(rawLine.text, *rawLine.subsystem);
 		}
 	}
+#endif // !defined HEADLESS
 
 	if (!(gs->frameNum & 31)) {
 		oscStatsSender->Update(gs->frameNum);
@@ -2546,6 +2675,7 @@ bool CGame::Update()
 
 bool CGame::DrawWorld()
 {
+#if !defined HEADLESS
 	SCOPED_TIMER("Draw world");
 
 	CBaseGroundDrawer* gd = readmap->GetGroundDrawer();
@@ -2684,13 +2814,16 @@ bool CGame::DrawWorld()
 		glColor4f(0.0f, 0.2f, 0.8f, 0.333f);
 		glRectf(0.0f, 0.0f, 1.0f, 1.0f);
 	}
+#endif // !defined HEADLESS
 
 	return true;
 }
 
 #if defined(USE_GML) && GML_ENABLE_DRAW
 bool CGame::Draw() {
+#if !defined HEADLESS
 	gmlProcessor->Work(&CGame::DrawMTcb,NULL,NULL,this,gmlThreadCount,TRUE,NULL,1,2,2,FALSE);
+#endif // !defined HEADLESS
 	return true;
 }
 #else
@@ -2705,6 +2838,7 @@ bool CGame::DrawMT() {
 #else
 bool CGame::Draw() {
 #endif
+#if !defined HEADLESS
 
 	if(lastSimFrame!=gs->frameNum) {
 		CInputReceiver::CollectGarbage();
@@ -3019,6 +3153,7 @@ bool CGame::Draw() {
 #endif
 
 	SetDrawMode(notDrawing);
+#endif // !defined HEADLESS
 
 	return true;
 }
@@ -3043,6 +3178,7 @@ void CGame::ParseInputTextGeometry(const string& geo)
 
 void CGame::DrawInputText()
 {
+#if !defined HEADLESS
 	const float fontSale = 1.0f;                       // TODO: make configurable again
 	const float fontSize = fontSale * font->GetSize();
 
@@ -3087,20 +3223,25 @@ void CGame::DrawInputText()
 		font->SetColors(textColor, NULL);
 		font->glPrint(inputTextPosX, inputTextPosY, fontSize, FONT_DESCENDER | FONT_OUTLINE | FONT_NORM, tempstring);
 	}
+#endif // !defined HEADLESS
 }
 
 
 void CGame::StartPlaying()
 {
 	playing = true;
+#if !defined HEADLESS
 	GameSetupDrawer::Disable();
+#endif // !defined HEADLESS
 	lastTick = clock();
 	lastframe = SDL_GetTicks();
 
 	gu->myTeam = playerHandler->Player(gu->myPlayerNum)->team;
 	gu->myAllyTeam = teamHandler->AllyTeam(gu->myTeam);
 //	grouphandler->team = gu->myTeam;
+#if !defined HEADLESS
 	CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 
 	script->GameStart();
 	eventHandler.GameStart();
@@ -3125,23 +3266,30 @@ void CGame::SimFrame() {
 
 	script->Update();
 
+#if !defined HEADLESS
 	if (luaUI)    { luaUI->GameFrame(gs->frameNum); }
+#endif // !defined HEADLESS
 	if (luaGaia)  { luaGaia->GameFrame(gs->frameNum); }
 	if (luaRules) { luaRules->GameFrame(gs->frameNum); }
 
 	gs->frameNum++;
 
 	if (!skipping) {
+#if !defined HEADLESS
 		infoConsole->Update();
+#endif // !defined HEADLESS
 		waitCommandsAI.Update();
 		geometricObjects->Update();
+#if !defined HEADLESS
 		sound->NewFrame();
 		treeDrawer->Update();
+#endif // !defined HEADLESS
 		eoh->Update();
 		for (size_t a = 0; a < grouphandlers.size(); a++) {
 			grouphandlers[a]->Update();
 		}
 		profiler.Update();
+#if !defined HEADLESS
 		if (gu->directControl) {
 			unsigned char status = 0;
 			if (camMove[0]) { status |= (1 << 0); }
@@ -3161,6 +3309,7 @@ void CGame::SimFrame() {
 					                                                status, hp.x, hp.y));
 			}
 		}
+#endif // !defined HEADLESS
 	}
 
 	//everything from here is simulation
@@ -3170,7 +3319,9 @@ void CGame::SimFrame() {
 	mapDamage->Update();
 	pathManager->Update();
 	uh->Update();
+#if !defined HEADLESS
 	groundDecals->Update();
+#endif // !defined HEADLESS
 
 	{
 		SCOPED_TIMER("Collisions");
@@ -3293,7 +3444,9 @@ void CGame::ClientReadNet()
 			case NETMSG_STARTPLAYING: {
 				unsigned timeToStart = *(unsigned*)(inbuf+1);
 				if (timeToStart > 0) {
+#if !defined HEADLESS
 					GameSetupDrawer::StartCountdown(timeToStart);
+#endif // !defined HEADLESS
 				} else {
 					StartPlaying();
 				}
@@ -3360,7 +3513,9 @@ void CGame::ClientReadNet()
 
 			case NETMSG_INTERNAL_SPEED: {
 				gs->speedFactor = *((float*) &inbuf[1]);
+#if !defined HEADLESS
 				sound->PitchAdjust(sqrt(gs->speedFactor));
+#endif // !defined HEADLESS
 				//	logOutput.Print("Internal speed set to %.2f",gs->speedFactor);
 				AddTraffic(-1, packetCode, dataLength);
 				break;
@@ -3769,8 +3924,10 @@ void CGame::ClientReadNet()
 						playerHandler->Player(player)->StartSpectating();
 						if (player == gu->myPlayerNum) {
 							selectedUnits.ClearSelected();
+#if !defined HEADLESS
 							unitTracker.Disable();
 							CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 						}
 						if (numPlayersInTeam == 1) {
 							teamHandler->Team(fromTeam)->leader = -1;
@@ -3790,8 +3947,10 @@ void CGame::ClientReadNet()
 							gu->spectatingFullView   = false;
 							gu->spectatingFullSelect = false;
 							selectedUnits.ClearSelected();
+#if !defined HEADLESS
 							unitTracker.Disable();
 							CLuaUI::UpdateTeams();
+#endif // !defined HEADLESS
 						}
 						if (teamHandler->Team(newTeam)->leader == -1) {
 							teamHandler->Team(newTeam)->leader = player;
@@ -3881,6 +4040,7 @@ void CGame::ClientReadNet()
 								logOutput.Print("Sorry someone already controls that unit");
 							}
 						}
+#if !defined HEADLESS
 						else if (!luaRules || luaRules->AllowDirectUnitControl(player, unit)) {
 							unit->directControl=&playerHandler->Player(player)->myControl;
 							playerHandler->Player(player)->playerControlledUnit=unit;
@@ -3897,6 +4057,7 @@ void CGame::ClientReadNet()
 								selectedUnits.ClearSelected();
 							}
 						}
+#endif // !defined HEADLESS
 					}
 				}
 				AddTraffic(player, packetCode, dataLength);
@@ -3958,7 +4119,8 @@ float3 *plastDCpos=NULL;
 
 void CGame::UpdateUI(bool cam)
 {
-	//move camera if arrow keys pressed
+#if !defined HEADLESS
+	// move camera if arrow keys pressed
 	if (gu->directControl && !cam) {
 		CUnit* owner = gu->directControl;
 
@@ -4092,6 +4254,7 @@ void CGame::UpdateUI(bool cam)
 			ignoreChar = 0;
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -4134,6 +4297,7 @@ void CGame::MakeMemDump(void)
 
 void CGame::DrawDirectControlHud(void)
 {
+#if !defined HEADLESS
 	CUnit* unit = gu->directControl;
 	glPushMatrix();
 
@@ -4341,12 +4505,15 @@ void CGame::DrawDirectControlHud(void)
 	glEnable(GL_DEPTH_TEST);
 
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 
 void CGame::GameEnd()
 {
+#if !defined HEADLESS
 	new CEndGameBox();
+#endif // !defined HEADLESS
 	CDemoRecorder* record = net->GetDemoRecorder();
 	if (record != NULL) {
 		// Write CPlayer::Statistics and CTeam::Statistics to demo
@@ -4450,26 +4617,34 @@ void CGame::HandleChatMsg(const ChatMessage& msg)
 			const bool allied = teamHandler->Ally(msgAllyTeam, gu->myAllyTeam);
 			if (gu->spectating || (allied && !player->spectator)) {
 				logOutput.Print(label + "Allies: " + s);
+#if !defined HEADLESS
 				Channels::UserInterface.PlaySample(chatSound, 5);
+#endif // !defined HEADLESS
 			}
 		}
 		else if (msg.destination == ChatMessage::TO_SPECTATORS) {
 			if (gu->spectating || myMsg) {
 				logOutput.Print(label + "Spectators: " + s);
+#if !defined HEADLESS
 				Channels::UserInterface.PlaySample(chatSound, 5);
+#endif // !defined HEADLESS
 			}
 		}
 		else if (msg.destination == ChatMessage::TO_EVERYONE) {
 			if (gu->spectating || !noSpectatorChat || !player->spectator) {
 				logOutput.Print(label + s);
+#if !defined HEADLESS
 				Channels::UserInterface.PlaySample(chatSound, 5);
+#endif // !defined HEADLESS
 			}
 		}
 		else if (msg.destination < playerHandler->ActivePlayers())
 		{
 			if (msg.destination == gu->myPlayerNum && player && !player->spectator) {
 				logOutput.Print(label + "Private: " + s);
+#if !defined HEADLESS
 				Channels::UserInterface.PlaySample(chatSound, 5);
+#endif // !defined HEADLESS
 			}
 			else if (player->playerNum == gu->myPlayerNum)
 			{
@@ -4499,9 +4674,11 @@ void CGame::Skip(int toFrame)
 	const int totalFrames = endFrame - startFrame;
 	const float seconds = (float)(totalFrames) / (float)GAME_SPEED;
 
+#if !defined HEADLESS
 	bool soundmute = sound->IsMuted();
 	if (!soundmute)
 		sound->Mute(); // no sounds
+#endif // !defined HEADLESS
 
 	skipping = true;
 	{
@@ -4511,12 +4688,15 @@ void CGame::Skip(int toFrame)
 		gs->speedFactor     = speed;
 		gs->userSpeedFactor = speed;
 
+#if !defined HEADLESS
 		Uint32 gfxLastTime = SDL_GetTicks() - 10000; // force the first draw
+#endif // !defined HEADLESS
 
 		while (skipping && endFrame >= gs->frameNum) {
 			// FIXME: messes up the how-many-frames-are-left bar
 			Update();
 
+#if !defined HEADLESS
 			// draw something so that users don't file bug reports
 			const Uint32 gfxTime = SDL_GetTicks();
 			if ((gfxTime - gfxLastTime) > 100) { // 10fps
@@ -4542,6 +4722,7 @@ void CGame::Skip(int toFrame)
 
 				SDL_GL_SwapBuffers();
 			}
+#endif // !defined HEADLESS
 		}
 
 		gu->gameTime    += seconds;
@@ -4551,8 +4732,10 @@ void CGame::Skip(int toFrame)
 		gs->userSpeedFactor = oldUserSpeed;
 	}
 
+#if !defined HEADLESS
 	if (!soundmute)
 		sound->Mute(); // sounds back on
+#endif // !defined HEADLESS
 
 	logOutput.Print("Skipped %.1f seconds\n", seconds);
 }

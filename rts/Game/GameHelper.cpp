@@ -3,21 +3,27 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "StdAfx.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "mmgr.h"
 
 #include "GlobalUnsynced.h"
+#if !defined HEADLESS
+#include "UI/LuaUI.h"
 #include "Camera.h"
+#endif // !defined HEADLESS
 #include "GameSetup.h"
 #include "Game.h"
 #include "GameHelper.h"
-#include "UI/LuaUI.h"
 #include "LogOutput.h"
 #include "Map/Ground.h"
 #include "Map/MapDamage.h"
 #include "Map/ReadMap.h"
+#if !defined HEADLESS
 #include "Rendering/Env/BaseWater.h"
 #include "Rendering/GroundDecalHandler.h"
+#endif // !defined HEADLESS
 #include "Sim/Features/Feature.h"
 #include "Sim/Misc/CollisionHandler.h"
 #include "Sim/Misc/CollisionVolume.h"
@@ -177,6 +183,7 @@ void CGameHelper::Explosion(
 	CExplosionGenerator* explosionGraphics, CUnit* hit,
 	const float3& impactDir, int weaponId
 ) {
+#if !defined HEADLESS
 	if (luaUI) {
 		if ((weaponId >= 0) && (weaponId <= weaponDefHandler->numWeaponDefs)) {
 			WeaponDef& wd = weaponDefHandler->weaponDefs[weaponId];
@@ -186,6 +193,7 @@ void CGameHelper::Explosion(
 			}
 		}
 	}
+#endif // !defined HEADLESS
 
 	bool noGfx = eventHandler.Explosion(weaponId, expPos, owner);
 
@@ -257,9 +265,11 @@ void CGameHelper::Explosion(
 		explosionGraphics->Explosion(expPos, damages[0], expRad, owner, gfxMod, hit, impactDir);
 	}
 
+#if !defined HEADLESS
 	groundDecals->AddExplosion(expPos, damages[0], expRad);
 
 	water->AddExplosion(expPos, damages[0], expRad);
+#endif // !defined HEADLESS
 }
 
 

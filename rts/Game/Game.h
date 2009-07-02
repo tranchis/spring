@@ -18,7 +18,9 @@ class CAVIGenerator;
 class CConsoleHistory;
 class CWordCompletion;
 class CKeySet;
+#if !defined HEADLESS
 class CInfoConsole;
+#endif // !defined HEADLESS
 class LuaParser;
 class LuaInputReceiver;
 class CLoadSaveHandler;
@@ -113,7 +115,9 @@ public:
 
 	CScript* script;
 
+#if !defined HEADLESS
 	CInfoConsole *infoConsole;
+#endif // !defined HEADLESS
 
 	void MakeMemDump(void);
 

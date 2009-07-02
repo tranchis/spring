@@ -14,9 +14,9 @@
 #if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GL/VertexArray.h"
-#include "Rendering/Textures/TAPalette.h"
 #include "Rendering/Textures/3DOTextureHandler.h"
 #endif // !defined HEADLESS
+//#include "Rendering/Textures/TAPalette.h"
 #include "3DOParser.h"
 #include "s3oParser.h"
 #include "FileSystem/VFSHandler.h"

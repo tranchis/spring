@@ -12,6 +12,7 @@
 #include "TdfParser.h"
 #include "FileSystem/ArchiveScanner.h"
 #include "Map/MapParser.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/Textures/TAPalette.h"
 #include "Sim/Misc/GlobalConstants.h"
 #include "UnsyncedRNG.h"

@@ -43,10 +43,11 @@
 #include "Rendering/glFont.h"
 #include "Rendering/GLContext.h"
 #include "Rendering/VerticalSync.h"
-#include "Rendering/Textures/TAPalette.h"
 #include "Rendering/Textures/NamedTextures.h"
 #include "Rendering/Textures/TextureAtlas.h"
 #endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/Textures/TAPalette.h"
 #include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Misc/GlobalConstants.h"
 #include "LogOutput.h"
@@ -222,9 +223,9 @@ bool SpringApp::Initialize()
 		gu->quitTime = quit_time;
 	}
 
+	palette.Init();
 #if !defined HEADLESS
 	InitOpenGL();
-	palette.Init();
 
 	// Initialize keyboard
 	SDL_EnableUNICODE(1);
