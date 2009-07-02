@@ -10,14 +10,13 @@
 #include <map>
 #include <set>
 #include "IModelParser.h"
+#if !defined HEADLESS
+#include "Rendering/Textures/3DOTextureHandler.h"
+#endif // !defined HEADLESS
 
 
 class CMatrix44f;
 class CFileHandler;
-class C3DOTextureHandler {
-public:
-	struct UnitTexture;
-};
 
 struct S3DOVertex {
 	float3 pos;
@@ -30,7 +29,9 @@ struct S3DOPrimitive {
 	std::vector<float3> normals; ///< normals per vertex
 	float3 normal;
 	int numVertex;
+#if !defined HEADLESS
 	C3DOTextureHandler::UnitTexture* texture;
+#endif // !defined HEADLESS
 };
 
 struct S3DOPiece : public S3DModelPiece {

@@ -25,6 +25,8 @@
 #include "LogOutput.h"
 #include "FileSystem/FileHandler.h"
 #include "FileSystem/FileSystem.h"
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/UnitModels/3DModel.h"
 
 using namespace std;
 
