@@ -12,7 +12,6 @@
 
 #include "LuaHandle.h"
 
-#include "Game/UI/LuaUI.h"
 #include "LuaGaia.h"
 #include "LuaRules.h"
 
@@ -22,15 +21,17 @@
 #include "LuaBitOps.h"
 #include "LuaUtils.h"
 #include "Game/PlayerHandler.h"
+#if !defined HEADLESS
+#include "Game/UI/LuaUI.h"
 #include "Game/UI/KeyCodes.h"
 #include "Game/UI/KeySet.h"
 #include "Game/UI/KeyBindings.h"
 #include "Game/UI/MiniMap.h"
-#if !defined HEADLESS
-#include "Rendering/InMapDraw.h"
 #include "Rendering/GL/myGL.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
 #endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/InMapDraw.h"
 #include "Sim/Misc/GlobalSynced.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Projectiles/Projectile.h"
@@ -38,6 +39,7 @@
 #include "Sim/Units/UnitDef.h"
 #include "Sim/Weapons/Weapon.h"
 #include "EventHandler.h"
+#include "GlobalUnsynced.h"
 #include "LogOutput.h"
 #include "SpringApp.h"
 #include "FileSystem/FileHandler.h"
@@ -1090,6 +1092,7 @@ void CLuaHandle::HandleLuaMsg(int playerID, int script, int mode, const std::vec
 	msg.resize(data.size());
 	std::copy(data.begin(), data.end(), msg.begin());
 	if (script == LUA_HANDLE_ORDER_UI) {
+#if !defined HEADLESS
 		if (luaUI) {
 			bool sendMsg = false;
 			if (mode == 0) {
@@ -1117,6 +1120,7 @@ void CLuaHandle::HandleLuaMsg(int playerID, int script, int mode, const std::vec
 				luaUI->RecvLuaMsg(msg, playerID);
 			}
 		}
+#endif // !defined HEADLESS
 	}
 	else if (script == LUA_HANDLE_ORDER_GAIA) {
 		if (luaGaia) {
@@ -1378,6 +1382,7 @@ void CLuaHandle::DrawScreenEffects()
 
 void CLuaHandle::DrawInMiniMap()
 {
+#if !defined HEADLESS
 	LUA_CALL_IN_CHECK(L);
 	lua_checkstack(L, 4);
 	static const LuaHashString cmdStr("DrawInMiniMap");
@@ -1398,8 +1403,7 @@ void CLuaHandle::DrawInMiniMap()
 
 	// call the routine
 	RunCallInUnsynced(cmdStr, 2, 0);
-
-	return;
+#endif // !defined HEADLESS
 }
 
 /******************************************************************************/
@@ -1425,6 +1429,9 @@ bool CLuaHandle::KeyPress(unsigned short key, bool isRepeat)
 		return false; // the call is not defined, do not take the event
 	}
 
+	bool retval = false;
+
+#if !defined HEADLESS
 	lua_pushnumber(L, key);
 
 	lua_newtable(L);
@@ -1442,16 +1449,16 @@ bool CLuaHandle::KeyPress(unsigned short key, bool isRepeat)
 
 	// call the function
 	if (!RunCallInUnsynced(cmdStr, 5, 1)) {
-		return false;
-	}
-
-	// const int args = lua_gettop(L); unused
-	if (!lua_isboolean(L, -1)) {
+		retval = false;
+	} else if (!lua_isboolean(L, -1)) {
 		lua_pop(L, 1);
-		return false;
+		retval = false;
+	} else {
+		retval = !!lua_toboolean(L, -1);
+		lua_pop(L, 1);
 	}
-	const bool retval = !!lua_toboolean(L, -1);
-	lua_pop(L, 1);
+#endif // !defined HEADLESS
+
 	return retval;
 }
 
@@ -1468,6 +1475,9 @@ bool CLuaHandle::KeyRelease(unsigned short key)
 		return false; // the call is not defined, do not take the event
 	}
 
+	bool retval = false;
+
+#if !defined HEADLESS
 	lua_pushnumber(L, key);
 
 	lua_newtable(L);
@@ -1483,15 +1493,16 @@ bool CLuaHandle::KeyRelease(unsigned short key)
 
 	// call the function
 	if (!RunCallInUnsynced(cmdStr, 4, 1)) {
-		return false;
-	}
-
-	if (!lua_isboolean(L, -1)) {
+		retval = false;
+	} else if (!lua_isboolean(L, -1)) {
 		lua_pop(L, 1);
-		return false;
+		retval = false;
+	} else {
+		retval = !!lua_toboolean(L, -1);
+		lua_pop(L, 1);
 	}
-	const bool retval = !!lua_toboolean(L, -1);
-	lua_pop(L, 1);
+#endif // !defined HEADLESS
+
 	return retval;
 }
 
@@ -1508,21 +1519,23 @@ bool CLuaHandle::MousePress(int x, int y, int button)
 		return false; // the call is not defined, do not take the event
 	}
 
+	bool retval = false;
+
 	lua_pushnumber(L, x - gu->viewPosX);
 	lua_pushnumber(L, gu->viewSizeY - y - 1);
 	lua_pushnumber(L, button);
 
 	// call the function
 	if (!RunCallInUnsynced(cmdStr, 3, 1)) {
-		return false;
+		retval = false;
+	} else if (!lua_isboolean(L, -1)) {
+		lua_pop(L, 1);
+		retval = false;
+	} else {
+		retval = !!lua_toboolean(L, -1);
+		lua_pop(L, 1);
 	}
 
-	if (!lua_isboolean(L, -1)) {
-		lua_pop(L, 1);
-		return false;
-	}
-	const bool retval = !!lua_toboolean(L, -1);
-	lua_pop(L, 1);
 	return retval;
 }
 
@@ -1539,21 +1552,23 @@ int CLuaHandle::MouseRelease(int x, int y, int button)
 		return false; // the call is not defined, do not take the event
 	}
 
+	int retval = false;
+
 	lua_pushnumber(L, x - gu->viewPosX);
 	lua_pushnumber(L, gu->viewSizeY - y - 1);
 	lua_pushnumber(L, button);
 
 	// call the function
 	if (!RunCallInUnsynced(cmdStr, 3, 1)) {
-		return false;
+		retval = false;
+	} else if (!lua_isnumber(L, -1)) {
+		lua_pop(L, 1);
+		retval = -1;
+	} else {
+		retval = lua_toint(L, -1) - 1;
+		lua_pop(L, 1);
 	}
 
-	if (!lua_isnumber(L, -1)) {
-		lua_pop(L, 1);
-		return -1;
-	}
-	const int retval = lua_toint(L, -1) - 1;
-	lua_pop(L, 1);
 	return retval;
 }
 
