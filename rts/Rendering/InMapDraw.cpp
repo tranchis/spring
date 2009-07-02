@@ -81,6 +81,7 @@ CInMapDraw::CInMapDraw(void)
 	lastLeftClickTime = 0;
 	lastPos = float3(1, 1, 1);
 
+#if !defined HEADLESS
 	drawQuadsX = gs->mapx / DRAW_QUAD_SIZE;
 	drawQuadsY = gs->mapy / DRAW_QUAD_SIZE;
 	numQuads = drawQuadsX * drawQuadsY;
@@ -164,12 +165,15 @@ CInMapDraw::CInMapDraw(void)
 	glBuildMipmaps(GL_TEXTURE_2D, GL_RGBA8, 128, 64, GL_RGBA, GL_UNSIGNED_BYTE, tex[0]);
 
 	blippSound = sound->GetSoundId("MapPoint", false);
+#endif // !defined HEADLESS
 }
 
 
 CInMapDraw::~CInMapDraw(void)
 {
+#if !defined HEADLESS
 	glDeleteTextures (1, &texture);
+#endif // !defined HEADLESS
 }
 
 void CInMapDraw::PostLoad()
@@ -260,6 +264,7 @@ struct InMapDraw_QuadDrawer: public CReadMap::IQuadDrawer
 
 void InMapDraw_QuadDrawer::DrawQuad(int x, int y)
 {
+#if !defined HEADLESS
 	int drawQuadsX = imd->drawQuadsX;
 	CInMapDraw::DrawQuad* dq = &imd->drawQuads[y * drawQuadsX + x];
 
@@ -315,12 +320,14 @@ void InMapDraw_QuadDrawer::DrawQuad(int x, int y)
 			lineva->AddVertexQC(li->pos2 - (li->pos2 - camera->pos).ANormalize() * 26, li->color);
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
 
 void CInMapDraw::Draw(void)
 {
+#if !defined HEADLESS
 	GML_STDMUTEX_LOCK(inmap); //! Draw
 
 	glDepthMask(0);
@@ -360,6 +367,7 @@ void CInMapDraw::Draw(void)
 	//font->End(); //! draw point markers text
 
 	glDepthMask(1);
+#endif // !defined HEADLESS
 }
 
 
@@ -521,7 +529,9 @@ void CInMapDraw::LocalPoint(const float3& constPos, const std::string& label,
 		logOutput.Print("%s added point: %s",
 		                sender->name.c_str(), point.label.c_str());
 		logOutput.SetLastMsgPos(pos);
+#if !defined HEADLESS
 		Channels::UserInterface.PlaySample(blippSound, pos);
+#endif // !defined HEADLESS
 		minimap->AddNotification(pos, float3(1.0f, 1.0f, 1.0f), 1.0f);
 	}
 }

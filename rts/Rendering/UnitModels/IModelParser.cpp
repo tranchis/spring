@@ -18,6 +18,7 @@
 #include "Util.h"
 #include "LogOutput.h"
 #include "Exceptions.h"
+#include "lib/gml/gml.h"
 
 
 C3DModelLoader* modelParser = NULL;
@@ -90,7 +91,9 @@ S3DModel* C3DModelLoader::Load3DModel(std::string name, const float3& centerOffs
 		model->relMidPos += centerOffset;
 
 		CreateLists(p, model->rootobject);
+#if !defined HEADLESS
 		fartextureHandler->CreateFarTexture(model);
+#endif // !defined HEADLESS
 
 		cache[name] = model; // cache model
 		return model;
@@ -220,6 +223,7 @@ void C3DModelLoader::FixLocalModel(S3DModelPiece* model, LocalModel* lmodel, int
 
 void C3DModelLoader::CreateListsNow(IModelParser* parser, S3DModelPiece* o)
 {
+#if !defined HEADLESS
 	o->displist = glGenLists(1);
 	glNewList(o->displist, GL_COMPILE);
 	parser->Draw(o);
@@ -228,6 +232,7 @@ void C3DModelLoader::CreateListsNow(IModelParser* parser, S3DModelPiece* o)
 	for (std::vector<S3DModelPiece*>::iterator bs = o->childs.begin(); bs != o->childs.end(); bs++) {
 		CreateListsNow(parser, *bs);
 	}
+#endif // !defined HEADLESS
 }
 
 

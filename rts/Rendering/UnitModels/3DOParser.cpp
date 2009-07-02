@@ -231,6 +231,7 @@ void C3DOParser::GetPrimitives(S3DOPiece* obj,int pos,int num,vertex_vector* vv,
 		for(list<int>::iterator vi=orderVert.begin();vi!=orderVert.end();++vi)
 			vertHash=(vertHash+(*vi))*(*vi);
 
+#if !defined HEADLESS
 		sp.texture=0;
 		if(p.OffsetToTextureName!=0)
 		{
@@ -249,6 +250,7 @@ void C3DOParser::GetPrimitives(S3DOPiece* obj,int pos,int num,vertex_vector* vv,
 			sprintf(t,"ta_color%i",p.PaletteEntry);
 			sp.texture=texturehandler3DO->Get3DOTexture(t);
 		}
+#endif // !defined HEADLESS
 		float3 n=-(obj->vertices[sp.vertices[1]].pos-obj->vertices[sp.vertices[0]].pos).cross(obj->vertices[sp.vertices[2]].pos-obj->vertices[sp.vertices[0]].pos);
 		n.Normalize();
 		sp.normal=n;
@@ -380,6 +382,7 @@ S3DOPiece* C3DOParser::ReadChild(int pos, S3DOPiece* root, int* numobj)
 
 void C3DOParser::Draw(const S3DModelPiece* o) const
 {
+#if !defined HEADLESS
 	if (o->isEmpty)
 		return;
 
@@ -428,6 +431,7 @@ void C3DOParser::Draw(const S3DModelPiece* o) const
 	}
 
 	// glFrontFace(GL_CCW);
+#endif // !defined HEADLESS
 }
 
 

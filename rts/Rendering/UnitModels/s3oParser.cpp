@@ -42,9 +42,11 @@ S3DModel* CS3OParser::Load(std::string name)
 	model->type = MODELTYPE_S3O;
 	model->numobjects = 0;
 	model->name = name;
+#if !defined HEADLESS
 	model->tex1 = (char*) &fileBuf[header.texture1];
 	model->tex2 = (char*) &fileBuf[header.texture2];
 	texturehandlerS3O->LoadS3OTexture(model);
+#endif // !defined HEADLESS
 
 	SS3OPiece* rootPiece = LoadPiece(fileBuf, header.rootPiece, model);
 	rootPiece->type = MODELTYPE_S3O;
@@ -191,6 +193,7 @@ void CS3OParser::FindMinMax(SS3OPiece* o) const
 
 void CS3OParser::Draw(const S3DModelPiece* o) const
 {
+#if !defined HEADLESS
 	if (o->isEmpty) {
 		return;
 	}
@@ -250,6 +253,7 @@ void CS3OParser::Draw(const S3DModelPiece* o) const
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+#endif // !defined HEADLESS
 }
 
 

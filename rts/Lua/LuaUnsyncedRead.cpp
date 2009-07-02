@@ -481,16 +481,21 @@ int LuaUnsyncedRead::IsUnitInView(lua_State* L)
 
 static bool UnitIsIcon(const CUnit* unit)
 {
+#if !defined HEADLESS
 	const float sqDist = (unit->pos - camera->pos).SqLength();
 	const float iconLength = unitDrawer->iconLength;
 	const float iconDistSqrMult = unit->unitDef->iconType->GetDistanceSqr();
 	const float realIconLength = iconLength * iconDistSqrMult;
 	return (sqDist > realIconLength);
+#else // !defined HEADLESS
+	return true;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::IsUnitVisible(lua_State* L)
 {
+#if !defined HEADLESS
 	CUnit* unit = ParseUnit(L, __FUNCTION__, 1);
 	if (unit == NULL) {
 		return 0;
@@ -517,6 +522,9 @@ int LuaUnsyncedRead::IsUnitVisible(lua_State* L)
 		}
 	}
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -649,6 +657,7 @@ enum UnitAllegiance {
 
 int LuaUnsyncedRead::GetVisibleUnits(lua_State* L)
 {
+#if !defined HEADLESS
 	// arg 1 - teamID
 	int teamID = luaL_optint(L, 1, -1);
 	if (teamID == MyUnits) {
@@ -744,6 +753,9 @@ int LuaUnsyncedRead::GetVisibleUnits(lua_State* L)
 	}
 
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -898,28 +910,37 @@ int LuaUnsyncedRead::IsGUIHidden(lua_State* L)
 
 int LuaUnsyncedRead::HaveShadows(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	if (shadowHandler == NULL) {
 		return 0;
 	}
 	lua_pushboolean(L, shadowHandler->drawShadows);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::HaveAdvShading(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	if (unitDrawer == NULL) {
 		return 0;
 	}
 	lua_pushboolean(L, unitDrawer->advShading);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetWaterMode(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	if (water == NULL) {
 		return 0;
@@ -936,11 +957,15 @@ int LuaUnsyncedRead::GetWaterMode(lua_State* L)
 	lua_pushnumber(L, mode);
 	lua_pushstring(L, modeName);
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetMapDrawMode(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	const CBaseGroundDrawer* gd = readmap->GetGroundDrawer();
 	switch (gd->drawMode) {
@@ -951,6 +976,9 @@ int LuaUnsyncedRead::GetMapDrawMode(lua_State* L)
 		case CBaseGroundDrawer::drawLos:    { HSTR_PUSH(L, "los");    break; }
 	}
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -958,6 +986,7 @@ int LuaUnsyncedRead::GetMapDrawMode(lua_State* L)
 
 int LuaUnsyncedRead::GetCameraNames(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 
 	lua_newtable(L);
@@ -969,11 +998,15 @@ int LuaUnsyncedRead::GetCameraNames(lua_State* L)
 	}
 
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCameraState(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 
 	lua_newtable(L);
@@ -992,39 +1025,55 @@ int LuaUnsyncedRead::GetCameraState(lua_State* L)
 	}
 
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCameraPosition(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, camera->pos.x);
 	lua_pushnumber(L, camera->pos.y);
 	lua_pushnumber(L, camera->pos.z);
 	return 3;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCameraDirection(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, camera->forward.x);
 	lua_pushnumber(L, camera->forward.y);
 	lua_pushnumber(L, camera->forward.z);
 	return 3;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCameraFOV(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, camera->GetFov());
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCameraVectors(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 
 	const CCamera* cam = camera;
@@ -1048,11 +1097,15 @@ int LuaUnsyncedRead::GetCameraVectors(lua_State* L)
 #undef PACK_CAMERA_VECTOR
 
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::WorldToScreenCoords(lua_State* L)
 {
+#if !defined HEADLESS
 	const float3 worldPos(luaL_checkfloat(L, 1),
 	                      luaL_checkfloat(L, 2),
 	                      luaL_checkfloat(L, 3));
@@ -1061,11 +1114,15 @@ int LuaUnsyncedRead::WorldToScreenCoords(lua_State* L)
 	lua_pushnumber(L, winPos.y);
 	lua_pushnumber(L, winPos.z);
 	return 3;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::TraceScreenRay(lua_State* L)
 {
+#if !defined HEADLESS
 	// window coordinates
 	const int mx = luaL_checkint(L, 1);
 	const int my = luaL_checkint(L, 2);
@@ -1152,6 +1209,9 @@ int LuaUnsyncedRead::TraceScreenRay(lua_State* L)
 	lua_pushnumber(L, 3); lua_pushnumber(L, groundPos.z); lua_rawset(L, -3);
 
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1283,9 +1343,13 @@ int LuaUnsyncedRead::DiffTimers(lua_State* L)
 
 int LuaUnsyncedRead::GetSoundStreamTime(lua_State* L)
 {
+#if !defined HEADLESS
 	lua_pushnumber(L, Channels::BGMusic.GetPlayTime());
 	lua_pushnumber(L, Channels::BGMusic.GetTime());
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1313,6 +1377,7 @@ int LuaUnsyncedRead::GetFPS(lua_State* L)
 
 int LuaUnsyncedRead::GetActiveCommand(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(gui); // GetActiveCommand
 
 	if (guihandler == NULL) {
@@ -1332,11 +1397,15 @@ int LuaUnsyncedRead::GetActiveCommand(lua_State* L)
 	lua_pushnumber(L, cmdDescs[inCommand].type);
 	lua_pushstring(L, cmdDescs[inCommand].name.c_str());
 	return 4;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetDefaultCommand(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(gui); // GetDefaultCommand
 
 	if (guihandler == NULL) {
@@ -1356,6 +1425,9 @@ int LuaUnsyncedRead::GetDefaultCommand(lua_State* L)
 	lua_pushnumber(L, cmdDescs[defCmd].type);
 	lua_pushstring(L, cmdDescs[defCmd].name.c_str());
 	return 4;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1391,6 +1463,7 @@ static void PushCommandDesc(lua_State* L, const CommandDescription& cd)
 
 int LuaUnsyncedRead::GetActiveCmdDescs(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(gui); // GetActiveCmdDescs
 
 	if (guihandler == NULL) {
@@ -1407,11 +1480,15 @@ int LuaUnsyncedRead::GetActiveCmdDescs(lua_State* L)
 	}
 	HSTR_PUSH_NUMBER(L, "n", cmdDescCount);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetActiveCmdDesc(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(gui); // GetActiveCmdDesc
 
 	if (guihandler == NULL) {
@@ -1430,11 +1507,15 @@ int LuaUnsyncedRead::GetActiveCmdDesc(lua_State* L)
 	}
 	PushCommandDesc(L, cmdDescs[cmdIndex]);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCmdDescIndex(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_RECMUTEX_LOCK(gui); // GetCmdDescIndex
 
 	if (guihandler == NULL) {
@@ -1450,6 +1531,8 @@ int LuaUnsyncedRead::GetCmdDescIndex(lua_State* L)
 			return 1;
 		}
 	}
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1458,34 +1541,46 @@ int LuaUnsyncedRead::GetCmdDescIndex(lua_State* L)
 
 int LuaUnsyncedRead::GetBuildFacing(lua_State* L)
 {
+#if !defined HEADLESS
 	if (guihandler == NULL) {
 		return 0;
 	}
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, guihandler->buildFacing);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetBuildSpacing(lua_State* L)
 {
+#if !defined HEADLESS
 	if (guihandler == NULL) {
 		return 0;
 	}
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, guihandler->buildSpacing);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetGatherMode(lua_State* L)
 {
+#if !defined HEADLESS
 	if (guihandler == NULL) {
 		return 0;
 	}
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, guihandler->GetGatherMode());
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1493,12 +1588,16 @@ int LuaUnsyncedRead::GetGatherMode(lua_State* L)
 
 int LuaUnsyncedRead::GetActivePage(lua_State* L)
 {
+#if !defined HEADLESS
 	if (guihandler == NULL) {
 		return 0;
 	}
 	lua_pushnumber(L, guihandler->GetActivePage());
 	lua_pushnumber(L, guihandler->GetMaxPage());
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1506,6 +1605,7 @@ int LuaUnsyncedRead::GetActivePage(lua_State* L)
 
 int LuaUnsyncedRead::GetMouseState(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushnumber(L, mouse->lastx - gu->viewPosX);
 	lua_pushnumber(L, gu->viewSizeY - mouse->lasty - 1);
@@ -1513,20 +1613,28 @@ int LuaUnsyncedRead::GetMouseState(lua_State* L)
 	lua_pushboolean(L, mouse->buttons[SDL_BUTTON_MIDDLE].pressed);
 	lua_pushboolean(L, mouse->buttons[SDL_BUTTON_RIGHT].pressed);
 	return 5;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetMouseCursor(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	lua_pushstring(L, mouse->cursorText.c_str());
 	lua_pushnumber(L, mouse->cursorScale);
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetMouseStartPosition(lua_State* L)
 {
+#if !defined HEADLESS
 	if (mouse == NULL) {
 		return 0;
 	}
@@ -1544,6 +1652,9 @@ int LuaUnsyncedRead::GetMouseStartPosition(lua_State* L)
 	lua_pushnumber(L, bp.dir.y);
 	lua_pushnumber(L, bp.dir.z);
 	return 8;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1599,18 +1710,23 @@ int LuaUnsyncedRead::GetPressedKeys(lua_State* L)
 
 int LuaUnsyncedRead::GetInvertQueueKey(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	if (guihandler == NULL) {
 		return 0;
 	}
 	lua_pushboolean(L, guihandler->GetInvertQueueKey());
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 /******************************************************************************/
 
 int LuaUnsyncedRead::GetLastMessagePositions(lua_State* L)
 {
+#if !defined HEADLESS
 	CInfoConsole* ic = game->infoConsole;
 	if (ic == NULL) {
 		return 0;
@@ -1635,12 +1751,16 @@ int LuaUnsyncedRead::GetLastMessagePositions(lua_State* L)
 		lua_rawset(L, -3);
 	}
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 /******************************************************************************/
 
 int LuaUnsyncedRead::GetConsoleBuffer(lua_State* L)
 {
+#if !defined HEADLESS
 	CInfoConsole* ic = game->infoConsole;
 	if (ic == NULL) {
 		return true;
@@ -1686,20 +1806,28 @@ int LuaUnsyncedRead::GetConsoleBuffer(lua_State* L)
 	lua_rawset(L, -3);
 
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetCurrentTooltip(lua_State* L)
 {
+#if !defined HEADLESS
 	CheckNoArgs(L, __FUNCTION__);
 	const string tooltip = mouse->GetCurrentTooltip();
 	lua_pushstring(L, tooltip.c_str());
+#else // !defined HEADLESS
+	lua_pushstring(L, "");
+#endif // !defined HEADLESS
 	return 1;
 }
 
 
 int LuaUnsyncedRead::GetKeyCode(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 1) || !lua_isstring(L, 1)) {
 		luaL_error(L, "Incorrect arguments to GetKeyCode(\"keysym\")");
@@ -1707,11 +1835,15 @@ int LuaUnsyncedRead::GetKeyCode(lua_State* L)
 	const string keysym = lua_tostring(L, 1);
 	lua_pushnumber(L, keyCodes->GetCode(keysym));
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetKeySymbol(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 1) || !lua_isnumber(L, 1)) {
 		luaL_error(L, "Incorrect arguments to GetKeySymbol(keycode)");
@@ -1720,11 +1852,15 @@ int LuaUnsyncedRead::GetKeySymbol(lua_State* L)
 	lua_pushstring(L, keyCodes->GetName(keycode).c_str());
 	lua_pushstring(L, keyCodes->GetDefaultName(keycode).c_str());
 	return 2;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetKeyBindings(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 1) || !lua_isstring(L, 1)) {
 		luaL_error(L, "Incorrect arguments to GetKeyBindings(\"keyset\")");
@@ -1749,11 +1885,15 @@ int LuaUnsyncedRead::GetKeyBindings(lua_State* L)
 	lua_pushnumber(L, actions.size());
 	lua_rawset(L, -3);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedRead::GetActionHotKeys(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 1) || !lua_isstring(L, 1)) {
 		luaL_error(L, "Incorrect arguments to GetActionHotKeys(\"command\")");
@@ -1771,6 +1911,9 @@ int LuaUnsyncedRead::GetActionHotKeys(lua_State* L)
 	lua_pushnumber(L, hotkeys.size());
 	lua_rawset(L, -3);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 /******************************************************************************/
@@ -2045,6 +2188,7 @@ int LuaUnsyncedRead::GetPlayerTraffic(lua_State* L)
 
 int LuaUnsyncedRead::GetDrawSelectionInfo(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if (args != 0) {
 		luaL_error(L, "Incorrect arguments to GetDrawSelectionInfo()");
@@ -2052,6 +2196,9 @@ int LuaUnsyncedRead::GetDrawSelectionInfo(lua_State* L)
 
 	lua_pushboolean(L, guihandler ? guihandler->GetDrawSelectionInfo() : 0);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 

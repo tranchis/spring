@@ -25,6 +25,7 @@
 
 void S3DModelPiece::DrawStatic() const
 {
+#if !defined HEADLESS
 	glPushMatrix();
 	glTranslatef(offset.x, offset.y, offset.z);
 	glCallList(displist);
@@ -32,12 +33,15 @@ void S3DModelPiece::DrawStatic() const
 		(*ci)->DrawStatic();
 	}
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 
 S3DModelPiece::~S3DModelPiece()
 {
+#if !defined HEADLESS
 	glDeleteLists(displist, 1);
+#endif // !defined HEADLESS
 	delete colvol;
 }
 
@@ -114,6 +118,7 @@ static const float RADTOANG  = 180 / PI;
 
 void LocalModelPiece::Draw() const
 {
+#if !defined HEADLESS
 	if (!visible && childs.size()==0)
 		return;
 
@@ -132,11 +137,13 @@ void LocalModelPiece::Draw() const
 	}
 
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 
 void LocalModelPiece::DrawLOD(unsigned int lod) const
 {
+#if !defined HEADLESS
 	if (!visible && childs.size()==0)
 		return;
 
@@ -155,11 +162,13 @@ void LocalModelPiece::DrawLOD(unsigned int lod) const
 	}
 
 	glPopMatrix();
+#endif // !defined HEADLESS
 }
 
 
 void LocalModelPiece::ApplyTransform() const
 {
+#if !defined HEADLESS
 	if (parent) {
 		parent->ApplyTransform();
 	}
@@ -168,6 +177,7 @@ void LocalModelPiece::ApplyTransform() const
 	if (rot[1]) { glRotatef( rot[1] * RADTOANG, 0.0f, 1.0f, 0.0f); }
 	if (rot[0]) { glRotatef( rot[0] * RADTOANG, 1.0f, 0.0f, 0.0f); }
 	if (rot[2]) { glRotatef(-rot[2] * RADTOANG, 0.0f, 0.0f, 1.0f); }
+#endif // !defined HEADLESS
 }
 
 

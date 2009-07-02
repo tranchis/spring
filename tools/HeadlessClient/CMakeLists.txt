@@ -202,6 +202,20 @@ SET(rendering_files
 	${sr}/Rendering/Textures/TAPalette.cpp
 	)
 
+SET(map_files
+#	${sr}/Map/BaseGroundDrawer.cpp
+	${sr}/Map/BasicMapDamage.cpp
+	${sr}/Map/Ground.cpp
+	${sr}/Map/HeightLinePalette.cpp
+#	${sr}/Map/HeightMapTexture.cpp
+	${sr}/Map/MapDamage.cpp
+	${sr}/Map/MapInfo.cpp
+	${sr}/Map/MapParser.cpp
+	${sr}/Map/MetalMap.cpp
+	${sr}/Map/NoMapDamage.cpp
+	${sr}/Map/ReadMap.cpp
+	)
+
 SET(springHeadless_files
 	${system_files}
 	${server_files}
@@ -210,14 +224,14 @@ SET(springHeadless_files
 	${game_files}
 	${lua_files}
 	${rendering_files}
-	${sr}/Map/MapParser
+	${map_files}
 	)
 
 #ADD_LIBRARY(springmain SHARED EXCLUDE_FROM_ALL ${springHeadless_files})
 
 ADD_EXECUTABLE(spring-headless EXCLUDE_FROM_ALL ${springHeadless_files} main)
 #TARGET_LINK_LIBRARIES(spring-headless springmain)
-TARGET_LINK_LIBRARIES(spring-headless ${Boost_REGEX_LIBRARY} ${Boost_THREAD_LIBRARY} ${springHeadless_libraries} lua)
+TARGET_LINK_LIBRARIES(spring-headless ${SDL_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${springHeadless_libraries} lua)
 if (MINGW)
 	TARGET_LINK_LIBRARIES (spring-headless ws2_32)
 else (MINGW)
