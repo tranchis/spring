@@ -22,14 +22,7 @@ using namespace std;
 
 #include "LuaHandle.h"
 #include "LuaHashString.h"
-#include "Game/Camera.h"
-#include "Game/Camera/CameraController.h"
-#include "Game/Game.h"
-#include "Game/GameHelper.h"
-#include "Game/GameSetup.h"
-#include "Game/PlayerHandler.h"
-#include "Game/PlayerRoster.h"
-#include "Game/CameraHandler.h"
+#if !defined HEADLESS
 #include "Game/UI/GuiHandler.h"
 #include "Game/UI/InfoConsole.h"
 #include "Game/UI/KeyCodes.h"
@@ -37,10 +30,19 @@ using namespace std;
 #include "Game/UI/KeyBindings.h"
 #include "Game/UI/MiniMap.h"
 #include "Game/UI/MouseHandler.h"
-#include "Map/BaseGroundDrawer.h"
+#include "Game/Camera.h"
+#include "Game/Camera/CameraController.h"
+#include "Game/CameraHandler.h"
+#endif // !defined HEADLESS
+#include "Game/Game.h"
+#include "Game/GameHelper.h"
+#include "Game/GameSetup.h"
+#include "Game/PlayerHandler.h"
+#include "Game/PlayerRoster.h"
 #include "Map/Ground.h"
 #include "Map/ReadMap.h"
 #if !defined HEADLESS
+#include "Map/BaseGroundDrawer.h"
 #include "Rendering/IconHandler.h"
 #include "Rendering/ShadowHandler.h"
 #include "Rendering/Env/BaseWater.h"
@@ -60,6 +62,8 @@ using namespace std;
 #if !defined HEADLESS
 #include "Sound/Music.h"
 #endif // !defined HEADLESS
+#include "GlobalUnsynced.h"
+#include "lib/gml/gml.h"
 
 
 extern boost::uint8_t *keys;
@@ -315,60 +319,67 @@ int LuaUnsyncedRead::GetScreenGeometry(lua_State* L)
 
 int LuaUnsyncedRead::GetMiniMapGeometry(lua_State* L)
 {
-	if (minimap == NULL) {
-		return 0;
+#if !defined HEADLESS
+	if (minimap != NULL) {
+		lua_pushnumber(L, minimap->GetPosX());
+		lua_pushnumber(L, minimap->GetPosY());
+		lua_pushnumber(L, minimap->GetSizeX());
+		lua_pushnumber(L, minimap->GetSizeY());
+		lua_pushboolean(L, minimap->GetMinimized());
+		lua_pushboolean(L, minimap->GetMaximized());
+		return 6;
 	}
-	lua_pushnumber(L, minimap->GetPosX());
-	lua_pushnumber(L, minimap->GetPosY());
-	lua_pushnumber(L, minimap->GetSizeX());
-	lua_pushnumber(L, minimap->GetSizeY());
-	lua_pushboolean(L, minimap->GetMinimized());
-	lua_pushboolean(L, minimap->GetMaximized());
+#endif // !defined HEADLESS
 
-	return 6;
+	return 0;
 }
 
 
 int LuaUnsyncedRead::GetMiniMapDualScreen(lua_State* L)
 {
-	if (minimap == NULL) {
-		return 0;
-	}
-	if (!gu->dualScreenMode) {
-		lua_pushboolean(L, false);
-	} else {
-		if (gu->dualScreenMiniMapOnLeft) {
-			lua_pushliteral(L, "left");
+#if !defined HEADLESS
+	if (minimap != NULL) {
+		if (!gu->dualScreenMode) {
+			lua_pushboolean(L, false);
 		} else {
-			lua_pushliteral(L, "right");
+			if (gu->dualScreenMiniMapOnLeft) {
+				lua_pushliteral(L, "left");
+			} else {
+				lua_pushliteral(L, "right");
+			}
 		}
+		return 1;
 	}
-	return 1;
+#endif // !defined HEADLESS
+
+	return 0;
 }
 
 
 int LuaUnsyncedRead::IsAboveMiniMap(lua_State* L)
 {
-	if (minimap == NULL) {
-		return 0;
+#if !defined HEADLESS
+	if (minimap != NULL) {
+		if (minimap->GetMinimized() || game->hideInterface) {
+			return false;
+		}
+
+		const int x = luaL_checkint(L, 1) + gu->viewPosX;
+		const int y = luaL_checkint(L, 2);
+
+		const int x0 = minimap->GetPosX();
+		const int y0 = minimap->GetPosY();
+		const int x1 = x0 + minimap->GetSizeX();
+		const int y1 = y0 + minimap->GetSizeY();
+
+		lua_pushboolean(L, (x >= x0) && (x < x1) &&
+			               (y >= y0) && (y < y1));
+
+		return 1;
 	}
+#endif // !defined HEADLESS
 
-	if (minimap->GetMinimized() || game->hideInterface) {
-		return false;
-	}
-
-	const int x = luaL_checkint(L, 1) + gu->viewPosX;
-	const int y = luaL_checkint(L, 2);
-
-	const int x0 = minimap->GetPosX();
-	const int y0 = minimap->GetPosY();
-	const int x1 = x0 + minimap->GetSizeX();
-	const int y1 = y0 + minimap->GetSizeY();
-
-	lua_pushboolean(L, (x >= x0) && (x < x1) &&
-	                   (y >= y0) && (y < y1));
-
-	return 1;
+	return 0;
 }
 
 
@@ -407,6 +418,7 @@ int LuaUnsyncedRead::GetHasLag(lua_State* L)
 
 int LuaUnsyncedRead::IsAABBInView(lua_State* L)
 {
+#if !defined HEADLESS
 	float3 mins = float3(luaL_checkfloat(L, 1),
 	                     luaL_checkfloat(L, 2),
 	                     luaL_checkfloat(L, 3));
@@ -414,18 +426,25 @@ int LuaUnsyncedRead::IsAABBInView(lua_State* L)
 	                     luaL_checkfloat(L, 5),
 	                     luaL_checkfloat(L, 6));
 	lua_pushboolean(L, camera->InView(mins, maxs));
+#else // !defined HEADLESS
+	lua_pushboolean(L, false);
+#endif // !defined HEADLESS
 	return 1;
 }
 
 
 int LuaUnsyncedRead::IsSphereInView(lua_State* L)
 {
+#if !defined HEADLESS
 	const float3 pos(luaL_checkfloat(L, 1),
 	                 luaL_checkfloat(L, 2),
 	                 luaL_checkfloat(L, 3));
 	const float radius = lua_israwnumber(L, 4) ? lua_tofloat(L, 4) : 0.0f;
 
 	lua_pushboolean(L, camera->InView(pos, radius));
+#else // !defined HEADLESS
+	lua_pushboolean(L, false);
+#endif // !defined HEADLESS
 	return 1;
 }
 
@@ -447,11 +466,15 @@ int LuaUnsyncedRead::IsUnitAllied(lua_State* L)
 
 int LuaUnsyncedRead::IsUnitInView(lua_State* L)
 {
+#if !defined HEADLESS
 	CUnit* unit = ParseUnit(L, __FUNCTION__, 1);
 	if (unit == NULL) {
 		return 0;
 	}
 	lua_pushboolean(L, camera->InView(unit->midPos, unit->radius));
+#else // !defined HEADLESS
+	lua_pushboolean(L, false);
+#endif // !defined HEADLESS
 	return 1;
 }
 
@@ -1022,6 +1045,7 @@ int LuaUnsyncedRead::GetCameraVectors(lua_State* L)
 	PACK_CAMERA_VECTOR(bottom);
 	PACK_CAMERA_VECTOR(leftside);
 	PACK_CAMERA_VECTOR(rightside);
+#undef PACK_CAMERA_VECTOR
 
 	return 1;
 }

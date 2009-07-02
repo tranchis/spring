@@ -15,7 +15,7 @@ using namespace std;
 #include "LuaInclude.h"
 
 #include "LuaHandle.h"
-#include "Game/UI/LuaUI.h"
+//#include "Game/UI/LuaUI.h"
 #include "LuaGaia.h"
 #include "LuaRules.h"
 #include "LuaHashString.h"

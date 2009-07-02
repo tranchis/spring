@@ -167,10 +167,10 @@ SET(lua_files
 	${sr}/Lua/LuaGaia.cpp
 	${sr}/Lua/LuaHandle.cpp
 	${sr}/Lua/LuaHandleSynced.cpp
-	${sr}/Lua/LuaInputReceiver.cpp
+#	${sr}/Lua/LuaInputReceiver.cpp
 	${sr}/Lua/LuaIO.cpp
 #	${sr}/Lua/LuaMaterial.cpp
-	${sr}/Lua/LuaOpenGL.cpp
+#	${sr}/Lua/LuaOpenGL.cpp
 	${sr}/Lua/LuaParser.cpp
 	${sr}/Lua/LuaPathFinder.cpp
 #	${sr}/Lua/LuaRBOs.cpp

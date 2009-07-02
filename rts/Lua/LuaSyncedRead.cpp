@@ -22,7 +22,7 @@
 #include "ExternalAI/EngineOutHandler.h"
 #include "Game/Game.h"
 #include "Game/GameSetup.h"
-#include "Game/Camera.h"
+//#include "Game/Camera.h"
 #include "Game/GameHelper.h"
 #include "Game/PlayerHandler.h"
 #include "Map/Ground.h"

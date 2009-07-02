@@ -22,14 +22,17 @@
 #include "LuaHandle.h"
 #include "LuaHashString.h"
 #include "LuaUtils.h"
+#if !defined HEADLESS
 #include "LuaTextures.h"
 
 #include "Game/Camera.h"
 #include "Game/CameraHandler.h"
 #include "Game/Camera/CameraController.h"
+#endif // !defined HEADLESS
 #include "Game/Game.h"
 #include "Game/SelectedUnits.h"
 #include "Game/PlayerHandler.h"
+#if !defined HEADLESS
 #include "Game/UI/CommandColors.h"
 #include "Game/UI/CursorIcons.h"
 #include "Game/UI/GuiHandler.h"
@@ -39,6 +42,7 @@
 #include "Game/UI/KeyBindings.h"
 #include "Game/UI/MiniMap.h"
 #include "Game/UI/MouseHandler.h"
+#endif // !defined HEADLESS
 #include "Map/MapInfo.h"
 #include "Map/ReadMap.h"
 #if !defined HEADLESS
@@ -46,8 +50,9 @@
 #include "Rendering/GL/myGL.h"
 #include "Rendering/FontTexture.h"
 #include "Rendering/IconHandler.h"
-#include "Rendering/InMapDraw.h"
 #endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/InMapDraw.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitDefHandler.h"
@@ -57,6 +62,7 @@
 #include "Sim/Units/Groups/Group.h"
 #include "Sim/Units/Groups/GroupHandler.h"
 #include "LogOutput.h"
+#include "GlobalUnsynced.h"
 #include "NetProtocol.h"
 #if !defined HEADLESS
 #include "Sound/Sound.h"
@@ -363,6 +369,7 @@ static int ParseFloatArray(lua_State* L, int index, float* array, int size)
 
 void LuaUnsyncedCtrl::DrawUnitCommandQueues()
 {
+#if !defined HEADLESS
 	if (drawCmdQueueUnits.empty()) {
 		return;
 	}
@@ -399,6 +406,7 @@ void LuaUnsyncedCtrl::DrawUnitCommandQueues()
 	glLineWidth(1.0f);
 
 	glEnable(GL_DEPTH_TEST);
+#endif // !defined HEADLESS
 }
 
 
@@ -527,6 +535,7 @@ int LuaUnsyncedCtrl::SendMessageToAllyTeam(lua_State* L)
 
 int LuaUnsyncedCtrl::LoadSoundDef(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args < 1) || !lua_isstring(L, 1)) {
 		luaL_error(L, "Incorrect arguments to LoadSoundDef()");
@@ -538,13 +547,15 @@ int LuaUnsyncedCtrl::LoadSoundDef(lua_State* L)
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		lua_pushboolean(L, success);
 		return 1;
-	} else {
-		return 0;
 	}
+#endif // !defined HEADLESS
+
+	return 0;
 }
 
 int LuaUnsyncedCtrl::PlaySoundFile(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args < 1) || !lua_isstring(L, 1)) {
 		luaL_error(L, "Incorrect arguments to PlaySoundFile()");
@@ -578,14 +589,16 @@ int LuaUnsyncedCtrl::PlaySoundFile(lua_State* L)
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		lua_pushboolean(L, success);
 		return 1;
-	} else {
-		return 0;
 	}
+#endif // !defined HEADLESS
+
+	return 0;
 }
 
 
 int LuaUnsyncedCtrl::PlaySoundStream(lua_State* L)
 {
+#if !defined HEADLESS
 	//const int args = lua_gettop(L);
 
 	const string soundFile = luaL_checkstring(L, 1);
@@ -598,29 +611,37 @@ int LuaUnsyncedCtrl::PlaySoundStream(lua_State* L)
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		lua_pushboolean(L, true);
 		return 1;
-	} else {
-		return 0;
 	}
+#endif // !defined HEADLESS
+
+	return 0;
 }
 
 int LuaUnsyncedCtrl::StopSoundStream(lua_State*)
 {
+#if !defined HEADLESS
 	Channels::BGMusic.Stop();
+#endif // !defined HEADLESS
 	return 0;
 }
 int LuaUnsyncedCtrl::PauseSoundStream(lua_State*)
 {
+#if !defined HEADLESS
 	Channels::BGMusic.Pause();
+#endif // !defined HEADLESS
 	return 0;
 }
 int LuaUnsyncedCtrl::SetSoundStreamVolume(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L);
 	if (args == 1) {
 		Channels::BGMusic.SetVolume(lua_tonumber(L, 1));
 	} else {
 		luaL_error(L, "Incorrect arguments to SetSoundStreamVolume(v)");
 	}
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -630,6 +651,7 @@ int LuaUnsyncedCtrl::SetSoundStreamVolume(lua_State* L)
 
 int LuaUnsyncedCtrl::AddWorldIcon(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 4) ||
 	    !lua_isnumber(L, 1) || !lua_isnumber(L, 2) ||
@@ -641,12 +663,15 @@ int LuaUnsyncedCtrl::AddWorldIcon(lua_State* L)
 	                 lua_tofloat(L, 3),
 	                 lua_tofloat(L, 4));
 	cursorIcons.AddIcon(cmdID, pos);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::AddWorldText(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 4) ||
 	    !lua_isstring(L, 1) || !lua_isnumber(L, 2) ||
@@ -658,12 +683,15 @@ int LuaUnsyncedCtrl::AddWorldText(lua_State* L)
 	                 lua_tofloat(L, 3),
 	                 lua_tofloat(L, 4));
 	cursorIcons.AddIconText(text, pos);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::AddWorldUnit(lua_State* L)
 {
+#if !defined HEADLESS
 	const int args = lua_gettop(L); // number of arguments
 	if ((args != 6) ||
 	    !lua_isstring(L, 1) || !lua_isnumber(L, 2) ||
@@ -685,12 +713,15 @@ int LuaUnsyncedCtrl::AddWorldUnit(lua_State* L)
 	}
 	const int facing = lua_toint(L, 6);
 	cursorIcons.AddBuildIcon(-unitDefID, pos, team, facing);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::DrawUnitCommands(lua_State* L)
 {
+#if !defined HEADLESS
 	GML_STDMUTEX_LOCK(dque); // DrawUnitCommands
 
 	if (lua_istable(L, 1)) {
@@ -711,6 +742,8 @@ int LuaUnsyncedCtrl::DrawUnitCommands(lua_State* L)
 	if (unit != NULL) {
 		drawCmdQueueUnits.insert(unit);
 	}
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -720,6 +753,7 @@ int LuaUnsyncedCtrl::DrawUnitCommands(lua_State* L)
 
 int LuaUnsyncedCtrl::SetCameraTarget(lua_State* L)
 {
+#if !defined HEADLESS
 	if (mouse == NULL) {
 		return 0;
 	}
@@ -740,6 +774,7 @@ int LuaUnsyncedCtrl::SetCameraTarget(lua_State* L)
 
 	camHandler->GetCurrentController().SetPos(pos);
 	camHandler->CameraTransition(transTime);
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -747,6 +782,7 @@ int LuaUnsyncedCtrl::SetCameraTarget(lua_State* L)
 
 int LuaUnsyncedCtrl::SetCameraState(lua_State* L)
 {
+#if !defined HEADLESS
 	if (mouse == NULL) {
 		return 0;
 	}
@@ -777,9 +813,10 @@ int LuaUnsyncedCtrl::SetCameraState(lua_State* L)
 
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 1;
-	} else {
-		return 0;
 	}
+#endif // !defined HEADLESS
+
+	return 0;
 }
 
 
@@ -865,6 +902,7 @@ int LuaUnsyncedCtrl::SetTeamColor(lua_State* L)
 
 int LuaUnsyncedCtrl::AssignMouseCursor(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 0;
 	}
@@ -894,13 +932,16 @@ int LuaUnsyncedCtrl::AssignMouseCursor(lua_State* L)
 	} else {
 		lua_pushboolean(L, false);
 	}
-
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedCtrl::ReplaceMouseCursor(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 0;
 	}
@@ -921,14 +962,17 @@ int LuaUnsyncedCtrl::ReplaceMouseCursor(lua_State* L)
 	}
 
 	lua_pushboolean(L, mouse->ReplaceMouseCursor(oldName, newName, hotSpot));
-
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 /******************************************************************************/
 
 int LuaUnsyncedCtrl::SetCustomCommandDrawData(lua_State* L)
 {
+#if !defined HEADLESS
 	const int cmdID = luaL_checkint(L, 1);
 
 	int iconID = 0;
@@ -968,6 +1012,7 @@ int LuaUnsyncedCtrl::SetCustomCommandDrawData(lua_State* L)
 	const bool showArea = lua_isboolean(L, 4) && lua_toboolean(L, 4);
 
 	cmdColors.SetCustomCmdData(cmdID, iconID, color, showArea);
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -978,6 +1023,7 @@ int LuaUnsyncedCtrl::SetCustomCommandDrawData(lua_State* L)
 
 int LuaUnsyncedCtrl::SetDrawSky(lua_State* L)
 {
+#if !defined HEADLESS
 	if (game == NULL) {
 		return 0;
 	}
@@ -985,12 +1031,15 @@ int LuaUnsyncedCtrl::SetDrawSky(lua_State* L)
 		luaL_error(L, "Incorrect arguments to SetDrawSky()");
 	}
 	game->drawSky = !!lua_toboolean(L, 1);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::SetDrawWater(lua_State* L)
 {
+#if !defined HEADLESS
 	if (game == NULL) {
 		return 0;
 	}
@@ -998,12 +1047,14 @@ int LuaUnsyncedCtrl::SetDrawWater(lua_State* L)
 		luaL_error(L, "Incorrect arguments to SetDrawWater()");
 	}
 	game->drawWater = !!lua_toboolean(L, 1);
+#endif // !defined HEADLESS
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::SetDrawGround(lua_State* L)
 {
+#if !defined HEADLESS
 	if (game == NULL) {
 		return 0;
 	}
@@ -1011,6 +1062,7 @@ int LuaUnsyncedCtrl::SetDrawGround(lua_State* L)
 		luaL_error(L, "Incorrect arguments to SetDrawGround()");
 	}
 	game->drawGround = !!lua_toboolean(L, 1);
+#endif // !defined HEADLESS
 	return 0;
 }
 
@@ -1019,6 +1071,7 @@ int LuaUnsyncedCtrl::SetDrawGround(lua_State* L)
 
 int LuaUnsyncedCtrl::SetWaterParams(lua_State* L)
 {
+#if !defined HEADLESS
 	if (game == NULL) {
 		return 0;
 	}
@@ -1117,6 +1170,7 @@ int LuaUnsyncedCtrl::SetWaterParams(lua_State* L)
 			}
 		}
 	}
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -1126,6 +1180,7 @@ int LuaUnsyncedCtrl::SetWaterParams(lua_State* L)
 
 int LuaUnsyncedCtrl::SetUnitNoDraw(lua_State* L)
 {
+#if !defined HEADLESS
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 0;
 	}
@@ -1138,6 +1193,8 @@ int LuaUnsyncedCtrl::SetUnitNoDraw(lua_State* L)
 		luaL_error(L, "Incorrect arguments to SetUnitNoDraw()");
 	}
 	unit->noDraw = lua_toboolean(L, 2);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1192,6 +1249,7 @@ int LuaUnsyncedCtrl::SetUnitNoSelect(lua_State* L)
 
 int LuaUnsyncedCtrl::AddUnitIcon(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 0;
 	}
@@ -1203,17 +1261,24 @@ int LuaUnsyncedCtrl::AddUnitIcon(lua_State* L)
 	lua_pushboolean(L, iconHandler->AddIcon(iconName, texName,
 	                                        size, dist, radAdjust));
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedCtrl::FreeUnitIcon(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		return 0;
 	}
 	const string iconName  = luaL_checkstring(L, 1);
 	lua_pushboolean(L, iconHandler->FreeIcon(iconName));
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1245,7 +1310,7 @@ int LuaUnsyncedCtrl::ExtractModArchiveFile(lua_State* L)
 	if ((s > 0) && ((dname[s - 1] == '/') || (dname[s - 1] == '\\'))) {
 		dname = dname.substr(0, s - 1);
 	}
-#endif
+#endif // WIN32
 
 	if (!dname.empty() && !filesystem.CreateDirectory(dname)) {
 		luaL_error(L, "Could not create directory \"%s\" for file \"%s\"",
@@ -1290,11 +1355,13 @@ int LuaUnsyncedCtrl::SendCommands(lua_State* L)
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
+#if !defined HEADLESS
 	if ((guihandler == NULL) || gs->noHelperAIs) {
 		return 0;
 	}
+#endif // !defined HEADLESS
 
-	vector<string> cmds;
+	std::vector<string> cmds;
 
 	if (lua_istable(L, 1)) { // old style -- table
 		const int table = 1;
@@ -1323,7 +1390,9 @@ int LuaUnsyncedCtrl::SendCommands(lua_State* L)
 
 	lua_settop(L, 0); // pop the input arguments
 
+#if !defined HEADLESS
 	guihandler->RunCustomCommands(cmds, false);
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -1333,6 +1402,7 @@ int LuaUnsyncedCtrl::SendCommands(lua_State* L)
 
 static int SetActiveCommandByIndex(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1370,11 +1440,15 @@ static int SetActiveCommandByIndex(lua_State* L)
 	                                                  alt, ctrl, meta, shift);
 	lua_pushboolean(L, success);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 static int SetActiveCommandByAction(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1392,11 +1466,15 @@ static int SetActiveCommandByAction(lua_State* L)
 	const bool success = guihandler->SetActiveCommand(action, ks, 0);
 	lua_pushboolean(L, success);
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
 int LuaUnsyncedCtrl::SetActiveCommand(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1414,12 +1492,15 @@ int LuaUnsyncedCtrl::SetActiveCommand(lua_State* L)
 		return SetActiveCommandByAction(L);
 	}
 	luaL_error(L, "Incorrect arguments to SetActiveCommand()");
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::ForceLayoutUpdate(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1427,6 +1508,8 @@ int LuaUnsyncedCtrl::ForceLayoutUpdate(lua_State* L)
 		return 0;
 	}
 	guihandler->ForceLayoutUpdate();
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1435,6 +1518,7 @@ int LuaUnsyncedCtrl::ForceLayoutUpdate(lua_State* L)
 
 int LuaUnsyncedCtrl::WarpMouse(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1445,12 +1529,15 @@ int LuaUnsyncedCtrl::WarpMouse(lua_State* L)
 	const int x = lua_toint(L, 1);
 	const int y = gu->viewSizeY - lua_toint(L, 2) - 1;
 	mouse->WarpMouse(x, y);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
 
 int LuaUnsyncedCtrl::SetMouseCursor(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1458,6 +1545,8 @@ int LuaUnsyncedCtrl::SetMouseCursor(lua_State* L)
 	if (lua_israwnumber(L, 2)) {
 		mouse->cursorScale = lua_tonumber(L, 2);
 	}
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1466,6 +1555,7 @@ int LuaUnsyncedCtrl::SetMouseCursor(lua_State* L)
 
 int LuaUnsyncedCtrl::SetCameraOffset(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1480,6 +1570,8 @@ int LuaUnsyncedCtrl::SetCameraOffset(lua_State* L)
 	const float tz = luaL_optfloat(L, 6, 0.0f);
 	camera->posOffset = float3(px, py, pz);
 	camera->tiltOffset = float3(tx, ty, tz);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1488,6 +1580,7 @@ int LuaUnsyncedCtrl::SetCameraOffset(lua_State* L)
 
 int LuaUnsyncedCtrl::SetLosViewColors(lua_State* L)
 {
+#if !defined HEADLESS
 	float red[4];
 	float green[4];
 	float blue[4];
@@ -1510,6 +1603,8 @@ int LuaUnsyncedCtrl::SetLosViewColors(lua_State* L)
 	gd->jamColor[0]    = (int)(scale *   red[3]);
 	gd->jamColor[1]    = (int)(scale * green[3]);
 	gd->jamColor[2]    = (int)(scale *  blue[3]);
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -1592,6 +1687,7 @@ int LuaUnsyncedCtrl::CreateDir(lua_State* L)
 
 int LuaUnsyncedCtrl::MakeFont(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1655,6 +1751,9 @@ int LuaUnsyncedCtrl::MakeFont(lua_State* L)
 
 	lua_pushboolean(L, FontTexture::Execute());
 	return 1;
+#else // !defined HEADLESS
+	return 0;
+#endif // !defined HEADLESS
 }
 
 
@@ -1662,6 +1761,7 @@ int LuaUnsyncedCtrl::MakeFont(lua_State* L)
 
 int LuaUnsyncedCtrl::SetUnitDefIcon(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1691,10 +1791,11 @@ int LuaUnsyncedCtrl::SetUnitDefIcon(lua_State* L)
 		const set<int>& decoySet = fit->second;
 		set<int>::const_iterator dit;
 		for (dit = decoySet.begin(); dit != decoySet.end(); ++dit) {
-  		const UnitDef* decoyDef = unitDefHandler->GetUnitByID(*dit);
+		const UnitDef* decoyDef = unitDefHandler->GetUnitByID(*dit);
 			decoyDef->iconType = ud->iconType;
 		}
 	}
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -1702,6 +1803,7 @@ int LuaUnsyncedCtrl::SetUnitDefIcon(lua_State* L)
 
 int LuaUnsyncedCtrl::SetUnitDefImage(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -1733,6 +1835,8 @@ int LuaUnsyncedCtrl::SetUnitDefImage(lua_State* L)
 	} else {
 		unitDefHandler->SetUnitDefImage(ud, texName);
 	}
+#endif // !defined HEADLESS
+
 	return 0;
 }
 
@@ -2259,6 +2363,7 @@ int LuaUnsyncedCtrl::MarkerErasePosition(lua_State* L)
 
 int LuaUnsyncedCtrl::SetDrawSelectionInfo(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -2268,8 +2373,10 @@ int LuaUnsyncedCtrl::SetDrawSelectionInfo(lua_State* L)
 		luaL_error(L, "Incorrect arguments to SetDrawSelectionInfo(bool)");
 	}
 
-	if (guihandler)
+	if (guihandler) {
 		guihandler->SetDrawSelectionInfo(lua_toboolean(L, 1));
+	}
+#endif // !defined HEADLESS
 
 	return 0;
 }
@@ -2280,6 +2387,7 @@ int LuaUnsyncedCtrl::SetDrawSelectionInfo(lua_State* L)
 
 int LuaUnsyncedCtrl::SetBuildSpacing(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -2291,12 +2399,14 @@ int LuaUnsyncedCtrl::SetBuildSpacing(lua_State* L)
 
 	if (guihandler)
 		guihandler->SetBuildSpacing(lua_tointeger(L, 1));
+#endif // !defined HEADLESS
 
 	return 0;
 }
 
 int LuaUnsyncedCtrl::SetBuildFacing(lua_State* L)
 {
+#if !defined HEADLESS
 	if (!CheckModUICtrl()) {
 		return 0;
 	}
@@ -2308,6 +2418,7 @@ int LuaUnsyncedCtrl::SetBuildFacing(lua_State* L)
 
 	if (guihandler)
 		guihandler->SetBuildFacing(lua_tointeger(L, 1));
+#endif // !defined HEADLESS
 
 	return 0;
 }

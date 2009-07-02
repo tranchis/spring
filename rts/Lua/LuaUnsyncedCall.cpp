@@ -15,7 +15,9 @@ using namespace std;
 #include "LuaInclude.h"
 
 #include "LuaHandle.h"
+#if !defined HEADLESS
 #include "Game/UI/LuaUI.h"
+#endif // !defined HEADLESS
 #include "LuaGaia.h"
 #include "LuaRules.h"
 #include "LuaHashString.h"
@@ -111,7 +113,11 @@ bool LuaUnsyncedCall::PushEntries(lua_State* L)
 {
 	PushCallHandler(L, (CLuaHandle**) &luaGaia,  "LuaGaia");
 	PushCallHandler(L, (CLuaHandle**) &luaRules, "LuaRules");
+#if !defined HEADLESS
 	PushCallHandler(L, (CLuaHandle**) &luaUI,    "LuaUI");
+#else // !defined HEADLESS
+	PushCallHandler(L, (CLuaHandle**) NULL,      "LuaUI");
+#endif // !defined HEADLESS
 	return true;
 }
 

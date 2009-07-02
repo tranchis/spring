@@ -27,8 +27,9 @@
 #include "Map/MapInfo.h"
 #if !defined HEADLESS
 #include "Rendering/IconHandler.h"
-#include "Rendering/UnitModels/IModelParser.h"
 #endif // !defined HEADLESS
+// sync relevant -> needed for HEADLESS too
+#include "Rendering/UnitModels/IModelParser.h"
 #include "Sim/Features/Feature.h"
 #include "Sim/Features/FeatureHandler.h"
 #include "Sim/Misc/CategoryHandler.h"
@@ -317,12 +318,14 @@ static int WeaponDefToID(lua_State* L, const void* data)
 
 static int SafeIconType(lua_State* L, const void* data)
 {
+#if !defined HEADLESS
 	// the iconType is unsynced because LuaUI has SetUnitDefIcon()
 	if (CLuaHandle::GetActiveHandle()->GetUserMode()) {
 		const CIcon& iconType = *((const CIcon*)data);
 		lua_pushstring(L, iconType->GetName().c_str());
 		return 1;
 	}
+#endif // !defined HEADLESS
 	return 0;
 }
 
@@ -633,7 +636,9 @@ ADD_BOOL("canAttackWater",  canAttackWater); // CUSTOM
 	ADD_FUNCTION("moveData",           ud.movedata,           MoveDataTable);
 	ADD_FUNCTION("shieldWeaponDef",    ud.shieldWeaponDef,    WeaponDefToID);
 	ADD_FUNCTION("stockpileWeaponDef", ud.stockpileWeaponDef, WeaponDefToID);
+#if !defined HEADLESS
 	ADD_FUNCTION("iconType",           ud.iconType,           SafeIconType);
+#endif // !defined HEADLESS
 
 	ADD_FUNCTION("isBomber",         ud.type, IsBomber);
 	ADD_FUNCTION("isBuilder",        ud.type, IsBuilder);

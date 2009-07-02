@@ -14,13 +14,15 @@
 
 #include "LuaCallInCheck.h"
 #include "LuaUtils.h"
+#if !defined HEADLESS
 #include "LuaMaterial.h"
+#include "LuaUnitRendering.h"
+#include "LuaOpenGL.h"
+#endif // !defined HEADLESS
 #include "LuaSyncedCtrl.h"
 #include "LuaSyncedRead.h"
-#include "LuaUnitRendering.h"
 #include "LuaUnitDefs.h"
 #include "LuaWeaponDefs.h"
-#include "LuaOpenGL.h"
 
 #include "Sim/Units/CommandAI/Command.h"
 #include "Game/Game.h"
@@ -184,7 +186,9 @@ bool CLuaRules::AddUnsyncedCode()
 	lua_rawget(L, -2);
 	lua_pushstring(L, "UnitRendering");
 	lua_newtable(L);
+#if !defined HEADLESS
 	LuaUnitRendering::PushEntries(L);
+#endif // !defined HEADLESS
 	lua_rawset(L, -3);
 	lua_pop(L, 1); // Spring
 
@@ -879,6 +883,9 @@ bool CLuaRules::DrawUnit(int unitID)
 		return false;
 	}
 
+	bool retval = false;
+
+#if !defined HEADLESS
 	const bool oldGLState = LuaOpenGL::IsDrawingEnabled();
 	LuaOpenGL::SetDrawingEnabled(true);
 
@@ -890,17 +897,17 @@ bool CLuaRules::DrawUnit(int unitID)
 	LuaOpenGL::SetDrawingEnabled(oldGLState);
 
 	if (!success) {
-		return false;
-	}
-
-	if (!lua_isboolean(L, -1)) {
+		retval = false;
+	} else if (!lua_isboolean(L, -1)) {
 		logOutput.Print("%s() bad return value\n", cmdStr.GetString().c_str());
 		lua_pop(L, 1);
-		return false;
+		retval = false;
+	} else {
+		retval = !!lua_toboolean(L, -1);
+		lua_pop(L, 1);
 	}
+#endif // !defined HEADLESS
 
-	const bool retval = !!lua_toboolean(L, -1);
-	lua_pop(L, 1);
 	return retval;
 }
 

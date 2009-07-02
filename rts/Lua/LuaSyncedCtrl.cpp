@@ -20,7 +20,7 @@
 #include "LuaUtils.h"
 #include "Game/Game.h"
 #include "Game/GameServer.h"
-#include "Game/Camera.h"
+//#include "Game/Camera.h"
 #include "Game/GameHelper.h"
 #include "Game/PlayerHandler.h"
 #include "Game/SelectedUnits.h"
@@ -2027,12 +2027,14 @@ int LuaSyncedCtrl::UseUnitResource(lua_State* L)
 
 int LuaSyncedCtrl::RemoveBuildingDecal(lua_State* L)
 {
+#if !defined HEADLESS
 	CUnit* unit = ParseUnit(L, __FUNCTION__, 1);
 	if (unit == NULL) {
 		return 0;
 	}
 	CBuilding* building = dynamic_cast<CBuilding*>(unit);
 	groundDecals->ForceRemoveBuilding(building);
+#endif // !defined HEADLESS
 	return 0;
 }
 

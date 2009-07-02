@@ -10,14 +10,16 @@
 
 #include "SelectedUnits.h"
 #include "WaitCommandsAI.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
-#include "NetProtocol.h"
-#include "Net/PackPacket.h"
-#include "ExternalAI/EngineOutHandler.h"
 #include "UI/CommandColors.h"
 #include "UI/GuiHandler.h"
 #include "UI/TooltipConsole.h"
-#include "LogOutput.h"
+#endif // !defined HEADLESS
+#include "NetProtocol.h"
+#include "Net/PackPacket.h"
+#include "ExternalAI/EngineOutHandler.h"
+// sync relevant -> needed for HEADLESS too
 #include "Rendering/UnitModels/3DOParser.h"
 #include "SelectedUnitsAI.h"
 #include "Sim/Misc/TeamHandler.h"
@@ -35,9 +37,13 @@
 #include "EventHandler.h"
 #include "ConfigHandler.h"
 #include "PlayerHandler.h"
+#if !defined HEADLESS
 #include "Camera.h"
 #include "Sound/AudioChannel.h"
+#endif // !defined HEADLESS
 #include "Util.h"
+#include "LogOutput.h"
+#include "GlobalUnsynced.h"
 
 extern boost::uint8_t *keys;
 
@@ -264,6 +270,7 @@ void CSelectedUnits::GiveCommand(Command c, bool fromUser)
 
 	SendCommand(c);
 
+#if !defined HEADLESS
 	if (!selectedUnits.empty()) {
 		CUnitSet::iterator ui = selectedUnits.begin();
 
@@ -274,6 +281,7 @@ void CSelectedUnits::GiveCommand(Command c, bool fromUser)
 				(*ui)->unitDef->sounds.ok.getVolume(soundIdx));
 		}
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -359,6 +367,7 @@ void CSelectedUnits::SelectGroup(int num)
 
 void CSelectedUnits::Draw()
 {
+#if !defined HEADLESS
 	glDisable(GL_TEXTURE_2D);
 	glDepthMask(false);
 	glDisable(GL_DEPTH_TEST);
@@ -436,6 +445,7 @@ void CSelectedUnits::Draw()
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(true);
 	glEnable(GL_TEXTURE_2D);
+#endif // !defined HEADLESS
 }
 
 
@@ -612,6 +622,7 @@ void CSelectedUnits::PossibleCommandChange(CUnit* sender)
 // CMiniMap::DrawForReal --> DrawCommands
 void CSelectedUnits::DrawCommands()
 {
+#if !defined HEADLESS
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 
@@ -650,6 +661,7 @@ void CSelectedUnits::DrawCommands()
 	glLineWidth(1.0f);
 
 	glEnable(GL_DEPTH_TEST);
+#endif // !defined HEADLESS
 }
 
 
@@ -714,14 +726,16 @@ std::string CSelectedUnits::GetTooltip(void)
 		curFuel = curFuel / numFuel;
 		maxFuel = maxFuel / numFuel;
 	}
-	const float num = selectedUnits.size();
 
+#if !defined HEADLESS
+	const float num = selectedUnits.size();
 	s += CTooltipConsole::MakeUnitStatsString(
 	       curHealth, maxHealth,
 	       curFuel,   maxFuel,
 	       (exp / num), cost, (range / num),
 	       metalMake,  metalUse,
 	       energyMake, energyUse);
+#endif // !defined HEADLESS
 
   if (gs->cheatEnabled && (selectedUnits.size() == 1)) {
   	CUnit* unit = *selectedUnits.begin();
