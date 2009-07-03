@@ -4,12 +4,14 @@
 #include "mmgr.h"
 
 #include "InMapDraw.h"
-#include "Game/Camera.h"
 #include "Game/Game.h"
 #include "Game/PlayerHandler.h"
+#if !defined HEADLESS
+#include "Game/Camera.h"
 #include "Game/UI/MiniMap.h"
 #include "Game/UI/MouseHandler.h"
 #include "Map/BaseGroundDrawer.h"
+#endif // !defined HEADLESS
 #include "Map/Ground.h"
 #include "Map/ReadMap.h"
 #include "Sim/Misc/TeamHandler.h"
@@ -18,6 +20,7 @@
 #include "GL/VertexArray.h"
 #endif // !defined HEADLESS
 #include "EventHandler.h"
+#include "GlobalUnsynced.h"
 #include "NetProtocol.h"
 #include "LogOutput.h"
 #if !defined HEADLESS
@@ -25,6 +28,7 @@
 #include "Sound/AudioChannel.h"
 #endif // !defined HEADLESS
 #include "creg/STL_List.h"
+#include "lib/gml/gml.h"
 
 
 #define DRAW_QUAD_SIZE 32
@@ -255,9 +259,13 @@ bool CInMapDraw::MapLine::MaySee(CInMapDraw* imd) const
 
 struct InMapDraw_QuadDrawer: public CReadMap::IQuadDrawer
 {
+#if !defined HEADLESS
 	CVertexArray *va, *lineva;
+#endif // !defined HEADLESS
 	CInMapDraw* imd;
+#if !defined HEADLESS
 	unsigned int texture;
+#endif // !defined HEADLESS
 
 	void DrawQuad(int x, int y);
 };
@@ -407,6 +415,7 @@ void CInMapDraw::MouseRelease(int x, int y, int button)
 
 void CInMapDraw::MouseMove(int x, int y, int dx,int dy, int button)
 {
+#if !defined HEADLESS
 	float3 pos = GetMouseMapPos();
 	if (pos.x < 0) {
 		return;
@@ -419,19 +428,22 @@ void CInMapDraw::MouseMove(int x, int y, int dx,int dy, int button)
 	if (mouse->buttons[SDL_BUTTON_RIGHT].pressed) {
 		SendErase(pos);
 	}
-
+#endif // !defined HEADLESS
 }
 
 
 float3 CInMapDraw::GetMouseMapPos(void)
 {
+#if !defined HEADLESS
 	float dist = ground->LineGroundCol(camera->pos, camera->pos + mouse->dir * gu->viewRange * 1.4f);
-	if (dist < 0) {
-		return float3(-1, 1, -1);
+	if (dist >= 0) {
+		float3 pos = camera->pos + mouse->dir * dist;
+		pos.CheckInBounds();
+		return pos;
 	}
-	float3 pos = camera->pos + mouse->dir * dist;
-	pos.CheckInBounds();
-	return pos;
+#else // !defined HEADLESS
+	return float3(-1, 1, -1);
+#endif // !defined HEADLESS
 }
 
 
@@ -531,8 +543,8 @@ void CInMapDraw::LocalPoint(const float3& constPos, const std::string& label,
 		logOutput.SetLastMsgPos(pos);
 #if !defined HEADLESS
 		Channels::UserInterface.PlaySample(blippSound, pos);
-#endif // !defined HEADLESS
 		minimap->AddNotification(pos, float3(1.0f, 1.0f, 1.0f), 1.0f);
+#endif // !defined HEADLESS
 	}
 }
 

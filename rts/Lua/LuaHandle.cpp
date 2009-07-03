@@ -17,7 +17,9 @@
 
 #include "LuaCallInCheck.h"
 #include "LuaHashString.h"
+#if !defined HEADLESS
 #include "LuaOpenGL.h"
+#endif // !defined HEADLESS
 #include "LuaBitOps.h"
 #include "LuaUtils.h"
 #include "Game/PlayerHandler.h"

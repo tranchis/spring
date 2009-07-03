@@ -50,7 +50,6 @@ LIST(APPEND springHeadless_libraries lua 7zip hpiutil2 oscpack minizip streflop)
 
 SET(sr ../../rts)
 
-#AUX_SOURCE_DIRECTORY(${sr}/System/Net/ netfiles)
 AUX_SOURCE_DIRECTORY(${sr}/ExternalAI/ ai_files)
 INCLUDE_DIRECTORIES(${sr}/System/Net/ ${sr}/System/ ${sr}/lib/lua/include)
 INCLUDE_DIRECTORIES(${sr}/ ${sr}/lib/7zip ${sr}/System)
@@ -96,7 +95,22 @@ AUX_SOURCE_DIRECTORY(${sr}/System/creg system_files)
 AUX_SOURCE_DIRECTORY(${sr}/System/Net/ system_files)
 AUX_SOURCE_DIRECTORY(${sr}/System/FileSystem/ system_files)
 AUX_SOURCE_DIRECTORY(${sr}/System/Sync/ system_files)
+AUX_SOURCE_DIRECTORY(${sr}/System/Platform system_files)
+### only use the directory for target platform
+IF (UNIX)
+	AUX_SOURCE_DIRECTORY(${sr}/System/Platform/Linux system_files)
+ELSE (UNIX)
+	AUX_SOURCE_DIRECTORY(${sr}/System/Platform/Win system_files)
+ENDIF (UNIX)
 
+SET(sim_files
+	${sr}/Sim/Units/Unit.cpp
+	${sr}/Sim/Units/UnitDefHandler.cpp
+	${sr}/Sim/Units/UnitHandler.cpp
+	${sr}/Sim/Units/UnitLoader.cpp
+	${sr}/Sim/Units/UnitSet.cpp
+#	${sr}/Sim/Units/UnitTracker.cpp
+	)
 AUX_SOURCE_DIRECTORY(${sr}/Sim sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Features sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Misc sim_files)
@@ -108,14 +122,6 @@ AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles/WeaponProjectiles sim_files)
 #AUX_SOURCE_DIRECTORY(${sr}/Sim/Projectiles/Unsynced sim_files)
 #AUX_SOURCE_DIRECTORY(${sr}/Sim/Units sim_files)
-SET(sim_files
-	${sr}/Sim/Units/Unit.cpp
-	${sr}/Sim/Units/UnitDefHandler.cpp
-	${sr}/Sim/Units/UnitHandler.cpp
-	${sr}/Sim/Units/UnitLoader.cpp
-	${sr}/Sim/Units/UnitSet.cpp
-#	${sr}/Sim/Units/UnitTracker.cpp
-	)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/COB sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/CommandAI sim_files)
 AUX_SOURCE_DIRECTORY(${sr}/Sim/Units/Groups sim_files)
@@ -153,6 +159,7 @@ SET(game_files
 	)
 
 AUX_SOURCE_DIRECTORY(${sr}/Game/Server server_files)
+
 #AUX_SOURCE_DIRECTORY(${sr}/Lua lua_files)
 SET(lua_files
 	${sr}/Lua/LuaBitOps.cpp
@@ -192,6 +199,7 @@ SET(lua_files
 	${sr}/Lua/LuaVFS.cpp
 	${sr}/Lua/LuaWeaponDefs.cpp
 	)
+	
 SET(rendering_files
 	${sr}/Rendering/InMapDraw.cpp
 	${sr}/Rendering/UnitModels/3DModel.cpp

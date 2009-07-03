@@ -14,7 +14,9 @@
 
 #include "LuaCallInCheck.h"
 #include "LuaUtils.h"
+#if !defined HEADLESS
 #include "LuaConstGL.h"
+#endif // !defined HEADLESS
 #include "LuaConstCMD.h"
 #include "LuaConstCMDTYPE.h"
 #include "LuaConstGame.h"
@@ -29,7 +31,9 @@
 #include "LuaUnitDefs.h"
 #include "LuaWeaponDefs.h"
 #include "LuaScream.h"
+#if !defined HEADLESS
 #include "LuaOpenGL.h"
+#endif // !defined HEADLESS
 #include "LuaVFS.h"
 
 #include "Game/Game.h"
@@ -275,8 +279,10 @@ bool CLuaHandleSynced::SetupUnsynced(const string& code, const string& filename)
 	    !AddEntriesToTable(L, "Spring",      LuaSyncedRead::PushEntries)   ||
 	    !AddEntriesToTable(L, "Spring",      LuaUnsyncedCtrl::PushEntries) ||
 	    !AddEntriesToTable(L, "Spring",      LuaUnsyncedRead::PushEntries) ||
+#if !defined HEADLESS
 	    !AddEntriesToTable(L, "gl",          LuaOpenGL::PushEntries)       ||
 	    !AddEntriesToTable(L, "GL",          LuaConstGL::PushEntries)      ||
+#endif // !defined HEADLESS
 	    !AddEntriesToTable(L, "Game",        LuaConstGame::PushEntries)    ||
 	    !AddEntriesToTable(L, "CMD",         LuaConstCMD::PushEntries)     ||
 	    !AddEntriesToTable(L, "CMDTYPE",     LuaConstCMDTYPE::PushEntries)) {
