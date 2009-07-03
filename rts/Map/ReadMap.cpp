@@ -128,7 +128,9 @@ void CReadMap::Serialize(creg::ISerializer& s)
 
 void CReadMap::Initialize()
 {
+#if !defined HEADLESS
 	PrintLoadMsg("Loading Map");
+#endif // !defined HEADLESS
 
 	orgheightmap=new float[(gs->mapx+1)*(gs->mapy+1)];
 

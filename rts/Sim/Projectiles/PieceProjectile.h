@@ -14,7 +14,9 @@ const int PF_NONE       = (1 << 5); // 32
 const int PF_NoCEGTrail = (1 << 6); // 64
 const int PF_NoHeatCloud= (1 << 7); // 128
 
+#if !defined HEADLESS
 class CSmokeTrailProjectile;
+#endif // !defined HEADLESS
 struct LocalModelPiece;
 struct S3DOPiece;
 struct SS3OPiece;
@@ -34,10 +36,12 @@ class CPieceProjectile: public CProjectile
 	float spinPos;
 	float alphaThreshold;
 
+#if !defined HEADLESS
 	float3 oldSmoke, oldSmokeDir;
 	bool drawTrail;
 	CSmokeTrailProjectile* curCallback;
 	int* numCallback;
+#endif // !defined HEADLESS
 	int age;
 
 	CCustomExplosionGenerator ceg;

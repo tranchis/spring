@@ -26,12 +26,14 @@
 #include "Sim/Projectiles/ExplosionGenerator.h"
 #include "Sim/Projectiles/PieceProjectile.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/BubbleProjectile.h"
 #include "Sim/Projectiles/Unsynced/HeatCloudProjectile.h"
 #include "Sim/Projectiles/Unsynced/MuzzleFlame.h"
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
 #include "Sim/Projectiles/Unsynced/WakeProjectile.h"
 #include "Sim/Projectiles/Unsynced/WreckProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/CommandAI/CommandAI.h"
 #include "Sim/Units/CommandAI/Command.h"
 #include "Sim/Units/UnitDef.h"
@@ -537,6 +539,7 @@ void CUnitScript::SetVisibility(int piece, bool visible)
 
 void CUnitScript::EmitSfx(int type, int piece)
 {
+#if !defined HEADLESS
 #ifndef _CONSOLE
 	if (!PieceExists(piece)) {
 		ShowScriptError("Invalid piecenumber for emit-sfx");
@@ -652,11 +655,9 @@ void CUnitScript::EmitSfx(int type, int piece)
 				}
 				// detonate weapon from piece
 				const WeaponDef* weaponDef = unit->weapons[index]->weaponDef;
-#if !defined HEADLESS
 				if (weaponDef->soundhit.getID(0) > 0) {
 					Channels::Battle.PlaySample(weaponDef->soundhit.getID(0), unit, weaponDef->soundhit.getVolume(0));
 				}
-#endif // !defined HEADLESS
 
 				helper->Explosion(
 					pos, weaponDef->damages, weaponDef->areaOfEffect, weaponDef->edgeEffectiveness,
@@ -668,7 +669,8 @@ void CUnitScript::EmitSfx(int type, int piece)
 	}
 
 
-#endif
+#endif // _CONSOLE
+#endif // !defined HEADLESS
 }
 
 
@@ -731,12 +733,14 @@ void CUnitScript::Explode(int piece, int flags)
 #ifdef TRACE_SYNC
 	tracefile << "Cob explosion: ";
 	tracefile << pos.x << " " << pos.y << " " << pos.z << " " << piece << " " << flags << "\n";
-#endif
+#endif // TRACE_SYNC
 
+#if !defined HEADLESS
 	if (!(flags & PF_NoHeatCloud)) {
 		// Do an explosion at the location first
 		new CHeatCloudProjectile(pos, float3(0, 0, 0), 30, 30, NULL);
 	}
+#endif // !defined HEADLESS
 
 	// If this is true, no stuff should fly off
 	if (flags & PF_NONE) return;
@@ -779,7 +783,7 @@ void CUnitScript::Explode(int piece, int flags)
 			new CPieceProjectile(pos, speed, pieceData, newflags,unit,0.5f);
 		}
 	}
-#endif
+#endif // _CONSOLE
 }
 
 
@@ -865,6 +869,7 @@ void CUnitScript::Shatter(int piece, const float3& pos, const float3& speed)
 
 void CUnitScript::ShowFlare(int piece)
 {
+#if !defined HEADLESS
 	if (!PieceExists(piece)) {
 		ShowScriptError("Invalid piecenumber for show(flare)");
 		return;
@@ -877,7 +882,8 @@ void CUnitScript::ShowFlare(int piece)
 	float size=unit->lastMuzzleFlameSize;
 
 	new CMuzzleFlame(pos, unit->speed,dir, size);
-#endif
+#endif // _CONSOLE
+#endif // !defined HEADLESS
 }
 
 

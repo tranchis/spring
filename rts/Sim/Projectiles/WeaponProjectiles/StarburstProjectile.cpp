@@ -15,9 +15,9 @@
 #include "Rendering/GL/VertexArray.h"
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Rendering/UnitModels/s3oParser.h"
+#include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
-#include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "StarburstProjectile.h"
@@ -42,7 +42,9 @@ CR_REG_METADATA(CStarburstProjectile,(
 	CR_MEMBER(drawTrail),
 	CR_MEMBER(numParts),
 	CR_MEMBER(doturn),
+#if !defined HEADLESS
 	CR_MEMBER(curCallback),
+#endif // !defined HEADLESS
 	CR_MEMBER(missileAge),
 	CR_MEMBER(distanceToTravel),
 	CR_MEMBER(aimError),
@@ -72,7 +74,9 @@ CStarburstProjectile::CStarburstProjectile(const float3& pos, const float3& spee
 	drawTrail(true),
 	numParts(0),
 	doturn(true),
+#if !defined HEADLESS
 	curCallback(0),
+#endif // !defined HEADLESS
 	numCallback(0),
 	missileAge(0),
 	distanceToTravel(maxdistance)
@@ -128,8 +132,10 @@ CStarburstProjectile::CStarburstProjectile(const float3& pos, const float3& spee
 CStarburstProjectile::~CStarburstProjectile(void)
 {
 	delete numCallback;
+#if !defined HEADLESS
 	if(curCallback)
 		curCallback->drawCallbacker=0;
+#endif // !defined HEADLESS
 	for(int a=0;a<5;++a){
 		delete oldInfos[a];
 	}
@@ -141,8 +147,10 @@ void CStarburstProjectile::Collision()
 	if(weaponDef->waterweapon && h < pos.y) return; //prevent impact on water if waterweapon is set
 	if(h>pos.y)
 		pos+=speed*(h-pos.y)/speed.y;
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail)
 		new CSmokeTrailProjectile(pos,oldSmoke,dir,oldSmokeDir,owner(),false,true,7,Smoke_Time,0.7f,drawTrail,0,weaponDef->visuals.texture2);
+#endif // !defined HEADLESS
 	oldSmokeDir=dir;
 	CWeaponProjectile::Collision();
 	oldSmoke=pos;
@@ -150,8 +158,10 @@ void CStarburstProjectile::Collision()
 
 void CStarburstProjectile::Collision(CUnit *unit)
 {
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail)
 		new CSmokeTrailProjectile(pos,oldSmoke,dir,oldSmokeDir,owner(),false,true,7,Smoke_Time,0.7f,drawTrail,0,weaponDef->visuals.texture2);
+#endif // !defined HEADLESS
 	oldSmokeDir=dir;
 
 	CWeaponProjectile::Collision(unit);
@@ -254,6 +264,7 @@ void CStarburstProjectile::Update(void)
 	age++;
 	numParts++;
 
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail && !(age & 7)) {
 		if (curCallback)
 			curCallback->drawCallbacker = 0;
@@ -263,14 +274,13 @@ void CStarburstProjectile::Update(void)
 		oldSmokeDir = dir;
 		numParts = 0;
 		useAirLos = curCallback->useAirLos;
-#if !defined HEADLESS
 		if (!drawTrail) {
 			float3 camDir = (pos - camera->pos).Normalize();
 			if (camera->pos.distance(pos) * 0.2f + (1 - fabs(camDir.dot(dir))) * 3000 > 300)
 				drawTrail = true;
 		}
-#endif // !defined HEADLESS
 	}
+#endif // !defined HEADLESS
 }
 
 void CStarburstProjectile::Draw(void)

@@ -11,7 +11,9 @@
 #define AGEMOD_VECTOR std::vector<float>
 #endif
 
+#if !defined HEADLESS
 class CSmokeTrailProjectile;
+#endif // !defined HEADLESS
 
 class CStarburstProjectile :
 	public CWeaponProjectile
@@ -45,7 +47,9 @@ public:
 	bool drawTrail;
 	int numParts;
 	bool doturn;
+#if !defined HEADLESS
 	CSmokeTrailProjectile* curCallback;
+#endif // !defined HEADLESS
 	void DrawCallback(void);
 	int* numCallback;
 	int missileAge;

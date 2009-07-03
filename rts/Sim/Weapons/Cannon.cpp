@@ -11,9 +11,9 @@
 #include "myMath.h"
 #if !defined HEADLESS
 #include "Rendering/Env/BaseWater.h"
-#endif // !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/HeatCloudProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/WeaponProjectiles/ExplosiveProjectile.h"
 #include "Sim/Units/Unit.h"
 #include "Sync/SyncTracer.h"

@@ -8,9 +8,11 @@
 #include "Map/Ground.h"
 #include "myMath.h"
 #include "Rifle.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/HeatCloudProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
 #include "Sim/Projectiles/Unsynced/TracerProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/Unit.h"
 #include "WeaponDefHandler.h"
 #include "Sync/SyncTracer.h"
@@ -94,8 +96,12 @@ void CRifle::FireImpl()
 	float length=helper->TraceRay(weaponMuzzlePos, dir, range, weaponDef->damages[0], owner, hit, collisionFlags);
 	if(hit) {
 		hit->DoDamage(weaponDef->damages, owner, ZeroVector, weaponDef->id);
+#if !defined HEADLESS
 		new CHeatCloudProjectile(weaponMuzzlePos + dir * length, hit->speed*0.9f, 30, 1, owner);
+#endif // !defined HEADLESS
 	}
+#if !defined HEADLESS
 	new CTracerProjectile(weaponMuzzlePos,dir*projectileSpeed,length,owner);
 	new CSmokeProjectile(weaponMuzzlePos,float3(0,0.0f,0),70,0.1f,0.02f,owner,0.6f);
+#endif // !defined HEADLESS
 }

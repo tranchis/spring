@@ -37,7 +37,9 @@
 #include "Sim/Misc/LosHandler.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/TeamHandler.h"
+#if !defined HEADLESS
 #include "Unsynced/ShieldPartProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitDef.h"
 #include "GlobalUnsynced.h"
@@ -72,7 +74,9 @@ CR_REG_METADATA(CProjectileHandler, (
 	CR_MEMBER(weaponProjectileIDs),
 	CR_MEMBER(freeIDs),
 	CR_MEMBER(maxUsedID),
+#if !defined HEADLESS
 	CR_MEMBER(groundFlashes),
+#endif // !defined HEADLESS
 	CR_RESERVED(32),
 	CR_SERIALIZER(Serialize),
 	CR_POSTLOAD(PostLoad)
@@ -902,7 +906,9 @@ void CProjectileHandler::CheckCollisions()
 
 void CProjectileHandler::AddGroundFlash(CGroundFlash* flash)
 {
+#if !defined HEADLESS
 	groundFlashes.push(flash);
+#endif // !defined HEADLESS
 }
 
 

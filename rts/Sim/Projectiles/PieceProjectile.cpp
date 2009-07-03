@@ -22,11 +22,11 @@
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Rendering/UnitModels/UnitDrawer.h"
+#include "Unsynced/SmokeProjectile.h"
+#include "Unsynced/SmokeTrailProjectile.h"
 #endif // !defined HEADLESS
 #include "Sim/Units/Unit.h"
 #include "Sync/SyncTracer.h"
-#include "Unsynced/SmokeProjectile.h"
-#include "Unsynced/SmokeTrailProjectile.h"
 #include "Util.h"
 
 static const float Smoke_Time = 40;
@@ -45,12 +45,14 @@ CR_REG_METADATA(CPieceProjectile,(
 	CR_MEMBER(spinVec),
 	CR_MEMBER(spinSpeed),
 	CR_MEMBER(spinPos),
+#if !defined HEADLESS
 	CR_MEMBER(oldSmoke),
 	CR_MEMBER(oldSmokeDir),
 	CR_MEMBER(alphaThreshold),
 	// CR_MEMBER(target),
 	CR_MEMBER(drawTrail),
 	CR_MEMBER(curCallback),
+#endif // !defined HEADLESS
 	CR_MEMBER(age),
 	CR_MEMBER(colorTeam),
 	CR_MEMBER(ceg),
@@ -59,7 +61,9 @@ CR_REG_METADATA(CPieceProjectile,(
 
 void CPieceProjectile::creg_Serialize(creg::ISerializer& s)
 {
+#if !defined HEADLESS
 	s.Serialize(numCallback, sizeof(int));
+#endif // !defined HEADLESS
 	for (int i = 0; i < 8; i++) {
 		s.Serialize(oldInfos[i], sizeof(CPieceProjectile::OldInfo));
 	}
@@ -72,10 +76,12 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 	dispList(piece? piece->displist: 0),
 #endif // !defined HEADLESS
 	spinPos(0),
+#if !defined HEADLESS
 	alphaThreshold(0.1f),
 	oldSmoke(pos),
 	drawTrail(true),
 	curCallback(0),
+#endif // !defined HEADLESS
 	age(0)
 {
 	checkCol = false;
@@ -145,18 +151,16 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 		useAirLos = true;
 	}
 
+#if !defined HEADLESS
 	numCallback = new int;
 	*numCallback = 0;
 	oldSmokeDir = speed;
 	oldSmokeDir.Normalize();
-#if !defined HEADLESS
 	float3 camDir = (pos-camera->pos).Normalize();
 
 	if (camera->pos.distance(pos) + (1 - fabs(camDir.dot(oldSmokeDir))) * 3000 < 200) {
 		drawTrail = false;
 	}
-#else // !defined HEADLESS
-	drawTrail = false;
 #endif // !defined HEADLESS
 
 	spinVec = gu->usRandVector();
@@ -181,10 +185,12 @@ CPieceProjectile::CPieceProjectile(const float3& pos, const float3& speed, Local
 
 CPieceProjectile::~CPieceProjectile(void)
 {
+#if !defined HEADLESS
 	delete numCallback;
 
 	if (curCallback)
 		curCallback->drawCallbacker = 0;
+#endif // !defined HEADLESS
 
 	for (int a = 0; a < 8; ++a) {
 		delete oldInfos[a];
@@ -218,7 +224,9 @@ void CPieceProjectile::Collision()
 #endif // !defined HEADLESS
 
 		CProjectile::Collision();
+#if !defined HEADLESS
 		oldSmoke = pos;
+#endif // !defined HEADLESS
 	}
 }
 
@@ -244,7 +252,9 @@ void CPieceProjectile::Collision(CUnit* unit)
 #endif // !defined HEADLESS
 
 	CProjectile::Collision(unit);
+#if !defined HEADLESS
 	oldSmoke = pos;
+#endif // !defined HEADLESS
 }
 
 

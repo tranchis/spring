@@ -8,7 +8,9 @@
 #include "float3.h"
 
 
+#if !defined HEADLESS
 class CGeoSquareProjectile;
+#endif // !defined HEADLESS
 
 class CGeometricObjects : public boost::noncopyable
 {
@@ -16,10 +18,12 @@ class CGeometricObjects : public boost::noncopyable
 	CR_DECLARE_SUB(GeoGroup);
 
 private:
+#if !defined HEADLESS
 	struct GeoGroup {
 		CR_DECLARE_STRUCT(GeoGroup);
 		std::vector<CGeoSquareProjectile*> squares;
 	};
+#endif // !defined HEADLESS
 
 public:
 	CGeometricObjects(void);
@@ -34,7 +38,9 @@ public:
 	void MarkSquare(int mapSquare);
 
 private:
+#if !defined HEADLESS
 	std::map<int,GeoGroup> geoGroups;
+#endif // !defined HEADLESS
 	std::multimap<int,int> toBeDeleted;
 	int firstFreeGroup;
 };

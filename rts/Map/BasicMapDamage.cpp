@@ -4,10 +4,12 @@
 #include "BasicMapDamage.h"
 #include "ReadMap.h"
 #include "MapInfo.h"
+#if !defined HEADLESS
 #include "BaseGroundDrawer.h"
 #include "HeightMapTexture.h"
 #include "Rendering/Env/BaseTreeDrawer.h"
 #include "Rendering/Env/BaseWater.h"
+#endif // !defined HEADLESS
 #include "TimeProfiler.h"
 #include "Sim/Misc/GroundBlockingObjectMap.h"
 #include "Sim/Misc/LosHandler.h"
@@ -104,8 +106,11 @@ void CBasicMapDamage::Explosion(const float3& pos, float strength, float radius)
 
 			e->squares.push_back(dif);
 
-			if (dif < -0.3f && strength > 200)
+#if !defined HEADLESS
+			if (dif < -0.3f && strength > 200) {
 				treeDrawer->RemoveGrass(x, y);
+			}
+#endif // !defined HEADLESS
 		}
 	}
 
@@ -262,8 +267,11 @@ void CBasicMapDamage::RecalcArea(int x1, int x2, int y1, int y2)
 	pathManager->TerrainChange(x1, y1, x2, y2);
 	featureHandler->TerrainChanged(x1, y1, x2, y2);
 	readmap->HeightmapUpdated(x1, x2, y1, y2);
+#if !defined HEADLESS
+// FIXME: might be sync relevant?
 	water->HeightmapChanged(x1, y1, x2, y2);
 	heightMapTexture.UpdateArea(x1, y1, x2, y2);
+#endif // !defined HEADLESS
 }
 
 

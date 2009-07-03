@@ -6,19 +6,27 @@
 #include "LogOutput.h"
 #include "Map/ReadMap.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/GeoSquareProjectile.h"
+#endif // !defined HEADLESS
 
 CR_BIND(CGeometricObjects, );
+#if !defined HEADLESS
 CR_BIND(CGeometricObjects::GeoGroup, );
+#endif // !defined HEADLESS
 
 CR_REG_METADATA(CGeometricObjects, (
+#if !defined HEADLESS
 		CR_MEMBER(geoGroups),
+#endif // !defined HEADLESS
 		CR_MEMBER(toBeDeleted),
 		CR_MEMBER(firstFreeGroup),
 		CR_RESERVED(16)
 		));
 
+#if !defined HEADLESS
 CR_REG_METADATA_SUB(CGeometricObjects, GeoGroup, (CR_MEMBER(squares)));
+#endif // !defined HEADLESS
 
 
 CGeometricObjects* geometricObjects;
@@ -46,6 +54,7 @@ int CGeometricObjects::AddSpline(float3 b1, float3 b2, float3 b3, float3 b4, flo
 		float3 dir1=(old2-old1).ANormalize();
 		float3 dir2=(np-old2).ANormalize();
 
+#if !defined HEADLESS
 		if(arrow==1 && a==19){
 			CGeoSquareProjectile* gsp=new CGeoSquareProjectile(old1,old2,dir1,dir2,width,0);
 			geoGroups[group].squares.push_back(gsp);
@@ -54,6 +63,7 @@ int CGeometricObjects::AddSpline(float3 b1, float3 b2, float3 b3, float3 b4, flo
 			CGeoSquareProjectile* gsp=new CGeoSquareProjectile(old1,old2,dir1,dir2,width*0.5f,width*0.5f);
 			geoGroups[group].squares.push_back(gsp);
 		}
+#endif // !defined HEADLESS
 		old1=old2;
 		old2=np;
 	}
@@ -66,6 +76,7 @@ int CGeometricObjects::AddSpline(float3 b1, float3 b2, float3 b3, float3 b4, flo
 
 void CGeometricObjects::DeleteGroup(int group)
 {
+#if !defined HEADLESS
 	GeoGroup* gg=&geoGroups[group];
 
 	std::vector<CGeoSquareProjectile*>::iterator gi;
@@ -75,11 +86,13 @@ void CGeometricObjects::DeleteGroup(int group)
 	}
 
 	geoGroups.erase(group);
+#endif // !defined HEADLESS
 }
 
 
 void CGeometricObjects::SetColor(int group, float r, float g, float b, float a)
 {
+#if !defined HEADLESS
 	GeoGroup* gg=&geoGroups[group];
 
 	std::vector<CGeoSquareProjectile*>::iterator gi;
@@ -90,6 +103,7 @@ void CGeometricObjects::SetColor(int group, float r, float g, float b, float a)
 		(*gi)->b=b;
 		(*gi)->a=a;
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -108,6 +122,7 @@ int CGeometricObjects::AddLine(float3 start, float3 end, float width, int arrow,
 	if(group==0)
 		group=firstFreeGroup++;
 
+#if !defined HEADLESS
 	float3 dir=(end-start).ANormalize();
 	if(arrow){
 		CGeoSquareProjectile* gsp=new CGeoSquareProjectile(start,start*0.2f+end*0.8f,dir,dir,width*0.5f,width*0.5f);
@@ -123,6 +138,7 @@ int CGeometricObjects::AddLine(float3 start, float3 end, float width, int arrow,
 
 	if(lifetime>=0)
 		toBeDeleted.insert(std::pair<int,int>(gs->frameNum+lifetime,group));
+#endif // !defined HEADLESS
 
 	return group;
 }

@@ -19,9 +19,9 @@
 #include "Rendering/UnitModels/UnitDrawer.h"
 #include "Rendering/UnitModels/s3oParser.h"
 #include "Rendering/UnitModels/3DOParser.h"
+#include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #endif // !defined HEADLESS
 #include "Sim/Misc/GeometricObjects.h"
-#include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "Sync/SyncTracer.h"
@@ -163,9 +163,11 @@ void CMissileProjectile::Collision()
 		pos -= speed * std::min(1.0f,float((h - pos.y) / fabs(speed.y)));
 	}
 
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail) {
 		new CSmokeTrailProjectile(pos, oldSmoke, dir, oldDir, owner(), false, true, 7, Smoke_Time, 0.6f, drawTrail, 0, weaponDef->visuals.texture2);
 	}
+#endif // !defined HEADLESS
 
 	CWeaponProjectile::Collision();
 	oldSmoke = pos;
@@ -173,9 +175,11 @@ void CMissileProjectile::Collision()
 
 void CMissileProjectile::Collision(CUnit *unit)
 {
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail) {
 		new CSmokeTrailProjectile(pos, oldSmoke, dir, oldDir, owner(), false, true, 7, Smoke_Time, 0.6f, drawTrail, 0, weaponDef->visuals.texture2);
 	}
+#endif // !defined HEADLESS
 
 	CWeaponProjectile::Collision(unit);
 	oldSmoke = pos;
@@ -296,6 +300,7 @@ void CMissileProjectile::Update(void)
 	numParts++;
 
 
+#if !defined HEADLESS
 	if (weaponDef->visuals.smokeTrail && !(age & 7)) {
 		CSmokeTrailProjectile* tp = new CSmokeTrailProjectile(pos, oldSmoke,
 			dir, oldDir, owner(), age == 8, false, 7, Smoke_Time, 0.6f, drawTrail, 0,
@@ -304,16 +309,14 @@ void CMissileProjectile::Update(void)
 		oldDir = dir;
 		numParts = 0;
 		useAirLos = tp->useAirLos;
-
-#if !defined HEADLESS
 		if (!drawTrail) {
 			float3 camDir = (pos - camera->pos).Normalize();
 			if ((camera->pos.distance(pos) * 0.2f + (1 - fabs(camDir.dot(dir))) * 3000) > 300) {
 				drawTrail = true;
 			}
 		}
-#endif // !defined HEADLESS
 	}
+#endif // !defined HEADLESS
 
 	UpdateGroundBounce();
 }

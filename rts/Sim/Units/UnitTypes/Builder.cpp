@@ -22,7 +22,9 @@
 #include "Sim/Misc/ModInfo.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/GfxProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/COB/CobInstance.h"
 #include "Sim/Units/CommandAI/BuilderCAI.h"
 #include "Sim/Units/CommandAI/CommandAI.h"
@@ -720,12 +722,14 @@ void CBuilder::HelpTerraform(CBuilder* unit)
 
 void CBuilder::CreateNanoParticle(float3 goal, float radius, bool inverse)
 {
+#if !defined HEADLESS
 	const int piece = script->QueryNanoPiece();
 
 #ifdef USE_GML
-	if (gs->frameNum - lastDrawFrame > 20)
+	if (gs->frameNum - lastDrawFrame > 20) {
 		return;
-#endif
+	}
+#endif // USE_GML
 
 	if (ph->currentParticles < ph->maxParticles && unitDef->showNanoSpray) {
 		float3 relWeaponFirePos = script->GetPiecePos(piece);
@@ -749,4 +753,5 @@ void CBuilder::CreateNanoParticle(float3 goal, float radius, bool inverse)
 			new CGfxProjectile(weaponPos, (dif + error) * 3, int(l / 3), color);
 		}
 	}
+#endif // !defined HEADLESS
 }

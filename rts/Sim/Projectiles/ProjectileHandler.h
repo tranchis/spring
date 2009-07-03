@@ -33,7 +33,9 @@ struct piececmp;
 typedef std::pair<CProjectile*, int> ProjectileMapPair;
 typedef std::map<int, ProjectileMapPair> ProjectileMap;
 typedef ThreadListSimRender<std::list<CProjectile*>, std::set<CProjectile*>, CProjectile*> ProjectileContainer;
+#if !defined HEADLESS
 typedef ThreadListSimRender<std::list<CGroundFlash*>, std::set<CGroundFlash*>, CGroundFlash*> GroundFlashContainer;
+#endif // !defined HEADLESS
 #if defined(USE_GML) && GML_ENABLE_SIM
 typedef ThreadListSimRender<std::set<FlyingPiece *>, std::set<FlyingPiece *, piececmp>, FlyingPiece *> FlyingPieceContainer;
 #else
@@ -107,55 +109,59 @@ public:
 	void AddFlyingPiece(float3 pos, float3 speed, S3DOPiece* object, S3DOPrimitive* piece);
 	void AddFlyingPiece(int textureType, int team, float3 pos, float3 speed, SS3OVertex* verts);
 
-	ProjectileContainer projectiles;	// contains both synced and unsynced projectiles
+	/// contains both synced and unsynced projectiles
+	ProjectileContainer projectiles;
 	FlyingPieceContainer flyingPieces;
+#if !defined HEADLESS
 	GroundFlashContainer groundFlashes;
+#endif // !defined HEADLESS
 
 	int maxUsedID;
 	std::list<int> freeIDs;
-	ProjectileMap weaponProjectileIDs;		// ID ==> <projectile, allyteam> map for weapon projectiles
+	/// ID ==> <projectile, allyteam> map for weapon projectiles
+	ProjectileMap weaponProjectileIDs;
 
 	std::set<CProjectile*,distcmp> distset;
 
 	unsigned int projectileShadowVP;
 
-	int maxParticles;              // different effects should start to cut down on unnececary(unsynced) particles when this number is reached
+	int maxParticles;              ///< different effects should start to cut down on unnececary(unsynced) particles when this number is reached
 	int maxNanoParticles;
-	int currentParticles;          // number of particles weighted by how complex they are
+	int currentParticles;          ///< number of particles weighted by how complex they are
 	int currentNanoParticles;
-	float particleSaturation;      // currentParticles / maxParticles ratio
+	float particleSaturation;      ///< currentParticles / maxParticles ratio
 	float nanoParticleSaturation;
 
 	int numPerlinProjectiles;
 
 #if !defined HEADLESS
-	CTextureAtlas* textureAtlas;  //texture atlas for projectiles
-	CTextureAtlas* groundFXAtlas; //texture atlas for ground fx
+	CTextureAtlas* textureAtlas;  ///< texture atlas for projectiles
+	CTextureAtlas* groundFXAtlas; ///< texture atlas for ground fx
 
 	//texturcoordinates for projectiles
 	AtlasedTexture flaretex;
-	AtlasedTexture dguntex;            // dgun texture
-	AtlasedTexture flareprojectiletex; // texture used by flares that trick missiles
-	AtlasedTexture sbtrailtex;         // default first section of starburst missile trail texture
-	AtlasedTexture missiletrailtex;    // default first section of missile trail texture
-	AtlasedTexture muzzleflametex;     // default muzzle flame texture
-	AtlasedTexture repulsetex;         // texture of impact on repulsor
-	AtlasedTexture sbflaretex;         // default starburst  missile flare texture
-	AtlasedTexture missileflaretex;    // default missile flare texture
-	AtlasedTexture beamlaserflaretex;  // default beam laser flare texture
+	AtlasedTexture dguntex;            ///< dgun texture
+	AtlasedTexture flareprojectiletex; ///< texture used by flares that trick missiles
+	AtlasedTexture sbtrailtex;         ///< default first section of starburst missile trail texture
+	AtlasedTexture missiletrailtex;    ///< default first section of missile trail texture
+	AtlasedTexture muzzleflametex;     ///< default muzzle flame texture
+	AtlasedTexture repulsetex;         ///< texture of impact on repulsor
+	AtlasedTexture sbflaretex;         ///< default starburst  missile flare texture
+	AtlasedTexture missileflaretex;    ///< default missile flare texture
+	AtlasedTexture beamlaserflaretex;  ///< default beam laser flare texture
 	AtlasedTexture explotex;
 	AtlasedTexture explofadetex;
 	AtlasedTexture heatcloudtex;
 	AtlasedTexture circularthingytex;
-	AtlasedTexture bubbletex;          // torpedo trail texture
-	AtlasedTexture geosquaretex;       // unknown use
-	AtlasedTexture gfxtex;             // nanospray texture
-	AtlasedTexture projectiletex;      // appears to be unused
-	AtlasedTexture repulsegfxtex;      // used by repulsor
-	AtlasedTexture sphereparttex;      // sphere explosion texture
-	AtlasedTexture torpedotex;         // appears in-game as a 1 texel texture
-	AtlasedTexture wrecktex;           // smoking explosion part texture
-	AtlasedTexture plasmatex;          // default plasma texture
+	AtlasedTexture bubbletex;          ///< torpedo trail texture
+	AtlasedTexture geosquaretex;       ///< unknown use
+	AtlasedTexture gfxtex;             ///< nanospray texture
+	AtlasedTexture projectiletex;      ///< appears to be unused
+	AtlasedTexture repulsegfxtex;      ///< used by repulsor
+	AtlasedTexture sphereparttex;      ///< sphere explosion texture
+	AtlasedTexture torpedotex;         ///< appears in-game as a 1 texel texture
+	AtlasedTexture wrecktex;           ///< smoking explosion part texture
+	AtlasedTexture plasmatex;          ///< default plasma texture
 	AtlasedTexture laserendtex;
 	AtlasedTexture laserfallofftex;
 	AtlasedTexture randdotstex;

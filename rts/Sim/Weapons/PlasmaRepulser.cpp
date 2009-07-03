@@ -9,8 +9,10 @@
 #include "Rendering/UnitModels/3DOParser.h"
 #include "Sim/Misc/InterceptHandler.h"
 #include "Sim/Projectiles/Projectile.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/RepulseGfx.h"
 #include "Sim/Projectiles/Unsynced/ShieldPartProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/WeaponProjectiles/WeaponProjectile.h"
 #include "Sim/Units/COB/UnitScript.h"
 #include "Sim/Units/Unit.h"
@@ -31,7 +33,9 @@ CR_REG_METADATA(CPlasmaRepulser, (
 	CR_MEMBER(wasDrawn),
 	CR_MEMBER(incoming),
 	CR_MEMBER(hasGfx),
+#if !defined HEADLESS
 	CR_MEMBER(visibleShieldParts),
+#endif // !defined HEADLESS
 	CR_RESERVED(8)
 	));
 
@@ -55,9 +59,11 @@ CPlasmaRepulser::~CPlasmaRepulser(void)
 {
 	interceptHandler.RemovePlasmaRepulser(this);
 
+#if !defined HEADLESS
 	for(std::list<CShieldPartProjectile*>::iterator si=visibleShieldParts.begin();si!=visibleShieldParts.end();++si){
 		(*si)->deleteMe=true;
 	}
+#endif // !defined HEADLESS
 }
 
 
@@ -78,11 +84,14 @@ void CPlasmaRepulser::Init(void)
 void CPlasmaRepulser::Update(void)
 {
 	const int defHitFrames = weaponDef->visibleShieldHitFrames;
+#if !defined HEADLESS
 	const bool couldBeVisible = (weaponDef->visibleShield || (defHitFrames > 0));
+#endif // !defined HEADLESS
 	const int defRechargeDelay = weaponDef->shieldRechargeDelay;
 
 	rechargeDelay -= (rechargeDelay > 0) ? 1 : 0;
 
+#if !defined HEADLESS
 	if (startShowingShield) {
 		// one-time iteration when shield first goes online
 		// (adds the projectile parts, this assumes owner is
@@ -102,6 +111,7 @@ void CPlasmaRepulser::Update(void)
 			}
 		}
 	}
+#endif // !defined HEADLESS
 
 	if (isEnabled && (curPower < weaponDef->shieldPower) && rechargeDelay <= 0) {
 		if (owner->UseEnergy(weaponDef->shieldPowerRegenEnergy * (1.0f / 30.0f))) {
@@ -112,6 +122,7 @@ void CPlasmaRepulser::Update(void)
 	                       + (owner->updir    * relWeaponPos.y)
 	                       + (owner->rightdir * relWeaponPos.x);
 
+#if !defined HEADLESS
 	if (couldBeVisible) {
 		float drawAlpha = 0.0f;
 		if (hitFrames > 0) {
@@ -142,6 +153,7 @@ void CPlasmaRepulser::Update(void)
 		}
 		wasDrawn = drawMe;
 	}
+#endif // !defined HEADLESS
 
 	if (isEnabled) {
 		for (std::list<CWeaponProjectile*>::iterator pi=incoming.begin();pi!=incoming.end();++pi) {
@@ -170,6 +182,7 @@ void CPlasmaRepulser::Update(void)
 							}
 						}
 
+#if !defined HEADLESS
 						if (weaponDef->visibleShieldRepulse) {
 							std::list<CWeaponProjectile*>::iterator i;
 							for (i=hasGfx.begin();i!=hasGfx.end();i++)
@@ -184,6 +197,7 @@ void CPlasmaRepulser::Update(void)
 								new CRepulseGfx(owner, *pi, radius, color);
 							}
 						}
+#endif // !defined HEADLESS
 
 						if (defHitFrames > 0) {
 							hitFrames = defHitFrames;

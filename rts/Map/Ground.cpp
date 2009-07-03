@@ -7,7 +7,9 @@
 
 #include "Ground.h"
 #include "ReadMap.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Projectile.h"
 #include "LogOutput.h"

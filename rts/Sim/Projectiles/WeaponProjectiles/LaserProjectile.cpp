@@ -7,9 +7,9 @@
 #if !defined HEADLESS
 #include "Game/Camera.h"
 #include "Rendering/GL/VertexArray.h"
+#include "Sim/Projectiles/Unsynced/SimpleParticleSystem.h"
 #endif // !defined HEADLESS
 #include "Sim/Projectiles/ProjectileHandler.h"
-#include "Sim/Projectiles/Unsynced/SimpleParticleSystem.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "GlobalUnsynced.h"
 

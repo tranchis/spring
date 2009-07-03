@@ -18,7 +18,9 @@
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/GfxProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/COB/UnitScript.h"
 #include "Sim/Units/CommandAI/CommandAI.h"
 #include "Sim/Units/CommandAI/FactoryCAI.h"
@@ -336,12 +338,14 @@ bool CFactory::ChangeTeam(int newTeam, ChangeType type)
 
 void CFactory::CreateNanoParticle(void)
 {
+#if !defined HEADLESS
 	const int piece = script->QueryNanoPiece();
 
 #ifdef USE_GML
-	if (gs->frameNum - lastDrawFrame > 20)
+	if (gs->frameNum - lastDrawFrame > 20) {
 		return;
-#endif
+	}
+#endif // USE_GML
 
 	if (ph->currentNanoParticles < ph->maxNanoParticles && unitDef->showNanoSpray) {
 		const float3 relWeaponFirePos = script->GetPiecePos(piece);
@@ -360,4 +364,5 @@ void CFactory::CreateNanoParticle(void)
 		}
 		new CGfxProjectile(weaponPos, dif, (int) l, color);
 	}
+#endif // !defined HEADLESS
 }

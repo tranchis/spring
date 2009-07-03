@@ -16,7 +16,9 @@
 #include "Sim/Misc/LosHandler.h"
 #include "Sim/Misc/QuadField.h"
 #include "Sim/Misc/RadarHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/COB/UnitScript.h"
 #include "Sim/Units/UnitDef.h"
 #include "Sim/Weapons/Weapon.h"
@@ -295,7 +297,9 @@ void CAirMoveType::Update(void)
 		case AIRCRAFT_CRASHING:
 			owner->crashing = true;
 			UpdateAirPhysics(crashRudder, crashAileron, crashElevator, 0, owner->frontdir);
+#if !defined HEADLESS
 			new CSmokeProjectile(owner->midPos, gs->randVector() * 0.08f, 100 + gs->randFloat() * 50, 5, 0.2f, owner, 0.4f);
+#endif // !defined HEADLESS
 			if (!(gs->frameNum & 3) && std::max(0.f, ground->GetApproximateHeight(pos.x, pos.z)) + 5 + owner->radius > pos.y)
 				owner->KillUnit(true, false, 0);
 			break;
@@ -316,8 +320,8 @@ EndNormalControl:
 		bool hitBuilding = false;
 
 		if (collide && (aircraftState == AIRCRAFT_FLYING || aircraftState == AIRCRAFT_CRASHING)) {
-			vector<CUnit*> nearUnits = qf->GetUnitsExact(pos, owner->radius + 6);
-			vector<CUnit*>::iterator ui;
+			std::vector<CUnit*> nearUnits = qf->GetUnitsExact(pos, owner->radius + 6);
+			std::vector<CUnit*>::iterator ui;
 
 			for (ui = nearUnits.begin(); ui != nearUnits.end(); ++ui) {
 				float sqDist = (pos - (*ui)->pos).SqLength();

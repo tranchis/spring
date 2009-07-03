@@ -10,10 +10,10 @@
 #include "myMath.h"
 #if !defined HEADLESS
 #include "Rendering/GL/VertexArray.h"
-#endif // !defined HEADLESS
-#include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Projectiles/Unsynced/BubbleProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeTrailProjectile.h"
+#endif // !defined HEADLESS
+#include "Sim/Projectiles/ProjectileHandler.h"
 #include "Sim/Units/Unit.h"
 #include "Sim/Weapons/WeaponDefHandler.h"
 #include "TorpedoProjectile.h"
@@ -155,6 +155,7 @@ void CTorpedoProjectile::Update(void)
 
 	pos += speed;
 
+#if !defined HEADLESS
 	if (pos.y < -2) {
 		--nextBubble;
 
@@ -167,6 +168,7 @@ void CTorpedoProjectile::Update(void)
 				1 + gs->randFloat() * 2, 0.01f, owner(), 0.3f + gs->randFloat() * 0.3f);
 		}
 	}
+#endif // !defined HEADLESS
 
 	UpdateGroundBounce();
 }

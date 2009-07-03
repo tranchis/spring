@@ -14,8 +14,6 @@
 #include "Rendering/GL/myGL.h"
 #include "Rendering/GroundFlash.h"
 #include "Rendering/Textures/ColorMap.h"
-#endif // !defined HEADLESS
-#include "ProjectileHandler.h"
 #include "Unsynced/BubbleProjectile.h"
 #include "Unsynced/DirtProjectile.h"
 #include "Unsynced/ExploSpikeProjectile.h"
@@ -24,6 +22,8 @@
 #include "Unsynced/SpherePartProjectile.h"
 #include "Unsynced/WakeProjectile.h"
 #include "Unsynced/WreckProjectile.h"
+#endif // !defined HEADLESS
+#include "ProjectileHandler.h"
 #include <assert.h>
 #include "GlobalUnsynced.h"
 #include "Exceptions.h"
@@ -179,9 +179,11 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 		height = 0.0f;
 	}
 
+#if !defined HEADLESS
 	bool waterExplosion = h2 < -3;
 	bool uwExplosion = pos.y < -15;
 	bool airExplosion = pos.y - max((float)0, h2) > 20;
+#endif // !defined HEADLESS
 
 	damage=damage/20;
 	if (damage>radius*1.5f) {
@@ -204,7 +206,6 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 
 		new CHeatCloudProjectile(npos,speed,8+sqrt(damage)*0.5f,7+damage*2.8f,owner);
 	}
-#endif // !defined HEADLESS
 	if (ph->particleSaturation<1) {		//turn off lots of graphic only particles when we have more particles than we want
 		float smokeDamage=damage;
 		if (uwExplosion)
@@ -281,7 +282,6 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 		}
 	}
 
-#if !defined HEADLESS
 	if (radius > 20 && damage > 6 && height < radius * 0.7f) {
 		float modSize=max(radius,damage*2);
 		float circleAlpha=0;
@@ -295,11 +295,11 @@ void CStdExplosionGenerator::Explosion(const float3 &pos, float damage,
 		float flashAlpha=min(0.8f,damage*0.01f);
 		new CStandardGroundFlash(pos,circleAlpha,flashAlpha,flashSize,circleGrowth,ttl);
 	}
-#endif // !defined HEADLESS
 
 	if (radius > 40 && damage > 12) {
 		CSpherePartProjectile::CreateSphere(pos,min(0.7f,damage*0.02f),5+(int)(sqrt(damage)*0.7f),(8+damage*2.5f)/(9+sqrt(damage)*0.7f)*0.5f,owner);
 	}
+#endif // !defined HEADLESS
 }
 
 // -------------------------------------------------------------------------------

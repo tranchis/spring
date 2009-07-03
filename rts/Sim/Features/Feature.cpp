@@ -22,8 +22,10 @@
 #include "Sim/Misc/TeamHandler.h"
 #include "Sim/Projectiles/FireProjectile.h"
 #include "Sim/Projectiles/ProjectileHandler.h"
+#if !defined HEADLESS
 #include "Sim/Projectiles/Unsynced/GeoThermSmokeProjectile.h"
 #include "Sim/Projectiles/Unsynced/SmokeProjectile.h"
+#endif // !defined HEADLESS
 #include "Sim/Units/UnitDef.h"
 #include "Sim/Units/Unit.h"
 #include "GlobalUnsynced.h"
@@ -102,9 +104,11 @@ CFeature::~CFeature(void)
 		myFire = 0;
 	}
 
+#if !defined HEADLESS
 	if (def->geoThermal) {
 		CGeoThermSmokeProjectile::GeoThermDestroyed(this);
 	}
+#endif // !defined HEADLESS
 
 	delete collisionVolume; collisionVolume = NULL;
 }
@@ -626,10 +630,12 @@ bool CFeature::Update(void)
 
 	if (emitSmokeTime != 0) {
 		--emitSmokeTime;
+#if !defined HEADLESS
 		if (!((gs->frameNum + id) & 3) && ph->particleSaturation < 0.7f) {
 			new CSmokeProjectile(midPos + gu->usRandVector() * radius * 0.3f,
 				gu->usRandVector() * 0.3f + UpVector, emitSmokeTime / 6 + 20, 6, 0.4f, 0, 0.5f);
 		}
+#endif // !defined HEADLESS
 		if (emitSmokeTime > 0)
 			finishedUpdate = false;
 	}
@@ -665,6 +671,7 @@ bool CFeature::Update(void)
 			solidOnTop = so;
 		}
 
+#if !defined HEADLESS
 		// Hide the smoke if there is a geothermal unit on the vent
 		CUnit *u = dynamic_cast<CUnit*>(solidOnTop);
 		if (!u || !u->unitDef->needGeo) {
@@ -676,6 +683,7 @@ bool CFeature::Update(void)
 					float3(pos.x, pos.y-10, pos.z), speed, int(50 + gu->usRandFloat() * 7), this);
 			}
 		}
+#endif // !defined HEADLESS
 
 		finishedUpdate = false;
 	}
