@@ -4,6 +4,7 @@
 #include "SmfMapFile.h"
 
 class CBFGroundDrawer;
+class CCamera;
 
 class CSmfReadMap : public CReadMap
 {
@@ -14,8 +15,10 @@ public:
 	~CSmfReadMap();
 
 	void HeightmapUpdatedNow(int x1, int x2, int y1, int y2);
+#if !defined HEADLESS
 	GLuint GetShadingTexture () { return shadowTex; }
 	GLuint GetGrassShadingTexture () { return minimapTex; }
+#endif // !defined HEADLESS
 	void DrawMinimap ();
 	void GridVisibility(CCamera *cam, int quadSize, float maxdist, IQuadDrawer *cb, int extraSize);
 	CBaseGroundDrawer* GetGroundDrawer();
@@ -51,17 +54,23 @@ protected:
 
 	CSmfMapFile file;
 
+#if !defined HEADLESS
 	std::string detailTexName;
 	GLuint detailTex;
+#endif // !defined HEADLESS
 
 	unsigned char waterHeightColors[1024*4];
 
+#if !defined HEADLESS
 	GLuint shadowTex;
 	GLuint minimapTex;
+#endif // !defined HEADLESS
 
 	float* heightmap;
 
+#if !defined HEADLESS
 	CBFGroundDrawer *groundDrawer;
+#endif // !defined HEADLESS
 
 	float3 GetLightValue(int x, int y);
 	void ParseSMD(std::string filename);

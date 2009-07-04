@@ -5,7 +5,9 @@
 #include "Map/ReadMap.h"
 #include "terrain/TerrainBase.h"
 #include "terrain/Terrain.h"
+#if !defined HEADLESS
 #include "Rendering/Textures/Bitmap.h"
+#endif // !defined HEADLESS
 #include "Frustum.h"
 
 class CSm3GroundDrawer;
@@ -37,7 +39,9 @@ public:
 
 	void Update();
 	void Explosion(float x, float y, float strength);
+#if !defined HEADLESS
 	GLuint GetShadingTexture(); // a texture with RGB for shading and A for height
+#endif // !defined HEADLESS
 	void DrawMinimap(); // draw the minimap in a quad (with extends: (0,0)-(1,1))
 
 	// Feature creation
@@ -66,7 +70,9 @@ protected:
 		unsigned char *data;
 	};
 
+#if !defined HEADLESS
 	GLuint minimapTexture;
+#endif // !defined HEADLESS
 
 	std::map<std::string, InfoMap> infoMaps;
 	friend class CSm3GroundDrawer;

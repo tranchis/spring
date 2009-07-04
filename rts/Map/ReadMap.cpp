@@ -27,6 +27,7 @@
 #include "LogOutput.h"
 #include "Platform/errorhandler.h"
 #include "Exceptions.h"
+#include "lib/gml/gml.h"
 
 using namespace std;
 

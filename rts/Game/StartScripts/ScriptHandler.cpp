@@ -27,7 +27,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+#if !defined HEADLESS
 ListSelectCallback CScriptHandler::callback = 0;
+#endif // !defined HEADLESS
 
 CScriptHandler::CScriptHandler() : chosenScript(0)
 {
@@ -93,11 +95,14 @@ void CScriptHandler::SelectScript(std::string s)
 	}
 	CScriptHandler::Instance().chosenScript = CScriptHandler::Instance().scripts[s];
 	CScriptHandler::Instance().chosenScript->ScriptSelected();
+#if !defined HEADLESS
 	if (CScriptHandler::Instance().callback)
 		CScriptHandler::Instance().callback(s);
 	callback = 0; // invalidate after selection
+#endif // !defined HEADLESS
 }
 
+#if !defined HEADLESS
 /** Generate a CglList with all available scripts. */
 CglList* CScriptHandler::GenList(ListSelectCallback callb)
 {
@@ -107,3 +112,4 @@ CglList* CScriptHandler::GenList(ListSelectCallback callb)
 	callback = callb;
 	return list;
 }
+#endif // !defined HEADLESS

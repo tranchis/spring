@@ -29,7 +29,9 @@
 #ifndef TERRAIN_BASE_H
 #define TERRAIN_BASE_H
 
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 
 #include "Map/SM3/Frustum.h"
 #include "Matrix44f.h"
@@ -58,4 +60,4 @@ namespace terrain {
 
 };
 
-#endif
+#endif // TERRAIN_BASE_H

@@ -10,8 +10,10 @@
 #include "ExternalAI/SkirmishAIKey.h"
 #include "Game/Game.h"
 #include "Game/GameSetup.h"
+#if !defined HEADLESS
 #include "Game/UI/MiniMap.h"
 #include "Game/UI/InfoConsole.h"
+#endif // !defined HEADLESS
 #include "Lua/LuaParser.h"
 #include "Map/MapParser.h"
 #include "Map/ReadMap.h"
@@ -22,6 +24,7 @@
 #include "Sim/Units/UnitLoader.h"
 #include "LogOutput.h"
 #include "Exceptions.h"
+#include "GlobalUnsynced.h"
 
 
 CCommanderScript::CCommanderScript(): CScript(std::string("Commanders"))
@@ -98,11 +101,13 @@ void CCommanderScript::GameStart()
 
 		team->lineageRoot = unit->id;
 
+#if !defined HEADLESS
 		// FIXME this shouldn't be here, but no better place exists currently
 		if (a == gu->myTeam) {
 			minimap->AddNotification(team->startPos, float3(1.0f, 1.0f, 1.0f), 1.0f);
 			game->infoConsole->SetLastMsgPos(team->startPos);
 		}
+#endif // !defined HEADLESS
 	}
 }
 

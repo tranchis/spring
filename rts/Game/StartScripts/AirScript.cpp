@@ -8,7 +8,9 @@
 #include "Sim/Units/Unit.h"
 #include "Sim/Units/UnitHandler.h"
 #include "Sim/Units/UnitDefHandler.h"
+#if !defined HEADLESS
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Sim/MoveTypes/AirMoveType.h"
 #include "ConfigHandler.h"
 #include "LogOutput.h"
@@ -54,8 +56,10 @@ void CAirScript::GameStart()
 {
 	doRoll=!configHandler->Get("ReflectiveWater",1);
 
+#if !defined HEADLESS
 	tcp=camera->pos;
 	tcf=camera->forward;
+#endif // !defined HEADLESS
 
 	for(int a=0;a<10;++a){
 		CUnit* u;
@@ -131,6 +135,7 @@ void CAirScript::Update()
 
 void CAirScript::SetCamera(void)
 {
+#if !defined HEADLESS
 	if(curPlane==0 || uh->units[curPlane]==0){
 		std::deque<int>::iterator pi;
 		for(pi=planes.begin();pi!=planes.end();++pi){
@@ -180,4 +185,5 @@ void CAirScript::SetCamera(void)
 	}
 	oldCamDir=camera->forward;
 	oldCamPos=camera->pos;
+#endif // !defined HEADLESS
 }

@@ -46,6 +46,14 @@ LIST(APPEND springHeadless_libraries ${SDL_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boo
 #ADD_SUBDIRECTORY(../../rts/lib)
 LIST(APPEND springHeadless_libraries lua 7zip hpiutil2 oscpack minizip streflop)
 
+### Find include directories and add platform specific libraries
+IF (MINGW)
+	FIND_PACKAGE(Win32Libs REQUIRED)
+	LIST(APPEND spring_libraries ${WIN32_LIBRARIES} mingw32)
+ELSE (MINGW)
+	FIND_PACKAGE(X11 REQUIRED)
+	LIST(APPEND spring_libraries ${X11_X11_LIB} ${X11_Xcursor_LIB})
+ENDIF (MINGW)
 
 
 SET(sr ../../rts)
@@ -157,6 +165,7 @@ SET(game_files
 	${sr}/Game/WaitCommandsAI.cpp
 	${sr}/Game/WordCompletion.cpp
 	)
+AUX_SOURCE_DIRECTORY(${sr}/Game/StartScripts game_files)
 
 AUX_SOURCE_DIRECTORY(${sr}/Game/Server server_files)
 
@@ -222,6 +231,11 @@ SET(map_files
 	${sr}/Map/MetalMap.cpp
 	${sr}/Map/NoMapDamage.cpp
 	${sr}/Map/ReadMap.cpp
+	${sr}/Map/SM3/Frustum.cpp
+	${sr}/Map/SM3/Plane.cpp
+	${sr}/Map/SM3/Sm3Map.cpp
+	${sr}/Map/SMF/SmfMapFile.cpp
+	${sr}/Map/SMF/SmfReadMap.cpp
 	)
 
 SET(springHeadless_files
@@ -245,5 +259,6 @@ if (MINGW)
 else (MINGW)
 	#set_target_properties(spring-headless PROPERTIES COMPILE_FLAGS "-fvisibility=default")
 endif (MINGW)
+
 
 #install (TARGETS springmain spring-headless RUNTIME DESTINATION ${BINDIR} LIBRARY DESTINATION ${LIBDIR})
