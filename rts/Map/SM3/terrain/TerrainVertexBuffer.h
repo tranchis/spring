@@ -37,21 +37,23 @@ namespace terrain {
 		VertexBuffer ();
 		~VertexBuffer ();
 
-		void Init(int bytesize); /// Allocate the buffer
-		void Free(); /// Free the buffer, called by destructor
-		uint GetSize() { return size; } /// returns the vertex buffer size in bytes
+		void Init(int bytesize); ///< Allocate the buffer
+		void Free(); ///< Free the buffer, called by destructor
+		uint GetSize() { return size; } ///< returns the vertex buffer size in bytes
 
-		void* Bind (); /// returns the pointer that should be passed to glVertexPointer
-		void Unbind (); /// unbind it, so it can be locked again
+		void* Bind (); ///< returns the pointer that should be passed to glVertexPointer
+		void Unbind (); ///< unbind it, so it can be locked again
 
-		void* LockData(); /// returns a pointer to the data, write-only
-		void UnlockData(); /// unlocks the data, so it can be used for rendering
+		void* LockData(); ///< returns a pointer to the data, write-only
+		void UnlockData(); ///< unlocks the data, so it can be used for rendering
 		
-		static int TotalSize() { return totalBufferSize; } /// returns total buffer memory size used by all VertexBuffer instances
+		static int TotalSize() { return totalBufferSize; } ///< returns total buffer memory size used by all VertexBuffer instances
 
 	protected:
 		char *data;
+#if !defined HEADLESS
 		GLuint id;
+#endif // !defined HEADLESS
 		uint size;
 		uint type;
 
@@ -65,4 +67,4 @@ namespace terrain {
 	};
 };
 
-#endif
+#endif // JC_TERRAIN_VERTEX_BUFFER_H

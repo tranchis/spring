@@ -7,8 +7,8 @@
 #include "terrain/Terrain.h"
 #if !defined HEADLESS
 #include "Rendering/Textures/Bitmap.h"
-#endif // !defined HEADLESS
 #include "Frustum.h"
+#endif // !defined HEADLESS
 
 class CSm3GroundDrawer;
 
@@ -82,8 +82,9 @@ protected:
 	unsigned int numFeatures;
 	void LoadFeatureData();
 
+#if !defined HEADLESS
 	Frustum tmpFrustum;
+#endif // !defined HEADLESS
 };
 
-
-#endif
+#endif // SM3_MAP_H

@@ -1,13 +1,19 @@
 #include "StdAfx.h"
 
 #include "Sm3Map.h"
+#if !defined HEADLESS
 #include "Sm3GroundDrawer.h"
+#endif // !defined HEADLESS
 
 #include "LogOutput.h"
+#if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
+#endif // !defined HEADLESS
 #include "Map/MapInfo.h"
 #include "Map/MapParser.h"
+#if !defined HEADLESS
 #include "Rendering/ShadowHandler.h"
+#endif // !defined HEADLESS
 #include "ConfigHandler.h"
 #include "Platform/errorhandler.h"
 #include "Platform/byteorder.h"
@@ -15,8 +21,10 @@
 #include "TdfParser.h"
 #include "Util.h"
 
+#if !defined HEADLESS
 #include "terrain/TerrainNode.h"
 #include "Game/Camera.h"
+#endif // !defined HEADLESS
 #include "Game/GameSetup.h"
 
 #include <stdexcept>
@@ -39,21 +47,27 @@ CR_BIND_DERIVED(CSm3ReadMap, CReadMap, ())
 
 CSm3ReadMap::CSm3ReadMap()
 {
+#if !defined HEADLESS
 	groundDrawer=0;
 	minimapTexture = 0;
+#endif // !defined HEADLESS
 	numFeatures=0;
 }
 
 CSm3ReadMap::~CSm3ReadMap()
 {
+#if !defined HEADLESS
 	delete groundDrawer;
 	delete renderer;
+#endif // !defined HEADLESS
 
 	for (std::vector<std::string*>::iterator fti = featureTypes.begin(); fti != featureTypes.end(); ++fti)
 		delete *fti;
 	featureTypes.clear();
 
+#if !defined HEADLESS
 	glDeleteTextures(1, &minimapTexture);
+#endif // !defined HEADLESS
 }
 
 struct Sm3LoadCB : terrain::ILoadCallback
@@ -65,6 +79,7 @@ void CSm3ReadMap::Initialize (const char *mapname)
 {
 	try {
 		string lmsg = "Loading " + string(mapname);
+#if !defined HEADLESS
 		PrintLoadMsg(lmsg.c_str());
 		GLint tu;
 		glGetIntegerv(GL_MAX_TEXTURE_UNITS, &tu);
@@ -93,6 +108,7 @@ void CSm3ReadMap::Initialize (const char *mapname)
 			if(bmp.Load(mapInfo->sm3.minimap))
 				minimapTexture=bmp.CreateTexture(true);
 		}
+#endif // !defined HEADLESS
 
 /*		int numStages=atoi(mapDefParser.SGetValueDef("0", "map\\terrain\\numtexturestages").c_str());
 		int maxStages=configHandler->Get("SM3MaxTextureStages", 10);
@@ -103,6 +119,7 @@ void CSm3ReadMap::Initialize (const char *mapname)
 		}
 */
 		Sm3LoadCB loadcb;
+#if !defined HEADLESS
 		terrain::LightingInfo lightInfo;
 		lightInfo.ambient = mapInfo->light.groundAmbientColor;
 		terrain::StaticLight light;
@@ -111,6 +128,7 @@ void CSm3ReadMap::Initialize (const char *mapname)
 		light.position = mapInfo->light.sunDir *1000000;
 		lightInfo.staticLights.push_back (light);
 		renderer->Load (GetMapDefParser(), &lightInfo, &loadcb);
+#endif // !defined HEADLESS
 
 		height = width = renderer->GetHeightmapWidth ()-1;
 
@@ -139,7 +157,9 @@ void CSm3ReadMap::Initialize (const char *mapname)
 		}
 		LoadFeatureData();
 
+#if !defined HEADLESS
 		groundDrawer = new CSm3GroundDrawer (this);
+#endif // !defined HEADLESS
 	}
 	catch(content_error& e)
 	{
@@ -150,7 +170,9 @@ void CSm3ReadMap::Initialize (const char *mapname)
 
 CBaseGroundDrawer *CSm3ReadMap::GetGroundDrawer ()
 {
+#if !defined HEADLESS
 	return groundDrawer;
+#endif // !defined HEADLESS
 }
 
 void CSm3ReadMap::HeightmapUpdatedNow(int x1, int x2, int y1, int y2)
@@ -174,9 +196,12 @@ void CSm3ReadMap::HeightmapUpdatedNow(int x1, int x2, int y1, int y2)
 
 void CSm3ReadMap::Update() {}
 void CSm3ReadMap::Explosion(float x,float y,float strength) {}
+#if !defined HEADLESS
 GLuint CSm3ReadMap::GetShadingTexture () { return 0; } // a texture with RGB for shading and A for height
+#endif // !defined HEADLESS
 void CSm3ReadMap::DrawMinimap ()
 {
+#if !defined HEADLESS
 	if (!minimapTexture)
 		return;
 
@@ -226,6 +251,7 @@ void CSm3ReadMap::DrawMinimap ()
 	glActiveTextureARB(GL_TEXTURE0_ARB);
 	glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 	glDisable(GL_TEXTURE_2D);
+#endif // !defined HEADLESS
 }
 
 // Feature creation
@@ -312,14 +338,16 @@ CSm3ReadMap::InfoMap::~InfoMap () {
 //   "grass"  -  grassmap
 unsigned char *CSm3ReadMap::GetInfoMap (const std::string& name, MapBitmapInfo* bm)
 {
+#if !defined HEADLESS
 	std::string map;
 	if (!GetMapDefParser().SGetValue(map, "MAP\\INFOMAPS\\" + name))
 		return 0;
 
 	CBitmap img;
 	// all infomaps are grayscale
-	if (!img.LoadGrayscale(map))
+	if (!img.LoadGrayscale(map)) {
 		return 0;
+	}
 
 	InfoMap& im = infoMaps[name];
 
@@ -329,6 +357,9 @@ unsigned char *CSm3ReadMap::GetInfoMap (const std::string& name, MapBitmapInfo* 
 	img.mem = 0;
 
 	return im.data;
+#else // !defined HEADLESS
+	return NULL;
+#endif // !defined HEADLESS
 }
 
 
@@ -337,6 +368,7 @@ void CSm3ReadMap::FreeInfoMap (const std::string& name, unsigned char *data)
 	infoMaps.erase (name);
 }
 
+#if !defined HEADLESS
 struct DrawGridParms
 {
 	int quadSize;
@@ -348,19 +380,22 @@ struct DrawGridParms
 static void DrawGrid(terrain::TQuad *tq, DrawGridParms *param)
 {
 	if (tq->InFrustum(param->frustum)) {
-		if (tq->width == param->quadSize)
+		if (tq->width == param->quadSize) {
 			param->cb->DrawQuad(tq->qmPos.x, tq->qmPos.y);
-		else if (tq->width < param->quadSize)
+		} else if (tq->width < param->quadSize) {
 			return;
-		else {
-			for (int a=0;a<4;a++)
+		} else {
+			for (int a=0;a<4;a++) {
 				DrawGrid(tq->childs[a],param);
+			}
 		}
 	}
 }
+#endif // !defined HEADLESS
 
 void CSm3ReadMap::GridVisibility(CCamera *cam, int quadSize, float maxdist, IQuadDrawer *cb, int extraSize)
 {
+#if !defined HEADLESS
 	float aspect = cam->viewport[2]/(float)cam->viewport[3];
 	tmpFrustum.CalcCameraPlanes(&cam->pos, &cam->right, &cam->up, &cam->forward, cam->GetTanHalfFov(), aspect);
 
@@ -370,4 +405,5 @@ void CSm3ReadMap::GridVisibility(CCamera *cam, int quadSize, float maxdist, IQua
 	dgp.quadSize = quadSize;
 	dgp.frustum = &tmpFrustum;
 	DrawGrid(renderer->GetQuadTree(), &dgp);
+#endif // !defined HEADLESS
 }

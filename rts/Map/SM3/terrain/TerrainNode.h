@@ -140,7 +140,9 @@ namespace terrain
 
 		// renderdata: normalmap + vertex buffer
 		// normalmap for detail preservation
+#if !defined HEADLESS
 		GLuint normalMap;
+#endif // !defined HEADLESS
 		uint normalMapW, normalMapTexWidth;
 
 		VertexBuffer vertexBuffer;
@@ -301,7 +303,9 @@ namespace terrain
 		typedef unsigned short index_t;
 		IndexTable ();
 
+#if !defined HEADLESS
 		GLenum IndexType() { return GL_UNSIGNED_SHORT; }
+#endif // !defined HEADLESS
 
 		int size[NUM_TABLES];
 		IndexBuffer buffers[NUM_TABLES];

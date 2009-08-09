@@ -231,9 +231,11 @@ SET(map_files
 	${sr}/Map/MetalMap.cpp
 	${sr}/Map/NoMapDamage.cpp
 	${sr}/Map/ReadMap.cpp
-	${sr}/Map/SM3/Frustum.cpp
 	${sr}/Map/SM3/Plane.cpp
 	${sr}/Map/SM3/Sm3Map.cpp
+	${sr}/Map/SM3/terrain/Terrain.cpp
+	${sr}/Map/SM3/terrain/TerrainUtil.cpp
+	${sr}/Map/SM3/terrain/TerrainVertexBuffer.cpp
 	${sr}/Map/SMF/SmfMapFile.cpp
 	${sr}/Map/SMF/SmfReadMap.cpp
 	)

@@ -39,7 +39,9 @@
 #include <deque>
 #include <fstream>
 #include <IL/il.h>
+#if !defined HEADLESS
 #include "TerrainTexture.h"
+#endif // !defined HEADLESS
 #include "TerrainNode.h"
 #include "FileSystem/FileHandler.h"
 #include "Util.h"
@@ -54,12 +56,16 @@ namespace terrain {
 
 	Config::Config()
 	{
+#if !defined HEADLESS
 		cacheTextures=false;
+#endif // !defined HEADLESS
 		useBumpMaps=false;
 		terrainNormalMaps=false;
 		detailMod=2.0f;
 		normalMapLevel=2;
+#if !defined HEADLESS
 		cacheTextureSize = 128;
+#endif // !defined HEADLESS
 		useShadowMaps = false;
 		anisotropicFiltering = 0;
 		forceFallbackTexturing = false;
@@ -117,7 +123,9 @@ namespace terrain {
 		drawState=NoDraw;
 		renderData=0;
 		textureSetup=0;
+#if !defined HEADLESS
 		cacheTexture=0;
+#endif // !defined HEADLESS
 		normalData=0;
 	}
 
@@ -128,11 +136,13 @@ namespace terrain {
 				delete childs[a];
 		}
 
+#if !defined HEADLESS
 		// delete cached texture
 		if (cacheTexture) {
 			glDeleteTextures(1,&cacheTexture);
 			cacheTexture = 0;
 		}
+#endif // !defined HEADLESS
 	}
 
 	void TQuad::Build (Heightmap *hm, int2 sqStart, int2 hmStart, int2 quadPos, int w, int d)
@@ -181,6 +191,7 @@ namespace terrain {
 		return vertexSize;
 	}
 
+#if !defined HEADLESS
 	void TQuad::Draw (IndexTable *indexTable, bool onlyPositions, int lodState)
 	{
 		uint vda = textureSetup->vertexDataReq;
@@ -226,6 +237,7 @@ namespace terrain {
 		Vector3 boxSt=start, boxEnd=end;
 		return f->IsBoxVisible (boxSt, boxEnd) != Frustum::Outside;
 	}
+#endif // !defined HEADLESS
 
 	// Calculates the exact nearest point, not just one of the box'es vertices
 	void NearestBoxPoint(const Vector3 *min, const Vector3 *max, const Vector3 *pos, Vector3 *out)
@@ -263,6 +275,7 @@ namespace terrain {
 		quads.push_back(this);
 	}
 
+#if !defined HEADLESS
 	void TQuad::FreeCachedTexture()
 	{
 		if (cacheTexture) {
@@ -270,6 +283,7 @@ namespace terrain {
 			cacheTexture = 0;
 		}
 	}
+#endif // !defined HEADLESS
 
 	TQuad *TQuad::FindSmallestContainingQuad2D(const Vector3& pos, float range, int maxdepth)
 	{
@@ -308,24 +322,30 @@ namespace terrain {
 	}
 	Terrain::~Terrain()
 	{
+#if !defined HEADLESS
 		delete renderDataManager;
-        delete texturing;
+		delete texturing;
+#endif // !defined HEADLESS
 		while (heightmap) {
 			Heightmap *p = heightmap;
 			heightmap = heightmap->lowDetail;
 			delete p;
 		}
+#if !defined HEADLESS
 		for (size_t a=0;a<qmaps.size();a++)
 			delete qmaps[a];
 		qmaps.clear();
 		delete quadtree;
+#endif // !defined HEADLESS
 		delete indexTable;
 	}
 
+#if !defined HEADLESS
 	void Terrain::SetShadowMap (uint shadowTex)
 	{
 		shadowMap = shadowTex;
 	}
+#endif // !defined HEADLESS
 
 	// used by ForceQueue to queue quads
 	void Terrain::QueueLodFixQuad (TQuad *q)
@@ -405,6 +425,7 @@ namespace terrain {
 	// Handle visibility with the frustum, and select LOD based on distance to camera and LOD setting
 	void Terrain::QuadVisLod (TQuad *q)
 	{
+#if !defined HEADLESS
 		if (q->InFrustum (&frustum)) {
 			// Node is visible, now determine if this LOD is suitable, or that a higher LOD should be used.
 			float lod = config.detailMod * q->CalcLod (curRC->cam->pos);
@@ -422,17 +443,21 @@ namespace terrain {
 			q->drawState=TQuad::Culled;
 			culled.push_back (q);
 		}
+#endif // !defined HEADLESS
 	}
 
+#if !defined HEADLESS
 	static inline bool QuadSortFunc (const QuadRenderInfo& q1, const QuadRenderInfo& q2)
 	{
 		return q1.quad->textureSetup->sortkey < q2.quad->textureSetup->sortkey;
 	}
+#endif // !defined HEADLESS
 
 
 	// update quad node drawing list
 	void Terrain::Update ()
 	{
+#if !defined HEADLESS
 		nodeUpdateCount = 0;
 
 		renderDataManager->ClearStat();
@@ -530,8 +555,10 @@ namespace terrain {
 				nodeUpdateCount, renderDataManager->normalDataAllocates, renderDataManager->renderDataAllocates);
 		}
 		curRC = 0;
+#endif // !defined HEADLESS
 	}
 
+#if !defined HEADLESS
 	void Terrain::DrawSimple ()
 	{
 		glEnable(GL_CULL_FACE);
@@ -548,7 +575,7 @@ namespace terrain {
 		glEnable (GL_TEXTURE_2D);
 		glBindTexture (GL_TEXTURE_2D, tex);
 		glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        SetTexGen (1.0f / (heightmap->w * SquareSize));
+		SetTexGen (1.0f / (heightmap->w * SquareSize));
 
 		DrawSimple ();
 
@@ -585,7 +612,6 @@ namespace terrain {
 			}
 		glEnd();
 		glColor3f (1,1,1);
-
 	}
 
 	void Terrain::Draw ()
@@ -709,7 +735,8 @@ namespace terrain {
 			nodeUpdateCount, renderDataManager->normalDataAllocates, renderDataManager->QuadRenderDataCount ());
 		texturing->DebugPrint(fr);
 	}
-#endif
+#endif // TERRAINRENDERERLIB_EXPORTS
+#endif // !defined HEADLESS
 
 	TQuad* FindQuad (TQuad *q, const Vector3& cpos)
 	{
@@ -726,6 +753,7 @@ namespace terrain {
 		return 0;
 	}
 
+#if !defined HEADLESS
 	void Terrain::RenderNodeFlat (int x,int y,int depth)
 	{
 		RenderNode (qmaps[depth]->At (x,y));
@@ -840,11 +868,13 @@ namespace terrain {
 //			logUpdates=!logUpdates;
 		texturing->DebugEvent (event);
 	}
+#endif // !defined HEADLESS
 
 	void Terrain::Load(const TdfParser& tdf, LightingInfo *li, ILoadCallback *cb)
 	{
 		string basepath = "MAP\\TERRAIN\\";
 
+#if !defined HEADLESS
 		// validate configuration
 		if (config.cacheTextures)
 			config.useBumpMaps = false;
@@ -859,6 +889,7 @@ namespace terrain {
 					config.anisotropicFiltering = maxAnisotropy;
 			}
 		}
+#endif // !defined HEADLESS
 
 		// load heightmap
 		string heightmapName;
@@ -941,11 +972,13 @@ namespace terrain {
 
 		if (cb) cb->PrintMsg ("initializing texturing system...");
 
+#if !defined HEADLESS
 		// load textures
 		texturing = new TerrainTexture;
 		texturing->Load (&tdf, heightmap, quadtree, qmaps, &config, cb, li);
 
 		renderDataManager = new RenderDataManager (lowdetailhm, qmaps.front());
+#endif // !defined HEADLESS
 
 		// calculate index table
 		indexTable=new IndexTable;
@@ -1027,7 +1060,7 @@ namespace terrain {
 
 		char *buffer=new char[len];
 		fh.Read(buffer, len);
-        bool success = !!ilLoadL(IL_TYPE_UNKNOWN, buffer, len);
+		bool success = !!ilLoadL(IL_TYPE_UNKNOWN, buffer, len);
 		delete [] buffer;
 
 		if (!success) {
@@ -1082,11 +1115,6 @@ namespace terrain {
 		return heightmap->w;
 	}
 
-	void Terrain::SetShaderParams (Vector3 dir, Vector3 eyevec)
-	{
-		texturing->SetShaderParams (dir, eyevec);
-	}
-
 	// heightmap blitting
 	void Terrain::HeightmapUpdated (int sx,int sy,int w,int h)
 	{
@@ -1135,6 +1163,12 @@ namespace terrain {
 	}
 
 
+#if !defined HEADLESS
+	void Terrain::SetShaderParams (Vector3 dir, Vector3 eyevec)
+	{
+		texturing->SetShaderParams (dir, eyevec);
+	}
+
 	void Terrain::SetShadowParams(ShadowMapParams *smp)
 	{
 		texturing->SetShadowMapParams(smp);
@@ -1161,6 +1195,7 @@ namespace terrain {
 	{
 		activeRC = rc;
 	}
+#endif // !defined HEADLESS
 
 };
 

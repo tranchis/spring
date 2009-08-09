@@ -29,6 +29,9 @@
 #ifndef JC_TERRAIN_H
 #define JC_TERRAIN_H
 
+#include "float3.h"
+typedef float3 Vector3;
+
 class TdfParser;
 
 namespace terrain {
@@ -52,6 +55,7 @@ namespace terrain {
 		unsigned shadowMap;
 	};
 
+#if !defined HEADLESS
 	class Camera
 	{
 	public:
@@ -65,6 +69,7 @@ namespace terrain {
 		
 		float fov, aspect;
 	};
+#endif // !defined HEADLESS
 
 	// for rendering debug text
 	struct IFontRenderer
@@ -76,8 +81,10 @@ namespace terrain {
 	{
 		Config();
 
+#if !defined HEADLESS
 		bool cacheTextures;
 		int cacheTextureSize; // size of a single cache texture: 32/64/128/256/512
+#endif // !defined HEADLESS
 
 		bool useBumpMaps;
 		bool terrainNormalMaps;
@@ -112,8 +119,8 @@ namespace terrain {
 		int cacheTextureSize;
 		int renderDataSize;
 	};
-	
-    class RenderContext;
+
+	class RenderContext;
 
 	struct LightingInfo
 	{
@@ -127,47 +134,55 @@ namespace terrain {
 		Terrain ();
 		~Terrain ();
 
+#if !defined HEADLESS
 		// Render contexts
-        RenderContext *AddRenderContext (Camera *cam, bool needsTexturing);
+		RenderContext *AddRenderContext (Camera *cam, bool needsTexturing);
 		void RemoveRenderContext (RenderContext *ctx);
-		void SetActiveContext (RenderContext *ctx);   // set active rendering context / camera viewpoint
+		void SetActiveContext (RenderContext *ctx);   ///< set active rendering context / camera viewpoint
 
-		void Load (const TdfParser& tdf, LightingInfo* li, ILoadCallback *cb);
 		void Draw ();
-		void DrawAll (); // draw all terrain nodes, regardless of visibility or lod
-		void Update (); // update lod+visibility, should be called when camera position has changed
-		void DrawSimple (); // no texture/no lighting
-		void DrawOverlayTexture (uint tex); // draw with single texture/no lighting
+		void DrawAll (); ///< draw all terrain nodes, regardless of visibility or lod
+		void DrawSimple (); ///< no texture/no lighting
+		void DrawOverlayTexture (uint tex); ///< draw with single texture/no lighting
+#endif // !defined HEADLESS
+		void Update (); ///< update lod+visibility, should be called when camera position has changed
+		void Load (const TdfParser& tdf, LightingInfo* li, ILoadCallback *cb);
 
 		TQuad *GetQuadTree() { return quadtree; }
 
-		// Allow it to use any part of the current rendering buffer target for caching textures
-		// should be called just before glClear (it doesn't need a cleared framebuffer)
-		// Update() should be called before this, otherwise there could be uncached nodes when doing Draw()
+		/**
+		 * Allow it to use any part of the current rendering buffer target for caching textures
+		 * should be called just before glClear (it doesn't need a cleared framebuffer)
+		 * Update() should be called before this, otherwise there could be uncached nodes when doing Draw()
+		 */
 		void CacheTextures();
-		// Render a single node flat onto the framebuffer, used for minimap rendering and texture caching
+		/// Render a single node flat onto the framebuffer, used for minimap rendering and texture caching
 		void RenderNodeFlat (int x,int y,int depth);
 
 		void DebugEvent (const std::string& event);
 		void DebugPrint (IFontRenderer *fr);
 
-		// World space lighting vector - used for bumpmapping
+#if !defined HEADLESS
+		/// World space lighting vector - used for bumpmapping
 		void SetShaderParams(Vector3 dir, Vector3 eyePos);
 
 		void SetShadowMap (uint shadowTex);
 		void SetShadowParams (ShadowMapParams *smp);
+#endif // !defined HEADLESS
 
-		// Heightmap interface, for dynamically changing heightmaps
+		/// Heightmap interface, for dynamically changing heightmaps
 		void GetHeightmap (int x,int y,int w,int h, float *dest);
-		float* GetHeightmap (); // if you change the heightmap, call HeightmapUpdated
+		float* GetHeightmap (); ///< if you change the heightmap, call HeightmapUpdated
 		void HeightmapUpdated (int x,int y,int w,int h);
-		float GetHeight (float x,float y); // get height from world coordinates 
+		float GetHeight (float x,float y); ///< get height from world coordinates 
 		float GetHeightAtPixel (int x,int y);
 
-		Vector3 TerrainSize ();
+		float3 TerrainSize ();
 		int GetHeightmapWidth ();
 
+#if !defined HEADLESS
 		void CalcRenderStats (RenderStats& stats, RenderContext *ctx=0);
+#endif // !defined HEADLESS
 
 		Config config;
 
@@ -176,15 +191,17 @@ namespace terrain {
 
 		void RenderNode (TQuad *q);
 
-		Heightmap *heightmap; // list of heightmaps, starting from highest detail level
-		Heightmap *lowdetailhm; // end of heightmap list, representing lowest detail level
+		Heightmap *heightmap; ///< list of heightmaps, starting from highest detail level
+		Heightmap *lowdetailhm; ///< end of heightmap list, representing lowest detail level
 		TQuad *quadtree;
-		std::vector<QuadMap*> qmaps; // list of quadmaps, starting from lowest detail level
-		std::vector<TQuad*> updatequads; // temporary list of quads that are being updated
+		std::vector<QuadMap*> qmaps; ///< list of quadmaps, starting from lowest detail level
+		std::vector<TQuad*> updatequads; ///< temporary list of quads that are being updated
 		std::vector<TQuad*> culled;
 		std::vector<RenderContext*> contexts;
 		RenderContext *activeRC, *curRC;
+#if !defined HEADLESS
 		Frustum frustum;
+#endif // !defined HEADLESS
 		IndexTable *indexTable;
 		TerrainTexture* texturing;
 		// settings read from config file
@@ -195,15 +212,15 @@ namespace terrain {
 
 		RenderDataManager *renderDataManager;
 
-		// Initial quad visibility and LOD estimation, registers to renderquads
+		/// Initial quad visibility and LOD estimation, registers to renderquads
 		void QuadVisLod (TQuad *q);
-		// Nabour and lod state calculation
+		/// Nabour and lod state calculation
 		void UpdateLodFix (TQuad *q);
 		void ForceQueue (TQuad *q);
 
-		// Heightmap loading using DevIL
+		/// Heightmap loading using DevIL
 		Heightmap* LoadHeightmapFromImage (const std::string& file, ILoadCallback *cb);
-		// RAW 16 bit heightmap loading 
+		/// RAW 16 bit heightmap loading 
 		Heightmap* LoadHeightmapFromRAW (const std::string& file, ILoadCallback *cb);
 		bool IsShadowed (int x, int y);
 
@@ -212,7 +229,7 @@ namespace terrain {
 
 		// debug variables
 		TQuad *debugQuad;
-		int nodeUpdateCount; // number of node updates since last frame
+		int nodeUpdateCount; ///< number of node updates since last frame
 		bool logUpdates;
 
 		struct VisNode
@@ -226,5 +243,4 @@ namespace terrain {
 
 };
 
-
-#endif
+#endif // JC_TERRAIN_H

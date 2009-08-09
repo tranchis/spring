@@ -31,9 +31,9 @@
 
 #if !defined HEADLESS
 #include "Rendering/GL/myGL.h"
-#endif // !defined HEADLESS
 
 #include "Map/SM3/Frustum.h"
+#endif // !defined HEADLESS
 #include "Matrix44f.h"
 
 #include "LogOutput.h"
